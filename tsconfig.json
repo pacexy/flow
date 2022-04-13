@@ -12,12 +12,7 @@
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
-    "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@turbospace/react-library": ["./packages/react-library/src/index.ts"],
-      "@turbospace/ts-library": ["./packages/ts-library/src/index.ts"]
-    }
+    "strict": true
   },
   "exclude": ["node_modules"]
 }

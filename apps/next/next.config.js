@@ -1,11 +1,5 @@
-const { join } = require('path')
-
 const withPWA = require('next-pwa')
-const withTM = require('next-transpile-modules')([
-  '@turbospace/internal',
-  join(__dirname, '../../packages/react-library'),
-  join(__dirname, '../../packages/ts-library'),
-])
+const withTM = require('next-transpile-modules')(['@turbospace/internal'])
 
 /**
  * @type {import('rehype-pretty-code').Options}
