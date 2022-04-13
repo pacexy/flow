@@ -1,5 +1,5 @@
 {
-  "name": "@ink/next",
+  "name": "@ink/reader",
   "private": true,
   "scripts": {
     "dev": "next dev",

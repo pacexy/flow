@@ -2,7 +2,7 @@ module.exports = {
   extends: ['../../.eslintrc.js', 'next'],
   settings: {
     next: {
-      rootDir: 'apps/next',
+      rootDir: 'apps/reader',
     },
   },
   rules: {

@@ -5,7 +5,7 @@ NPM_FLAGS = "--version" # prevent Netlify npm install
 
 [build]
 # Set `base` to repo directory in Netlify UI
-# base = 'next'
+# base = 'reader'
 publish = ".next"
 # https://answers.netlify.com/t/using-pnpm-and-pnpm-workspaces/2759
-command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm -F next... build"
+command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm -F reader... build"
