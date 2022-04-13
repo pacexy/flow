@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+code {
+  @apply overflow-x-auto;
+  counter-reset: line;
+}
+
+code[data-line-numbers] > .line::before {
+  @apply mr-6 inline-block w-6 text-right text-gray-400/40;
+  counter-increment: line;
+  content: counter(line);
+}
+
+code[data-line-numbers] > .line.highlighted::before {
+  @apply text-gray-400;
+}
+
+code[data-theme='dark'] {
+  @apply hidden dark:grid;
+}
+
+code[data-theme='light'] {
+  @apply grid dark:hidden;
+}
+
+pre > code {
+  @apply rounded-lg  bg-gray-400/10 py-4;
+}
+
+.line {
+  @apply px-4;
+}
+
+.line.highlighted {
+  @apply bg-gray-400/10;
+}
+
+.word.highlighted {
+  @apply inline-block bg-gray-400/20;
+}
+
+pre {
+  @apply my-4;
+}

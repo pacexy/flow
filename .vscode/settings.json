@@ -1,0 +1,4 @@
+{
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "exportall.config.folderListener": ["/apps/next/src/components"]
+}

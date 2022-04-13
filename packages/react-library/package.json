@@ -1,0 +1,35 @@
+{
+  "name": "@turbospace/react-library",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": "",
+  "keywords": [],
+  "author": "pacexy <pacexy@gmail.com>",
+  "homepage": "https://github.com/pacexy/turbospace#readme",
+  "bugs": "https://github.com/pacexy/turbospace/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pacexy/turbospace.git",
+    "directory": "packages/react-library"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "rimraf dist && esno ../../scripts/build.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/react": "17.0.43",
+    "@types/react-dom": "18.0.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0"
+  }
+}
