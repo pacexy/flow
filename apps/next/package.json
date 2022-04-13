@@ -1,5 +1,5 @@
 {
-  "name": "@turbospace/next",
+  "name": "@ink/next",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
     "@literal-ui/next": "^0.0.3",
     "@mdx-js/loader": "^2.1.0",
     "@mdx-js/react": "^2.1.0",
-    "@turbospace/internal": "workspace:*",
+    "@ink/internal": "workspace:*",
     "babel-loader": "^8.2.4",
     "clsx": "^1.1.1",
     "gray-matter": "^4.0.3",

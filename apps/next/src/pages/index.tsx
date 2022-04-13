@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { str } from '@turbospace/internal'
+import { str } from '@ink/internal'
 
 export default function Web() {
   return (

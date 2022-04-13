@@ -1,5 +1,5 @@
 const withPWA = require('next-pwa')
-const withTM = require('next-transpile-modules')(['@turbospace/internal'])
+const withTM = require('next-transpile-modules')(['@ink/internal'])
 
 /**
  * @type {import('rehype-pretty-code').Options}

@@ -1,5 +1,5 @@
 {
-  "name": "@turbospace/monorepo",
+  "name": "@ink/monorepo",
   "private": true,
   "packageManager": "pnpm@6.32.6",
   "scripts": {

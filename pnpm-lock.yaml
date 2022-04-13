@@ -51,7 +51,7 @@ importers:
       '@literal-ui/plugins': ^0.0.3
       '@mdx-js/loader': ^2.1.0
       '@mdx-js/react': ^2.1.0
-      '@turbospace/internal': workspace:*
+      '@ink/internal': workspace:*
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       autoprefixer: 10.4.4
@@ -75,7 +75,7 @@ importers:
       '@literal-ui/next': 0.0.3_next@12.1.5+react@18.0.0
       '@mdx-js/loader': 2.1.1
       '@mdx-js/react': 2.1.1_react@18.0.0
-      '@turbospace/internal': link:../../packages/internal
+      '@ink/internal': link:../../packages/internal
       babel-loader: 8.2.4
       clsx: 1.1.1
       gray-matter: 4.0.3

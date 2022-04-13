@@ -35,7 +35,7 @@ export function withLayout({ title }: Meta) {
   return function Layout({ children }) {
     return (
       <>
-        <NextSeo title={`${title} - Turbospace`} />
+        <NextSeo title={`${title} - Ink`} />
         <article>{children}</article>
       </>
     )

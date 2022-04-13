@@ -40,7 +40,7 @@ export const Layout: React.FC = ({ children }) => {
               <NavDrawer.Toggler />
             </TopAppBar.Leading>
           }
-          headline={<TopAppBar.Title>Turbospace</TopAppBar.Title>}
+          headline={<TopAppBar.Title>Ink</TopAppBar.Title>}
           trailing={
             <TopAppBar.Trailing>
               <Button className="hidden sm:block" variant="text">
@@ -51,7 +51,7 @@ export const Layout: React.FC = ({ children }) => {
               </Button>
               <IconButton
                 as={Link}
-                href="https://github.com/pacexy/turbospace"
+                href="https://github.com/pacexy/ink"
                 Icon={RiGithubFill}
               />
               <ColorScheme />

@@ -16,7 +16,7 @@ module.exports = {
           'sibling',
           'index',
         ],
-        pathGroups: [{ pattern: '@turbospace/**', group: 'internal' }],
+        pathGroups: [{ pattern: '@ink/**', group: 'internal' }],
         pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
