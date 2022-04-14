@@ -4,7 +4,7 @@ import Dexie, { Table } from 'dexie'
 export interface Book {
   id: string
   name: string
-  data: FileReader['result']
+  data: ArrayBuffer
   createdAt: number
 }
 

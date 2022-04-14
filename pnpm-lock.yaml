@@ -53,6 +53,8 @@ importers:
       '@literal-ui/plugins': ^0.0.3
       '@mdx-js/loader': ^2.1.0
       '@mdx-js/react': ^2.1.0
+      '@tailwindcss/aspect-ratio': ^0.4.0
+      '@tailwindcss/line-clamp': ^0.3.1
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       autoprefixer: 10.4.4
@@ -98,6 +100,8 @@ importers:
       shiki: 0.10.1
     devDependencies:
       '@literal-ui/plugins': 0.0.3_tailwindcss@3.0.24
+      '@tailwindcss/aspect-ratio': 0.4.0_tailwindcss@3.0.24
+      '@tailwindcss/line-clamp': 0.3.1_tailwindcss@3.0.24
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       autoprefixer: 10.4.4_postcss@8.4.12
@@ -1845,6 +1849,22 @@ packages:
       json5: 2.2.1
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.7
+    dev: true
+
+  /@tailwindcss/aspect-ratio/0.4.0_tailwindcss@3.0.24:
+    resolution: {integrity: sha512-WJu0I4PpqNPuutpaA9zDUq2JXR+lorZ7PbLcKNLmb6GL9/HLfC7w3CRsMhJF4BbYd/lkY6CfXOvkYpuGnZfkpQ==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
+    dependencies:
+      tailwindcss: 3.0.24
+    dev: true
+
+  /@tailwindcss/line-clamp/0.3.1_tailwindcss@3.0.24:
+    resolution: {integrity: sha512-pNr0T8LAc3TUx/gxCfQZRe9NB2dPEo/cedPHzUGIPxqDMhgjwNm6jYxww4W5l0zAsAddxr+XfZcqttGiFDgrGg==}
+    peerDependencies:
+      tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
+    dependencies:
+      tailwindcss: 3.0.24
     dev: true
 
   /@types/acorn/4.0.6:

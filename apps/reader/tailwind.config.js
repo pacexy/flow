@@ -5,7 +5,9 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require('m3-tokens/tailwind')({ source: '#00ff00' }),
+    require('m3-tokens/tailwind')({ source: '#808080' }),
     require('@literal-ui/plugins'),
+    require('@tailwindcss/line-clamp'),
+    require('@tailwindcss/aspect-ratio'),
   ],
 }
