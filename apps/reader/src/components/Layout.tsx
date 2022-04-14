@@ -4,7 +4,6 @@ import {
   ColorScheme,
   NavDrawer,
   NavBar,
-  Button,
   AppShell,
 } from '@literal-ui/core'
 import { Link } from '@literal-ui/next'
@@ -32,7 +31,7 @@ const items = [
 export const Layout: React.FC = ({ children }) => {
   return (
     <AppShell
-      className="mx-auto max-w-3xl p-4"
+      className="relative !w-auto"
       header={
         <TopAppBar
           leading={
@@ -43,12 +42,6 @@ export const Layout: React.FC = ({ children }) => {
           headline={<TopAppBar.Title>Ink</TopAppBar.Title>}
           trailing={
             <TopAppBar.Trailing>
-              <Button className="hidden sm:block" variant="text">
-                Log in
-              </Button>
-              <Button className="hidden sm:block" variant="tonal">
-                Sign up
-              </Button>
               <IconButton
                 as={Link}
                 href="https://github.com/pacexy/ink"
