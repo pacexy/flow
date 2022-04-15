@@ -44,3 +44,15 @@ pre > code {
 pre {
   @apply my-4;
 }
+
+.scroll {
+  overflow: overlay;
+}
+
+.scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll:hover::-webkit-scrollbar-thumb {
+  @apply bg-outline/10 hover:bg-outline/20 active:bg-outline/30;
+}

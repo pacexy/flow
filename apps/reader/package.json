@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@ink/internal": "workspace:*",
-    "@literal-ui/core": "^0.0.10",
+    "@literal-ui/core": "^0.0.11",
     "@literal-ui/hooks": "^0.0.6",
     "@literal-ui/next": "^0.0.3",
     "@mdx-js/loader": "^2.1.0",

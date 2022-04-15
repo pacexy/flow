@@ -1,17 +1,16 @@
 import {
   TopAppBar,
-  IconButton,
   ColorScheme,
   NavDrawer,
   NavBar,
   AppShell,
 } from '@literal-ui/core'
-import { Link } from '@literal-ui/next'
 import { MdCheck } from 'react-icons/md'
-import { RiGithubFill } from 'react-icons/ri'
 import { useRecoilValue } from 'recoil'
 
 import { navState } from '@ink/reader/state'
+
+import { NavItem } from './NavItem'
 
 const items = [
   { Icon: MdCheck, name: 'Label' },
@@ -22,7 +21,6 @@ const items = [
 
 export const Layout: React.FC = ({ children }) => {
   const nav = useRecoilValue(navState)
-  console.log(nav)
 
   return (
     <AppShell
@@ -31,17 +29,12 @@ export const Layout: React.FC = ({ children }) => {
         <TopAppBar
           leading={
             <TopAppBar.Leading>
-              <NavDrawer.Toggler />
+              {nav && <NavDrawer.Toggler />}
             </TopAppBar.Leading>
           }
-          headline={<TopAppBar.Title>Ink</TopAppBar.Title>}
+          headline={<TopAppBar.Title>Ink Reader</TopAppBar.Title>}
           trailing={
             <TopAppBar.Trailing>
-              <IconButton
-                as={Link}
-                href="https://github.com/pacexy/ink"
-                Icon={RiGithubFill}
-              />
               <ColorScheme />
             </TopAppBar.Trailing>
           }
@@ -49,15 +42,9 @@ export const Layout: React.FC = ({ children }) => {
       }
       sidebar={
         nav && (
-          <NavDrawer>
-            {nav.toc.map(({ label, subitems }, i) => (
-              <NavDrawer.Section key={i} headline={label}>
-                {subitems?.map((item, j) => (
-                  <NavDrawer.Item key={j}>
-                    <Link href={`/`}>{item.label}</Link>
-                  </NavDrawer.Item>
-                ))}
-              </NavDrawer.Section>
+          <NavDrawer className="scroll !px-0">
+            {nav.toc.map((item, i) => (
+              <NavItem key={i} item={item} />
             ))}
           </NavDrawer>
         )
