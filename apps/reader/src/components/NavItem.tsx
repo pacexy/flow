@@ -3,7 +3,7 @@ import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import type { NavItem as INavItem } from 'epubjs'
 import { ComponentProps } from 'react'
-import { MdExpandLess, MdExpandMore } from 'react-icons/md'
+import { MdChevronRight, MdExpandMore } from 'react-icons/md'
 
 interface NavItemProps extends ComponentProps<'div'> {
   item: INavItem
@@ -18,23 +18,26 @@ export const NavItem: React.FC<NavItemProps> = ({
   const [open, toggle] = useBoolean(false)
   let { label, subitems } = item
   const isLeaf = !subitems || !subitems.length
-  const Icon = open ? MdExpandLess : MdExpandMore
+  const Icon = open ? MdExpandMore : MdChevronRight
 
   label = label.trim()
 
   return (
     <div className={clsx('', className)} title={label} {...props}>
-      <button
-        className="text-on-surface-variant relative flex w-full items-center justify-between py-1 pr-3 text-left"
-        style={{ paddingLeft: level * 12 }}
+      <a
+        className="relative flex w-full cursor-pointer items-center py-0.5 pr-3 text-left"
+        style={{ paddingLeft: level * 8 }}
+        onClick={toggle}
       >
         <StateLayer />
-        <div className="typescale-body-medium">{label}</div>
-        <div role="button" className="relative ml-2">
-          <StateLayer />
-          {!isLeaf && <Icon size={22} onClick={toggle} />}
+        <Icon
+          size={22}
+          className={clsx('text-outline shrink-0', isLeaf && 'invisible')}
+        />
+        <div className="typescale-body-small text-on-surface-variant">
+          {label}
         </div>
-      </button>
+      </a>
 
       {open &&
         subitems?.map((item, i) => (

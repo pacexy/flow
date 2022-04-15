@@ -46,6 +46,7 @@ pre {
 }
 
 .scroll {
+  @apply h-full;
   overflow: overlay;
 }
 
@@ -54,5 +55,5 @@ pre {
 }
 
 .scroll:hover::-webkit-scrollbar-thumb {
-  @apply bg-outline/10 hover:bg-outline/20 active:bg-outline/30;
+  @apply bg-on-background/20 hover:bg-on-background/30 active:bg-on-background/40;
 }

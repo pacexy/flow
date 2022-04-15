@@ -45,11 +45,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ children, className }) => {
   return (
     <div
       {...rootProps}
-      className={clsx(
-        'absolute inset-0',
-        isDragActive && 'bg-gray-400/10',
-        className,
-      )}
+      className={clsx(isDragActive && 'bg-gray-400/10', className)}
     >
       <input {...getInputProps()} />
       {children}
