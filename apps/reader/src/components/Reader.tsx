@@ -3,7 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSetRecoilState } from 'recoil'
 
 import { Book, db } from '@ink/reader/db'
-import { navState } from '@ink/reader/state'
+import { navState, readerState } from '@ink/reader/state'
+
+import { Tab } from './Tab'
 
 interface ReaderProps {
   id: string
@@ -12,6 +14,7 @@ export function Reader({ id }: ReaderProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [book, setBook] = useState<Book>()
   const setNav = useSetRecoilState(navState)
+  const setId = useSetRecoilState(readerState)
   const epub = useMemo(() => {
     return book && ePub(book.data)
   }, [book])
@@ -37,5 +40,17 @@ export function Reader({ id }: ReaderProps) {
     })
   }, [epub, setNav])
 
-  return <div ref={ref}></div>
+  return (
+    <div>
+      <Tab.List>
+        <Tab selected focused onDelete={() => setId(undefined)}>
+          {book?.name}
+        </Tab>
+      </Tab.List>
+      <div>
+        <div></div>
+        <div ref={ref}></div>
+      </div>
+    </div>
+  )
 }
