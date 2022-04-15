@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-import { db } from '../db'
+import { db } from '@ink/reader/db'
 
 interface DropZoneProps extends ComponentProps<'div'> {}
 export const DropZone: React.FC<DropZoneProps> = ({ children, className }) => {

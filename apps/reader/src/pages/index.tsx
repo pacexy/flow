@@ -1,23 +1,31 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import epub, { Book } from 'epubjs'
-import React from 'react'
+import React, { ComponentProps } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { DropZone } from '../components'
+import { DropZone, Reader } from '../components'
 import { db } from '../db'
 import { useAsync } from '../hooks'
+import { readerState } from '../state'
 
-export default function Web() {
+export default function Index() {
+  const id = useRecoilValue(readerState)
   return (
     <div>
-      <DropZone className="p-4">
-        <Library />
-      </DropZone>
+      {id ? (
+        <Reader id={id} />
+      ) : (
+        <DropZone className="p-4">
+          <Library />
+        </DropZone>
+      )}
     </div>
   )
 }
 
 export const Library: React.FC = () => {
   const books = useLiveQuery(() => db?.books.toArray() ?? [])
+  const setId = useSetRecoilState(readerState)
 
   return (
     <ul className="flex flex-wrap gap-4">
@@ -27,7 +35,7 @@ export const Library: React.FC = () => {
         return (
           <li key={id}>
             <div className="bg-outline/5 w-56 space-y-4 rounded p-4">
-              <Cover book={book} />
+              <Cover role="button" book={book} onClick={() => setId(id)} />
               <div
                 className="line-clamp-2 text-on-surface-variant typescale-body-large w-full"
                 title={name}
@@ -42,10 +50,10 @@ export const Library: React.FC = () => {
   )
 }
 
-interface CoverProps {
+interface CoverProps extends ComponentProps<'img'> {
   book: Book
 }
-export const Cover: React.FC<CoverProps> = ({ book }) => {
+export const Cover: React.FC<CoverProps> = ({ book, ...props }) => {
   const src = useAsync(() => book.coverUrl())
 
   return (
@@ -53,6 +61,7 @@ export const Cover: React.FC<CoverProps> = ({ book }) => {
       src={src ?? undefined}
       alt="Cover"
       className="mx-auto h-56 object-contain"
+      {...props}
     />
   )
 }

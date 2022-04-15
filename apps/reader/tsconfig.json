@@ -1,5 +1,10 @@
 {
   "extends": "../../tsconfig.next.json",
+  "compilerOptions": {
+    "paths": {
+      "@ink/reader/*": ["apps/reader/src/*"]
+    }
+  },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

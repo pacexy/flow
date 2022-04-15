@@ -9,17 +9,9 @@ import {
 import { Link } from '@literal-ui/next'
 import { MdCheck } from 'react-icons/md'
 import { RiGithubFill } from 'react-icons/ri'
+import { useRecoilValue } from 'recoil'
 
-const sections = [
-  {
-    name: 'Section',
-    items: ['Label', 'Label'],
-  },
-  {
-    name: 'Section',
-    items: ['Label', 'Label'],
-  },
-]
+import { navState } from '@ink/reader/state'
 
 const items = [
   { Icon: MdCheck, name: 'Label' },
@@ -29,6 +21,9 @@ const items = [
 ]
 
 export const Layout: React.FC = ({ children }) => {
+  const nav = useRecoilValue(navState)
+  console.log(nav)
+
   return (
     <AppShell
       className="relative !w-auto"
@@ -53,17 +48,19 @@ export const Layout: React.FC = ({ children }) => {
         />
       }
       sidebar={
-        <NavDrawer>
-          {sections.map(({ name, items }, i) => (
-            <NavDrawer.Section key={i} headline={name}>
-              {items.map((item, j) => (
-                <NavDrawer.Item key={j}>
-                  <Link href={`/`}>{item}</Link>
-                </NavDrawer.Item>
-              ))}
-            </NavDrawer.Section>
-          ))}
-        </NavDrawer>
+        nav && (
+          <NavDrawer>
+            {nav.toc.map(({ label, subitems }, i) => (
+              <NavDrawer.Section key={i} headline={label}>
+                {subitems?.map((item, j) => (
+                  <NavDrawer.Item key={j}>
+                    <Link href={`/`}>{item.label}</Link>
+                  </NavDrawer.Item>
+                ))}
+              </NavDrawer.Section>
+            ))}
+          </NavDrawer>
+        )
       }
       navbar={
         <NavBar className="sm:hidden">

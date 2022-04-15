@@ -2,7 +2,7 @@
   "name": "@ink/reader",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 7127",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -26,6 +26,7 @@
     "react-dom": "18.0.0",
     "react-dropzone": "^12.0.5",
     "react-icons": "^4.3.1",
+    "recoil": "^0.7.1",
     "rehype-pretty-code": "0.3.0",
     "shiki": "^0.10.1"
   },
