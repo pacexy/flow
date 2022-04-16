@@ -6,7 +6,28 @@ import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 
-import { navState, renditionState } from '../state'
+import { navState, renditionState } from '../../state'
+
+import { Pane } from './Pane'
+
+export const TocView: React.FC = () => {
+  return (
+    <>
+      <TocPane />
+    </>
+  )
+}
+
+const TocPane: React.FC = () => {
+  const nav = useRecoilValue(navState)
+  return (
+    <Pane headline="toc">
+      {nav?.toc.map((item, i) => (
+        <NavItem key={i} item={item} />
+      ))}
+    </Pane>
+  )
+}
 
 interface NavItemProps extends ComponentProps<'div'> {
   item: INavItem
@@ -49,16 +70,5 @@ const NavItem: React.FC<NavItemProps> = ({
           <NavItem key={i} item={item} level={level + 1} />
         ))}
     </div>
-  )
-}
-
-export function TOC() {
-  const nav = useRecoilValue(navState)
-  return (
-    <>
-      {nav?.toc.map((item, i) => (
-        <NavItem key={i} item={item} />
-      ))}
-    </>
   )
 }

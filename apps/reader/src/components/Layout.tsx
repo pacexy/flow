@@ -1,58 +1,69 @@
-import { useBoolean, useColorScheme } from '@literal-ui/hooks'
+import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { ComponentProps } from 'react'
+import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
 import {
-  MdChevronRight,
-  MdExpandMore,
-  MdOutlineDarkMode,
+  MdFormatColorText,
   MdOutlineLightMode,
   MdSearch,
   MdToc,
 } from 'react-icons/md'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-import { TOC } from './TOC'
+import { actionState, renditionState } from '../state'
+import { keys } from '../utils'
+
+
+import { SearchView } from './viewlets/SearchView'
+import { TocView } from './viewlets/TocView'
+import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
-  const { toggle } = useColorScheme()
-
   return (
     <div className="flex h-screen">
-      <ActivityBar>
-        <ActionBar className="flex-1">
-          <Action Icon={MdToc} />
-          <Action Icon={MdSearch} />
-        </ActionBar>
-        <ActionBar>
-          <Action
-            Icon={MdOutlineDarkMode}
-            onClick={toggle}
-            className="hidden dark:flex"
-          />
-          <Action
-            Icon={MdOutlineLightMode}
-            onClick={toggle}
-            className="dark:hidden"
-          />
-        </ActionBar>
-      </ActivityBar>
-      <SideBar>
-        <Pane headline="toc">
-          <TOC />
-        </Pane>
-      </SideBar>
+      <ActivityBar />
+      <SideBar />
       <Reader className="flex-1 overflow-hidden">{children}</Reader>
     </div>
   )
 }
 
-interface ActivityBarProps extends ComponentProps<'div'> {}
-function ActivityBar({ className, ...props }: ActivityBarProps) {
+const actionMap = {
+  TOC: { title: 'Table of Content', Icon: MdToc, View: TocView },
+  Search: { title: 'Search', Icon: MdSearch, View: SearchView },
+  Typography: {
+    title: 'Typography',
+    Icon: MdFormatColorText,
+    View: TypographyView,
+  },
+}
+
+function ActivityBar() {
+  const { toggle } = useColorScheme()
+  const [action, setAction] = useRecoilState(actionState)
   return (
-    <div
-      className={clsx('bg-outline/10 hidden flex-col sm:flex', className)}
-      {...props}
-    />
+    <div className="bg-outline/10 hidden flex-col sm:flex">
+      <ActionBar className="flex-1">
+        {keys(actionMap).map((k) => {
+          const active = action === k
+          return (
+            <Action
+              title={actionMap[k].title}
+              Icon={actionMap[k].Icon}
+              active={active}
+              onClick={() => setAction(active ? undefined : k)}
+            />
+          )
+        })}
+      </ActionBar>
+      <ActionBar>
+        <Action
+          title="Toggle Color Scheme"
+          Icon={MdOutlineLightMode}
+          onClick={toggle}
+        />
+      </ActionBar>
+    </div>
   )
 }
 
@@ -63,58 +74,58 @@ function ActionBar({ className, ...props }: ActionBarProps) {
 
 interface ActionProps extends ComponentProps<'button'> {
   Icon: IconType
+  active?: boolean
 }
-const Action: React.FC<ActionProps> = ({ className, Icon, ...props }) => {
+const Action: React.FC<ActionProps> = ({
+  className,
+  Icon,
+  active,
+  ...props
+}) => {
   return (
     <button
       className={clsx(
-        'text-outline/70 hover:text-on-surface flex h-12 w-12 items-center justify-center',
+        'text-outline/70 hover:text-on-surface relative flex h-12 w-12 items-center justify-center',
+        active && 'text-on-surface',
         className,
       )}
       {...props}
     >
+      {active && (
+        <div className="bg-on-surface absolute inset-y-0 left-0 w-0.5" />
+      )}
       <Icon size={28} />
     </button>
   )
 }
 
-interface SideBarProps extends ComponentProps<'div'> {}
-function SideBar({ className, children, ...props }: SideBarProps) {
-  const headline = 'Title'
+function SideBar() {
+  const action = useRecoilValue(actionState)
+  const rendition = useRecoilValue(renditionState)
+
+  useEffect(() => {
+    // @ts-ignore
+    rendition?.resize()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!!action])
+
+  if (!action) return null
+
+  const View = actionMap[action].View
   return (
     <div
-      className={clsx('bg-outline/5 hidden flex-col sm:flex', className)}
+      className="bg-outline/5 hidden flex-col sm:flex"
       style={{ width: 240 }}
-      {...props}
     >
       <h2
-        title={headline}
+        title={action}
         className="typescale-body-small text-outline px-[22px] py-2"
       >
-        {headline.toUpperCase()}
+        {action.toUpperCase()}
       </h2>
-      <div className="flex-1 overflow-hidden">{children}</div>
-    </div>
-  )
-}
-
-interface PaneProps extends ComponentProps<'div'> {
-  headline: string
-}
-function Pane({ className, headline, children, ...props }: PaneProps) {
-  const [open, toggle] = useBoolean(true)
-  const Icon = open ? MdExpandMore : MdChevronRight
-  return (
-    <div className={clsx('h-full', className)} {...props}>
-      <div role="button" className="flex items-center py-0.5" onClick={toggle}>
-        <div>
-          <Icon size={22} className="text-outline" />
-        </div>
-        <div className="typescale-label-medium text-on-surface-variant">
-          {headline.toUpperCase()}
-        </div>
+      <div className="flex-1 overflow-hidden">
+        <View />
       </div>
-      {open && <div className="scroll">{children}</div>}
     </div>
   )
 }
