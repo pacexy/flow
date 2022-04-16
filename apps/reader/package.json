@@ -26,6 +26,7 @@
     "react-dom": "18.0.0",
     "react-dropzone": "^12.0.5",
     "react-icons": "^4.3.1",
+    "react-polymorphic-types": "^2.0.0",
     "recoil": "^0.7.1",
     "rehype-pretty-code": "0.3.0",
     "shiki": "^0.10.1"

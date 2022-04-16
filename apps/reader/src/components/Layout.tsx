@@ -122,9 +122,7 @@ function SideBar() {
       >
         {action.toUpperCase()}
       </h2>
-      <div className="flex-1 overflow-hidden">
-        <View />
-      </div>
+      <View />
     </div>
   )
 }

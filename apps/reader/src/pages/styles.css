@@ -46,7 +46,6 @@ pre {
 }
 
 .scroll {
-  @apply h-full;
   overflow: overlay;
 }
 
@@ -56,4 +55,8 @@ pre {
 
 .scroll:hover::-webkit-scrollbar-thumb {
   @apply bg-on-background/20 hover:bg-on-background/30 active:bg-on-background/40;
+}
+
+.scroll-parent {
+  @apply flex flex-col overflow-hidden;
 }

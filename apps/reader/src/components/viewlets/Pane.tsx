@@ -10,7 +10,7 @@ export function Pane({ className, headline, children, ...props }: PaneProps) {
   const [open, toggle] = useBoolean(true)
   const Icon = open ? MdExpandMore : MdChevronRight
   return (
-    <div className="h-full">
+    <div className="scroll-parent">
       <div role="button" className="flex items-center py-0.5" onClick={toggle}>
         <div>
           <Icon size={22} className="text-outline" />
