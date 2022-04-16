@@ -1,50 +1,26 @@
 import { StateLayer } from '@literal-ui/core'
+import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import ePub, { Book } from 'epubjs'
 import { useEffect, useRef, useState } from 'react'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { BookRecord, db } from '@ink/reader/db'
 import { navState, readerState, renditionState } from '@ink/reader/state'
 
 import { Tab } from './Tab'
 
-interface ReaderProps {
+interface ReaderGroupProps {
   id: string
 }
-export function Reader({ id }: ReaderProps) {
-  const ref = useRef<HTMLDivElement>(null)
+export function ReaderGroup({ id }: ReaderGroupProps) {
   const [book, setBook] = useState<BookRecord>()
-  const [epub, setEpub] = useState<Book>()
-  const setRendition = useSetRecoilState(renditionState)
-  const setNav = useSetRecoilState(navState)
   const setId = useSetRecoilState(readerState)
 
   useEffect(() => {
-    db?.books.get(id).then((book) => {
-      if (!ref.current || !book) return
-      setBook(book)
-
-      const epub = ePub(book.data)
-      setEpub(epub)
-      epub.loaded.navigation.then(setNav)
-
-      const rendition = epub.renderTo(ref.current, {
-        spread: 'always',
-        width: '100%',
-        height: '100%',
-      })
-      setRendition(rendition)
-      rendition.display()
-      rendition.themes.font('sans-serif')
-      rendition.themes.fontSize('20px')
-    })
-  }, [id, setNav, setRendition])
-
-  useEffect(() => {
-    return () => epub?.destroy()
-  }, [epub])
+    db?.books.get(id).then(setBook)
+  }, [id])
 
   return (
     <div className="flex h-full flex-col">
@@ -53,14 +29,19 @@ export function Reader({ id }: ReaderProps) {
           {book?.name}
         </Tab>
       </Tab.List>
-      <div className="typescale-body-small text-outline px-2 py-1">
-        BreadCrumbs
-      </div>
-      <div ref={ref} className="flex-1"></div>
-      <div className="flex">
-        <NavButton dir="left" />
-        <NavButton dir="right" />
-      </div>
+
+      {book && (
+        <>
+          <div className="typescale-body-small text-outline px-2 py-1">
+            BreadCrumbs
+          </div>
+          <Renderer book={book} />
+          <div className="flex">
+            <NavButton dir="left" />
+            <NavButton dir="right" />
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -81,4 +62,50 @@ const NavButton: React.FC<NavButtonProps> = ({ dir }) => {
       <Icon size={40} className="text-outline/30" />
     </button>
   )
+}
+
+interface RendererProps {
+  book: BookRecord
+}
+
+export function Renderer({ book }: RendererProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [, setEpub] = useState<Book>()
+  const [rendition, setRendition] = useRecoilState(renditionState)
+  const setNav = useSetRecoilState(navState)
+  const { scheme } = useColorScheme()
+
+  useEffect(() => {
+    if (!ref.current) return
+
+    const epub = ePub(book.data)
+    setEpub((prev) => {
+      prev?.destroy()
+      return epub
+    })
+    epub.loaded.navigation.then(setNav)
+
+    const rendition = epub.renderTo(ref.current, {
+      width: '100%',
+      height: '100%',
+    })
+    setRendition(rendition)
+    rendition.display()
+    rendition.themes.fontSize('20px')
+    rendition.themes.default({
+      p: {
+        'font-family': 'sans-serif',
+        'line-height': '1.5',
+      },
+    })
+  }, [book.data, setNav, setRendition])
+
+  useEffect(() => {
+    if (!scheme) return
+    const dark = scheme === 'dark'
+    rendition?.themes.override('color', dark ? '#e0e3e3' : '#191c1d')
+    rendition?.themes.override('background', dark ? '#121212' : 'white')
+  }, [rendition, scheme])
+
+  return <div ref={ref} className="scroll flex-1" />
 }

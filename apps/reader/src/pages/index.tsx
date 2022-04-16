@@ -3,7 +3,7 @@ import epub, { Book } from 'epubjs'
 import React, { ComponentProps } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { DropZone, Reader } from '../components'
+import { DropZone, ReaderGroup } from '../components'
 import { db } from '../db'
 import { useAsync } from '../hooks'
 import { readerState } from '../state'
@@ -11,7 +11,7 @@ import { readerState } from '../state'
 export default function Index() {
   const id = useRecoilValue(readerState)
   return id ? (
-    <Reader id={id} />
+    <ReaderGroup id={id} />
   ) : (
     <DropZone className="h-full p-4">
       <Library />
