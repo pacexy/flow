@@ -13,7 +13,6 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { actionState, renditionState } from '../state'
 import { keys } from '../utils'
 
-
 import { SearchView } from './viewlets/SearchView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
@@ -119,7 +118,7 @@ function SideBar() {
     >
       <h2
         title={action}
-        className="typescale-body-small text-outline px-[22px] py-2"
+        className="typescale-body-small text-outline px-[22px] py-3"
       >
         {action.toUpperCase()}
       </h2>

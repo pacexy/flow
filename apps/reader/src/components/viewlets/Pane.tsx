@@ -10,7 +10,7 @@ export function Pane({ className, headline, children, ...props }: PaneProps) {
   const [open, toggle] = useBoolean(true)
   const Icon = open ? MdExpandMore : MdChevronRight
   return (
-    <div className={clsx('h-full', className)} {...props}>
+    <div className="h-full">
       <div role="button" className="flex items-center py-0.5" onClick={toggle}>
         <div>
           <Icon size={22} className="text-outline" />
@@ -19,7 +19,11 @@ export function Pane({ className, headline, children, ...props }: PaneProps) {
           {headline.toUpperCase()}
         </div>
       </div>
-      {open && <div className="scroll">{children}</div>}
+      {open && (
+        <div className={clsx('scroll', className)} {...props}>
+          {children}
+        </div>
+      )}
     </div>
   )
 }

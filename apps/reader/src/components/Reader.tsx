@@ -94,7 +94,7 @@ export function Renderer({ book }: RendererProps) {
     rendition.themes.fontSize('20px')
     rendition.themes.default({
       p: {
-        'font-family': 'sans-serif',
+        'font-family': 'inherit',
         'line-height': '1.5',
       },
     })
