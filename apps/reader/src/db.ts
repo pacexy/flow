@@ -1,7 +1,7 @@
 import { IS_SERVER } from '@literal-ui/hooks'
 import Dexie, { Table } from 'dexie'
 
-export interface Book {
+export interface BookRecord {
   id: string
   name: string
   data: ArrayBuffer
@@ -11,7 +11,7 @@ export interface Book {
 export class DB extends Dexie {
   // 'books' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
-  books!: Table<Book>
+  books!: Table<BookRecord>
 
   constructor() {
     super('ink_reader')

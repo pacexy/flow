@@ -10,16 +10,12 @@ import { readerState } from '../state'
 
 export default function Index() {
   const id = useRecoilValue(readerState)
-  return (
-    <div>
-      {id ? (
-        <Reader id={id} />
-      ) : (
-        <DropZone className="p-4">
-          <Library />
-        </DropZone>
-      )}
-    </div>
+  return id ? (
+    <Reader id={id} />
+  ) : (
+    <DropZone className="h-full p-4">
+      <Library />
+    </DropZone>
   )
 }
 

@@ -10,14 +10,10 @@ import {
   MdSearch,
   MdToc,
 } from 'react-icons/md'
-import { useRecoilValue } from 'recoil'
 
-import { navState } from '@ink/reader/state'
-
-import { NavItem } from './NavItem'
+import { TOC } from './TOC'
 
 export const Layout: React.FC = ({ children }) => {
-  const nav = useRecoilValue(navState)
   const { toggle } = useColorScheme()
 
   return (
@@ -42,12 +38,10 @@ export const Layout: React.FC = ({ children }) => {
       </ActivityBar>
       <SideBar>
         <Pane headline="toc">
-          {nav?.toc.map((item, i) => (
-            <NavItem key={i} item={item} />
-          ))}
+          <TOC />
         </Pane>
       </SideBar>
-      <Reader className="flex-1">{children}</Reader>
+      <Reader className="flex-1 overflow-hidden">{children}</Reader>
     </div>
   )
 }
@@ -127,5 +121,5 @@ function Pane({ className, headline, children, ...props }: PaneProps) {
 
 interface ReaderProps extends ComponentProps<'div'> {}
 function Reader({ className, ...props }: ReaderProps) {
-  return <div className={clsx('scroll', className)} {...props} />
+  return <div className={clsx('', className)} {...props} />
 }
