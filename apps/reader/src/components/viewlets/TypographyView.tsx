@@ -62,18 +62,21 @@ export const TypographyView: React.FC = ({}) => {
 const typefaces = ['黑体', '宋体', 'sans-serif', 'serif']
 
 const TypeFacePane: React.FC = ({}) => {
-  const [sentence, setSentence] = useState('')
+  const [sentence, setSentence] = useState(
+    'The quick brown fox jumps over the lazy dog.',
+  )
   return (
     <Pane headline="Typeface">
       <TextField
         as="textarea"
         name="sentence"
+        defaultValue={sentence}
         onChange={(e) => setSentence(e.target.value)}
         className="mt-2 mb-4"
       />
       <div className="space-y-4">
         {typefaces.map((t) => (
-          <Typeface fontFamily={t} sentence={sentence} />
+          <Typeface key={t} fontFamily={t} sentence={sentence} />
         ))}
       </div>
     </Pane>
@@ -101,9 +104,7 @@ export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
       }}
     >
       <div>{fontFamily}</div>
-      <div style={{ fontFamily }}>
-        {sentence || 'The quick brown fox jumps over the lazy dog.'}
-      </div>
+      <div style={{ fontFamily }}>{sentence}</div>
     </button>
   )
 }
@@ -122,17 +123,19 @@ export function TextField<T extends ElementType = 'input'>({
 }: TextFieldProps<T>) {
   const Component = as || 'input'
   return (
-    <div className={clsx('flex flex-col gap-2 px-[22px]', className)}>
-      <label
-        htmlFor={name}
-        className="text-on-surface-variant typescale-label-medium uppercase"
-      >
+    <div
+      className={clsx(
+        'text-on-surface-variant flex flex-col gap-2 px-[22px]',
+        className,
+      )}
+    >
+      <label htmlFor={name} className="typescale-label-medium uppercase">
         {name}
       </label>
       <Component
         name={name}
         id={name}
-        className="typescale-body-medium text-on-surface p-1"
+        className="typescale-body-medium p-1"
         {...props}
       />
     </div>

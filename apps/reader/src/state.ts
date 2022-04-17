@@ -1,4 +1,4 @@
-import type { Rendition } from 'epubjs'
+import type { Rendition, Location } from 'epubjs'
 import type Navigation from 'epubjs/types/navigation'
 import { atom, AtomEffect } from 'recoil'
 
@@ -19,6 +19,11 @@ function localStorageEffect<T>(key: string): AtomEffect<T> {
 
 export const navState = atom<Navigation | undefined>({
   key: 'nav',
+  default: undefined,
+})
+
+export const locationState = atom<Location | undefined>({
+  key: 'location',
   default: undefined,
 })
 

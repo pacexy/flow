@@ -47,8 +47,8 @@ importers:
   apps/reader:
     specifiers:
       '@ink/internal': workspace:*
-      '@literal-ui/core': ^0.0.11
-      '@literal-ui/hooks': ^0.0.6
+      '@literal-ui/core': ^0.0.12
+      '@literal-ui/hooks': ^0.0.7
       '@literal-ui/next': ^0.0.3
       '@literal-ui/plugins': ^0.0.3
       '@mdx-js/loader': ^2.1.0
@@ -81,8 +81,8 @@ importers:
       tailwindcss: 3.0.24
     dependencies:
       '@ink/internal': link:../../packages/internal
-      '@literal-ui/core': 0.0.11_6f59ad6826e985587dc9ea5f880b28d3
-      '@literal-ui/hooks': 0.0.6_react-dom@18.0.0+react@18.0.0
+      '@literal-ui/core': 0.0.12_6f59ad6826e985587dc9ea5f880b28d3
+      '@literal-ui/hooks': 0.0.7_react-dom@18.0.0+react@18.0.0
       '@literal-ui/next': 0.0.3_next@12.1.5+react@18.0.0
       '@mdx-js/loader': 2.1.1
       '@mdx-js/react': 2.1.1_react@18.0.0
@@ -1527,13 +1527,13 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.11
     dev: true
 
-  /@literal-ui/core/0.0.11_6f59ad6826e985587dc9ea5f880b28d3:
-    resolution: {integrity: sha512-bgJfiLiIkNOi8rfBdea15HQ3hR6IB3UZg8vpcrq1gF9RnpqajxuMiZdfTuMDswOenjtmuCCAWICnIrPq2GIDHw==}
+  /@literal-ui/core/0.0.12_6f59ad6826e985587dc9ea5f880b28d3:
+    resolution: {integrity: sha512-iZ5NpEf+/axkU1TH2DE6IEgtwteqWw1FSqPBWG+DGQCyMoziwT+pIAAGO3ugoeSAui8fTc2T9aSNhIBoq1/OXg==}
     peerDependencies:
       react: '>=16.9.0'
       react-icons: '>=4.1.0'
     dependencies:
-      '@literal-ui/hooks': 0.0.6_react-dom@18.0.0+react@18.0.0
+      '@literal-ui/hooks': 0.0.7_react-dom@18.0.0+react@18.0.0
       clsx: 1.1.1
       react: 18.0.0
       react-icons: 4.3.1_react@18.0.0
@@ -1542,8 +1542,8 @@ packages:
       - react-dom
     dev: false
 
-  /@literal-ui/hooks/0.0.6_react-dom@18.0.0+react@18.0.0:
-    resolution: {integrity: sha512-DMC2OVTpjMhmGNZQSuDv4+Sey1giWkb9ki31FfaK+MLjYMHTT9H5QNoLNf29gyP/gaq6g3R2q2+m3iE4NQdCRg==}
+  /@literal-ui/hooks/0.0.7_react-dom@18.0.0+react@18.0.0:
+    resolution: {integrity: sha512-aHkaPLj4E+RCkuhzwobRKvl7cGsUbqAJCcVVYiaFOYuAgKr+7/woVJ4kgLVaXDm+ce7PDOklxN24IOVJ857bDQ==}
     peerDependencies:
       react: '>=16.9.0'
     dependencies:

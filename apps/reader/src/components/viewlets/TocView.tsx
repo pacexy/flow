@@ -6,7 +6,7 @@ import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 
-import { navState, renditionState } from '../../state'
+import { locationState, navState, renditionState } from '../../state'
 
 import { Pane } from './Pane'
 
@@ -45,12 +45,18 @@ const NavItem: React.FC<NavItemProps> = ({
   const isLeaf = !subitems || !subitems.length
   const Icon = open ? MdExpandMore : MdChevronRight
 
+  const location = useRecoilValue(locationState)
+  const active = location?.start.href === item.href
+
   label = label.trim()
 
   return (
     <div className={clsx('', className)} {...props}>
       <a
-        className="relative flex w-full cursor-pointer items-center py-0.5 pr-3 text-left"
+        className={clsx(
+          'relative flex w-full cursor-pointer items-center py-0.5 pr-3 text-left',
+          active && 'bg-outline/20',
+        )}
         style={{ paddingLeft: level * 8 }}
         onClick={isLeaf ? () => rendition?.display(item.href) : toggle}
         title={label}

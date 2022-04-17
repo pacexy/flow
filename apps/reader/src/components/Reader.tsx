@@ -1,13 +1,15 @@
 import { StateLayer } from '@literal-ui/core'
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import ePub, { Book } from 'epubjs'
-import { useEffect, useRef, useState } from 'react'
+import ePub, { Book, Rendition } from 'epubjs'
+import type Navigation from 'epubjs/types/navigation'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { BookRecord, db } from '@ink/reader/db'
 import {
+  locationState,
   navState,
   readerState,
   renditionState,
@@ -35,18 +37,7 @@ export function ReaderGroup({ id }: ReaderGroupProps) {
         </Tab>
       </Tab.List>
 
-      {book && (
-        <>
-          <div className="typescale-body-small text-outline px-2 py-1">
-            BreadCrumbs
-          </div>
-          <Renderer book={book} />
-          <div className="flex">
-            <NavButton dir="left" />
-            <NavButton dir="right" />
-          </div>
-        </>
-      )}
+      {book && <ReaderPane book={book} />}
     </div>
   )
 }
@@ -69,15 +60,15 @@ const NavButton: React.FC<NavButtonProps> = ({ dir }) => {
   )
 }
 
-interface RendererProps {
+interface ReaderPaneProps {
   book: BookRecord
 }
 
-export function Renderer({ book }: RendererProps) {
+export function ReaderPane({ book }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [, setEpub] = useState<Book>()
   const [rendition, setRendition] = useRecoilState(renditionState)
-  const setNav = useSetRecoilState(navState)
+  const [nav, setNav] = useRecoilState(navState)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
 
@@ -114,5 +105,65 @@ export function Renderer({ book }: RendererProps) {
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
 
-  return <div ref={ref} className="scroll flex-1" />
+  return (
+    <>
+      {rendition && nav && <ReaderPaneHeader rendition={rendition} nav={nav} />}
+      <div ref={ref} className="scroll flex-1" />
+      <div className="flex">
+        <NavButton dir="left" />
+        <NavButton dir="right" />
+      </div>
+    </>
+  )
+}
+
+interface ReaderPaneHeaderProps {
+  rendition: Rendition
+  nav: Navigation
+}
+export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({
+  rendition,
+  nav,
+}) => {
+  const [location, setLocation] = useRecoilState(locationState)
+  const breadcrumbs = useMemo(() => {
+    const crumbs = []
+    let navItem = location && nav.get(location?.start.href)
+
+    while (navItem) {
+      crumbs.unshift(navItem)
+      const parentId = navItem.parent
+      if (!parentId) {
+        navItem = undefined
+      } else {
+        // @ts-ignore
+        const index = nav.tocById[parentId]
+        // @ts-ignore
+        navItem = nav.getByIndex(parentId, index, nav.toc)
+      }
+    }
+    return crumbs
+  }, [location, nav])
+
+  useEffect(() => {
+    rendition.on('relocated', setLocation)
+  }, [rendition, setLocation])
+
+  return (
+    <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
+      <div className="flex">
+        {breadcrumbs.map((item, i) => (
+          <button key={i} className="hover:text-on-surface flex items-center">
+            {item.label}
+            {i !== breadcrumbs.length - 1 && <MdChevronRight size={22} />}
+          </button>
+        ))}
+      </div>
+      {location && (
+        <div>
+          {location.start.displayed.page} / {location.start.displayed.total}
+        </div>
+      )}
+    </div>
+  )
 }
