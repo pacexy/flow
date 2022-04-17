@@ -1,11 +1,9 @@
-import { useLiveQuery } from 'dexie-react-hooks'
 import epub, { Book } from 'epubjs'
 import React, { ComponentProps } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { DropZone, ReaderGroup } from '../components'
-import { db } from '../db'
-import { useAsync } from '../hooks'
+import { useAsync, useLibrary } from '../hooks'
 import { readerState } from '../state'
 
 export default function Index() {
@@ -20,7 +18,7 @@ export default function Index() {
 }
 
 export const Library: React.FC = () => {
-  const books = useLiveQuery(() => db?.books.toArray() ?? [])
+  const books = useLibrary()
   const setId = useSetRecoilState(readerState)
 
   return (

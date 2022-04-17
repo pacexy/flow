@@ -119,7 +119,7 @@ function SideBar() {
     >
       <h2
         title={action}
-        className="typescale-body-small text-outline px-[22px] py-3"
+        className="typescale-body-small text-outline px-5 py-3"
       >
         {action.toUpperCase()}
       </h2>

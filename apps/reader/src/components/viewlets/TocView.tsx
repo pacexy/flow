@@ -6,6 +6,8 @@ import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 
+import { useLibrary } from '@ink/reader/hooks'
+
 import { locationState, navState, renditionState } from '../../state'
 
 import { Pane } from './Pane'
@@ -13,8 +15,29 @@ import { Pane } from './Pane'
 export const TocView: React.FC = () => {
   return (
     <>
+      <LibraryPane />
       <TocPane />
     </>
+  )
+}
+
+const LibraryPane: React.FC = () => {
+  const books = useLibrary()
+  return (
+    <Pane headline="library" shrinkThreshold={6}>
+      {books?.map(({ id, name }) => (
+        <button
+          key={id}
+          data-bookId={id}
+          className="relative w-full truncate px-5 py-1 text-left"
+          title={name}
+          draggable
+        >
+          <StateLayer />
+          {name}
+        </button>
+      ))}
+    </Pane>
   )
 }
 
@@ -63,12 +86,10 @@ const NavItem: React.FC<NavItemProps> = ({
       >
         <StateLayer />
         <Icon
-          size={22}
+          size={20}
           className={clsx('text-outline shrink-0', isLeaf && 'invisible')}
         />
-        <div className="typescale-body-small text-on-surface-variant">
-          {label}
-        </div>
+        <div>{label}</div>
       </a>
 
       {open &&

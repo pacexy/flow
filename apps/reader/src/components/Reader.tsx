@@ -155,7 +155,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({
         {breadcrumbs.map((item, i) => (
           <button key={i} className="hover:text-on-surface flex items-center">
             {item.label}
-            {i !== breadcrumbs.length - 1 && <MdChevronRight size={22} />}
+            {i !== breadcrumbs.length - 1 && <MdChevronRight size={20} />}
           </button>
         ))}
       </div>

@@ -93,7 +93,7 @@ export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
   return (
     <button
       className={clsx(
-        'typescale-body-medium space-y-1 px-[22px] text-left',
+        'typescale-body-medium space-y-1 px-5 text-left',
         active ? 'text-on-surface-variant' : 'text-outline/60',
       )}
       onClick={() => {
@@ -125,7 +125,7 @@ export function TextField<T extends ElementType = 'input'>({
   return (
     <div
       className={clsx(
-        'text-on-surface-variant flex flex-col gap-2 px-[22px]',
+        'text-on-surface-variant flex flex-col gap-2 px-5',
         className,
       )}
     >
