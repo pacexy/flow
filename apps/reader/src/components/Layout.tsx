@@ -51,6 +51,7 @@ function ActivityBar() {
               Icon={actionMap[k].Icon}
               active={active}
               onClick={() => setAction(active ? undefined : k)}
+              key={k}
             />
           )
         })}

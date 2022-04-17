@@ -7,7 +7,12 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 import { BookRecord, db } from '@ink/reader/db'
-import { navState, readerState, renditionState } from '@ink/reader/state'
+import {
+  navState,
+  readerState,
+  renditionState,
+  settingsState,
+} from '@ink/reader/state'
 
 import { Tab } from './Tab'
 
@@ -73,6 +78,7 @@ export function Renderer({ book }: RendererProps) {
   const [, setEpub] = useState<Book>()
   const [rendition, setRendition] = useRecoilState(renditionState)
   const setNav = useSetRecoilState(navState)
+  const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
 
   useEffect(() => {
@@ -91,19 +97,20 @@ export function Renderer({ book }: RendererProps) {
     })
     setRendition(rendition)
     rendition.display()
-    rendition.themes.fontSize('20px')
-    rendition.themes.default({
-      p: {
-        'font-family': 'inherit',
-        'line-height': '1.5',
-      },
-    })
   }, [book.data, setNav, setRendition])
+
+  useEffect(() => {
+    rendition?.themes.override('font-size', settings.fontSize + 'px')
+    rendition?.themes.override('font-weight', settings.fontWeight + '')
+    rendition?.themes.override('line-height', settings.lineHeight + '')
+    if (settings.fontFamily)
+      rendition?.themes.override('font-family', settings.fontFamily)
+  }, [rendition, settings])
 
   useEffect(() => {
     if (!scheme) return
     const dark = scheme === 'dark'
-    rendition?.themes.override('color', dark ? '#e0e3e3' : '#191c1d')
+    rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a')
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
 

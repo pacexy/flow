@@ -1,25 +1,59 @@
 import clsx from 'clsx'
 import { ElementType, useState } from 'react'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 
-import { renditionState } from '@ink/reader/state'
+import { settingsState } from '@ink/reader/state'
 
 import { Pane } from './Pane'
 import { View } from './View'
 
 export const TypographyView: React.FC = ({}) => {
+  const [settings, setSettings] = useRecoilState(settingsState)
   return (
     <View className="space-y-4">
-      <TextField name="font_size" type="number" min={14} max={28} />
       <TextField
+        as="input"
+        name="font_size"
+        type="number"
+        min={14}
+        max={28}
+        defaultValue={settings.fontSize}
+        onChange={(e) => {
+          setSettings((prev) => ({
+            ...prev,
+            fontSize: Number(e.target.value),
+          }))
+        }}
+      />
+      <TextField
+        as="input"
         name="font_weight"
         type="number"
-        min={400}
+        min={100}
         max={900}
         step={100}
+        defaultValue={settings.fontWeight}
+        onChange={(e) => {
+          setSettings((prev) => ({
+            ...prev,
+            fontWeight: Number(e.target.value),
+          }))
+        }}
       />
-      <TextField name="line_height" type="number" />
+      <TextField
+        as="input"
+        name="line_height"
+        type="number"
+        step={0.1}
+        defaultValue={settings.lineHeight}
+        onChange={(e) => {
+          setSettings((prev) => ({
+            ...prev,
+            lineHeight: Number(e.target.value),
+          }))
+        }}
+      />
       <TypeFacePane />
     </View>
   )
@@ -34,9 +68,7 @@ const TypeFacePane: React.FC = ({}) => {
       <TextField
         as="textarea"
         name="sentence"
-        onChange={(e) => {
-          setSentence(e.target.value)
-        }}
+        onChange={(e) => setSentence(e.target.value)}
         className="mt-2 mb-4"
       />
       <div className="space-y-4">
@@ -53,16 +85,23 @@ interface TypefaceProps {
   sentence: string
 }
 export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
-  const rendition = useRecoilValue(renditionState)
+  const [settings, setSettings] = useRecoilState(settingsState)
+  const active = settings.fontFamily === fontFamily
   return (
     <button
-      className="typescale-body-medium space-y-1 px-[22px] text-left"
+      className={clsx(
+        'typescale-body-medium space-y-1 px-[22px] text-left',
+        active ? 'text-on-surface-variant' : 'text-outline/60',
+      )}
       onClick={() => {
-        rendition?.themes.font(fontFamily)
+        setSettings((prev) => ({
+          ...prev,
+          fontFamily: active ? undefined : fontFamily,
+        }))
       }}
     >
-      <div className="text-on-surface">{fontFamily}</div>
-      <div className="text-on-surface-variant" style={{ fontFamily }}>
+      <div>{fontFamily}</div>
+      <div style={{ fontFamily }}>
         {sentence || 'The quick brown fox jumps over the lazy dog.'}
       </div>
     </button>
@@ -93,7 +132,7 @@ export function TextField<T extends ElementType = 'input'>({
       <Component
         name={name}
         id={name}
-        className="typescale-body-medium text-on-surface px-2 py-1"
+        className="typescale-body-medium text-on-surface p-1"
         {...props}
       />
     </div>
