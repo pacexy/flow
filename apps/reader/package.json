@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev -p 7127",
     "build": "next build",
+    "analyze": "cross-env ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -14,6 +15,7 @@
     "@literal-ui/next": "^0.0.3",
     "@mdx-js/loader": "^2.1.0",
     "@mdx-js/react": "^2.1.0",
+    "@next/bundle-analyzer": "^12.1.5",
     "babel-loader": "^8.2.4",
     "clsx": "^1.1.1",
     "dexie": "^3.2.1",
