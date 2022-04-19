@@ -28,7 +28,7 @@ const LibraryPane: React.FC = () => {
       {books?.map(({ id, name }) => (
         <button
           key={id}
-          data-bookId={id}
+          data-book-id={id}
           className="relative w-full truncate px-5 py-1 text-left"
           title={name}
           draggable

@@ -3,6 +3,8 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
 
+import { IconButton } from './Button'
+
 interface TabProps extends ComponentProps<'button'> {
   onDelete?: () => void
   selected?: boolean
@@ -31,10 +33,7 @@ export function Tab({
         <div className="bg-tertiary-container absolute inset-x-0 top-0 h-0.5" />
       )}
       <span className="max-w-[200px] truncate">{children}</span>
-      <div role="button" className="relative">
-        <StateLayer />
-        <MdClose onClick={onDelete} size={18} />
-      </div>
+      <IconButton Icon={MdClose} onClick={onDelete} />
     </button>
   )
 }

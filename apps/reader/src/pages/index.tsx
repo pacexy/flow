@@ -1,8 +1,13 @@
+import clsx from 'clsx'
 import epub, { Book } from 'epubjs'
 import React, { ComponentProps } from 'react'
+import { MdClose } from 'react-icons/md'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { DropZone, ReaderGroup } from '../components'
+import { DropZone } from '@ink/reader/components/base'
+
+import { IconButton, ReaderGroup } from '../components'
+import { db } from '../db'
 import { useAsync, useLibrary } from '../hooks'
 import { readerState } from '../state'
 
@@ -11,7 +16,7 @@ export default function Index() {
   return id ? (
     <ReaderGroup id={id} />
   ) : (
-    <DropZone className="h-full p-4">
+    <DropZone>
       <Library />
     </DropZone>
   )
@@ -22,39 +27,69 @@ export const Library: React.FC = () => {
   const setId = useSetRecoilState(readerState)
 
   return (
-    <ul className="flex flex-wrap gap-4">
-      {books?.map(({ id, data, name }) => {
-        const book = epub(data)
+    <div className="h-full p-4">
+      <ul
+        className="grid gap-4"
+        style={{
+          gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
+        }}
+      >
+        {books?.map(({ id, data, name }) => {
+          const book = epub(data)
 
-        return (
-          <li key={id}>
-            <div className="bg-outline/5 w-56 space-y-4 rounded p-4">
-              <Cover role="button" book={book} onClick={() => setId(id)} />
-              <div
-                className="line-clamp-2 text-on-surface-variant typescale-body-large w-full"
-                title={name}
-              >
-                {name}
-              </div>
-            </div>
-          </li>
-        )
-      })}
-    </ul>
+          return (
+            <li key={id}>
+              <Card className="group relative">
+                <Cover role="button" book={book} onClick={() => setId(id)} />
+                <div
+                  className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
+                  title={name}
+                >
+                  {name}
+                </div>
+                <IconButton
+                  className="!absolute right-1 top-1 hidden group-hover:block"
+                  size={20}
+                  Icon={MdClose}
+                  onClick={() => {
+                    db?.books.delete(id)
+                  }}
+                />
+              </Card>
+            </li>
+          )
+        })}
+
+        <Card>Add book</Card>
+      </ul>
+    </div>
+  )
+}
+
+interface CardProps extends ComponentProps<'div'> {}
+export function Card({ className, ...props }: CardProps) {
+  return (
+    <div
+      className={clsx(
+        'bg-outline/5 flex h-80 flex-col items-center justify-center rounded p-4',
+        className,
+      )}
+      {...props}
+    />
   )
 }
 
 interface CoverProps extends ComponentProps<'img'> {
   book: Book
 }
-export const Cover: React.FC<CoverProps> = ({ book, ...props }) => {
+const Cover: React.FC<CoverProps> = ({ book, ...props }) => {
   const src = useAsync(() => book.coverUrl())
 
   return (
     <img
       src={src ?? undefined}
       alt="Cover"
-      className="mx-auto h-56 object-contain"
+      className="h-56 object-contain"
       {...props}
     />
   )
