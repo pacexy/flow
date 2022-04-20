@@ -1,5 +1,6 @@
 import clsx from 'clsx'
-import { useContext, useState, createContext } from 'react'
+import { useContext, useState, createContext, DragEvent } from 'react'
+import { useCallback } from 'react'
 
 import { db } from '@ink/reader/db'
 
@@ -14,10 +15,45 @@ export const DropZone: React.FC<DropZoneProps> = (props) => {
   )
 }
 
+enum Position {
+  Universe,
+  Top,
+  Bottom,
+  Left,
+  Right,
+}
+
 interface DropZoneInnerProps {}
 const DropZoneInner: React.FC<DropZoneInnerProps> = ({ children }) => {
   const { dragover, setDragover } = useDndContext()
+  const [position, setPosition] = useState<Position>()
   console.log(dragover)
+  console.log(position)
+
+  const handleDragover = useCallback((e: DragEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    const rect = (e.target as HTMLDivElement).getBoundingClientRect()
+    if (!rect.width || !rect.height) return
+
+    const offsetLeft = (e.clientX - rect.left) / rect.width
+    const offsetTop = (e.clientY - rect.top) / rect.height
+    const offsetRight = 1 - offsetLeft
+    const offsetBottom = 1 - offsetTop
+    const threshold = 0.15
+
+    const minOffset = Math.min(offsetLeft, offsetRight, offsetTop, offsetBottom)
+
+    setPosition(() => {
+      if (minOffset > threshold) return Position.Universe
+      if (minOffset === offsetLeft) return Position.Left
+      if (minOffset === offsetRight) return Position.Right
+      if (minOffset === offsetTop) return Position.Top
+      if (minOffset === offsetBottom) return Position.Bottom
+    })
+  }, [])
+
   return (
     <div
       className={clsx('scroll-parent relative h-full')}
@@ -32,14 +68,22 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({ children }) => {
     >
       {children}
 
-      {dragover && <div className="bg-outline/20 absolute inset-0 z-10"></div>}
+      {dragover && (
+        <div
+          className={clsx(
+            'bg-outline/20 absolute z-10 transition-all',
+            position === Position.Left && 'h-full w-1/2',
+            position === Position.Right && 'h-full w-1/2 translate-x-full',
+            position === Position.Top && 'h-1/2 w-full',
+            position === Position.Bottom && 'h-1/2  w-full translate-y-full',
+            position === Position.Universe && 'h-full w-full',
+          )}
+        ></div>
+      )}
       {dragover && (
         <div
           className="absolute inset-0 z-10"
-          onDragOver={(e) => {
-            e.stopPropagation()
-            e.preventDefault()
-          }}
+          onDragOver={handleDragover}
           onDragLeave={(e) => {
             console.log('drag leave', e.target)
             setDragover(false)
