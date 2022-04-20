@@ -1,6 +1,12 @@
 import clsx from 'clsx'
-import { useContext, useState, createContext, DragEvent } from 'react'
-import { useCallback } from 'react'
+import {
+  useContext,
+  useState,
+  createContext,
+  DragEvent,
+  useCallback,
+  useEffect,
+} from 'react'
 
 import { db } from '@ink/reader/db'
 
@@ -27,8 +33,11 @@ interface DropZoneInnerProps {}
 const DropZoneInner: React.FC<DropZoneInnerProps> = ({ children }) => {
   const { dragover, setDragover } = useDndContext()
   const [position, setPosition] = useState<Position>()
-  console.log(dragover)
-  console.log(position)
+  console.log(dragover, position)
+
+  useEffect(() => {
+    if (!dragover) setPosition(undefined)
+  }, [dragover])
 
   const handleDragover = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.stopPropagation()
