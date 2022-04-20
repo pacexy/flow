@@ -3,6 +3,7 @@ import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import ePub, { Book, Rendition } from 'epubjs'
 import type Navigation from 'epubjs/types/navigation'
+import Section from 'epubjs/types/section'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -17,6 +18,7 @@ import {
 } from '@ink/reader/state'
 
 import { Tab } from './Tab'
+import { DropZone, useDndContext } from './base'
 
 interface ReaderGroupProps {
   id: string
@@ -37,7 +39,11 @@ export function ReaderGroup({ id }: ReaderGroupProps) {
         </Tab>
       </Tab.List>
 
-      {book && <ReaderPane book={book} />}
+      {book && (
+        <DropZone>
+          <ReaderPane book={book} />
+        </DropZone>
+      )}
     </div>
   )
 }
@@ -85,6 +91,7 @@ export function ReaderPane({ book }: ReaderPaneProps) {
     const rendition = epub.renderTo(ref.current, {
       width: '100%',
       height: '100%',
+      allowScriptedContent: true,
     })
     setRendition(rendition)
     rendition.display()
@@ -104,6 +111,24 @@ export function ReaderPane({ book }: ReaderPaneProps) {
     rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a')
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
+
+  const { setDragover } = useDndContext()
+
+  useEffect(() => {
+    rendition?.on('displayed', (section: Section) => {
+      console.log(section)
+
+      // @ts-ignore
+      const [view] = rendition?.views()._views ?? []
+      console.log(view)
+
+      // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
+      view.window.ondragover = () => {
+        console.log('drag enter in iframe')
+        setDragover(true)
+      }
+    })
+  }, [rendition, setDragover])
 
   return (
     <>

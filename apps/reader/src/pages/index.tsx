@@ -27,7 +27,7 @@ export const Library: React.FC = () => {
   const setId = useSetRecoilState(readerState)
 
   return (
-    <div className="h-full p-4">
+    <div className="scroll h-full p-4">
       <ul
         className="grid gap-4"
         style={{

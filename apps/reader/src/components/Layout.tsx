@@ -22,7 +22,7 @@ export const Layout: React.FC = ({ children }) => {
     <div className="flex h-screen">
       <ActivityBar />
       <SideBar />
-      <Reader className="relative flex-1 overflow-hidden">{children}</Reader>
+      <Reader className="flex-1 overflow-hidden">{children}</Reader>
     </div>
   )
 }
