@@ -115,7 +115,7 @@ export function ReaderPane({ book }: ReaderPaneProps) {
   const { setDragover } = useDndContext()
 
   useEffect(() => {
-    rendition?.on('displayed', (section: Section) => {
+    rendition?.on('rendered', (section: Section) => {
       console.log(section)
 
       // @ts-ignore
