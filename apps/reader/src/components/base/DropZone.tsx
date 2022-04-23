@@ -12,7 +12,9 @@ import { db } from '@ink/reader/db'
 
 export const str = 'Hello world'
 
-interface DropZoneProps {}
+interface DropZoneProps {
+  className?: string
+}
 export const DropZone: React.FC<DropZoneProps> = (props) => {
   return (
     <DndProvider>
@@ -29,8 +31,13 @@ enum Position {
   Right,
 }
 
-interface DropZoneInnerProps {}
-const DropZoneInner: React.FC<DropZoneInnerProps> = ({ children }) => {
+interface DropZoneInnerProps {
+  className?: string
+}
+const DropZoneInner: React.FC<DropZoneInnerProps> = ({
+  children,
+  className,
+}) => {
   const { dragover, setDragover } = useDndContext()
   const [position, setPosition] = useState<Position>()
   console.log(dragover, position)
@@ -65,7 +72,7 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({ children }) => {
 
   return (
     <div
-      className={clsx('scroll-parent relative h-full')}
+      className={clsx('scroll-parent relative h-full', className)}
       // https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications#selecting_files_using_drag_and_drop
       onDragEnter={(e) => {
         if (dragover) return

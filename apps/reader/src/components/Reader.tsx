@@ -21,27 +21,44 @@ import { Tab } from './Tab'
 import { DropZone, useDndContext } from './base'
 
 interface ReaderGroupProps {
-  id: string
+  bookIds: string[]
 }
-export function ReaderGroup({ id }: ReaderGroupProps) {
-  const [book, setBook] = useState<BookRecord>()
-  const setId = useSetRecoilState(readerState)
+export function ReaderGroup({ bookIds }: ReaderGroupProps) {
+  const [books, setBooks] = useState<Array<BookRecord | undefined>>([])
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const setBookIds = useSetRecoilState(readerState)
+  const selectedBook = books[selectedIndex]
 
   useEffect(() => {
-    db?.books.get(id).then(setBook)
-  }, [id])
+    db?.books.bulkGet(bookIds).then(setBooks)
+  }, [bookIds])
 
   return (
     <div className="flex h-full flex-col">
       <Tab.List>
-        <Tab selected focused onDelete={() => setId(undefined)}>
-          {book?.name}
-        </Tab>
+        {books.map((book, i) => {
+          const selected = i === selectedIndex
+          if (!book) return null
+          return (
+            <Tab
+              key={book.id}
+              selected={selected}
+              focused={selected}
+              onClick={() => setSelectedIndex(i)}
+              onDelete={() => {
+                setBookIds((prev) => prev.filter((id) => id !== book.id))
+                setSelectedIndex(Math.min(i - 1, 0))
+              }}
+            >
+              {book.name}
+            </Tab>
+          )
+        })}
       </Tab.List>
 
-      {book && (
+      {selectedBook && (
         <DropZone>
-          <ReaderPane book={book} />
+          <ReaderPane book={selectedBook} />
         </DropZone>
       )}
     </div>

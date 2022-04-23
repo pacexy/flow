@@ -4,7 +4,7 @@ import React, { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { DropZone } from '@ink/reader/components/base'
+import { DropZone, SplitView } from '@ink/reader/components/base'
 
 import { IconButton, ReaderGroup } from '../components'
 import { db } from '../db'
@@ -12,9 +12,11 @@ import { useAsync, useLibrary } from '../hooks'
 import { readerState } from '../state'
 
 export default function Index() {
-  const id = useRecoilValue(readerState)
-  return id ? (
-    <ReaderGroup id={id} />
+  const bookIds = useRecoilValue(readerState)
+  return bookIds.length ? (
+    <SplitView>
+      <ReaderGroup bookIds={bookIds} />
+    </SplitView>
   ) : (
     <DropZone>
       <Library />
@@ -24,7 +26,7 @@ export default function Index() {
 
 export const Library: React.FC = () => {
   const books = useLibrary()
-  const setId = useSetRecoilState(readerState)
+  const setBookIds = useSetRecoilState(readerState)
 
   return (
     <div className="scroll h-full p-4">
@@ -40,7 +42,11 @@ export const Library: React.FC = () => {
           return (
             <li key={id}>
               <Card className="group relative">
-                <Cover role="button" book={book} onClick={() => setId(id)} />
+                <Cover
+                  role="button"
+                  book={book}
+                  onClick={() => setBookIds([id])}
+                />
                 <div
                   className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
                   title={name}

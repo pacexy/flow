@@ -33,9 +33,9 @@ export const renditionState = atom<Rendition | undefined>({
   dangerouslyAllowMutability: true,
 })
 
-export const readerState = atom<string | undefined>({
+export const readerState = atom<string[]>({
   key: 'reader',
-  default: undefined,
+  default: [],
 })
 
 export type Action = 'TOC' | 'Search' | 'Typography'
