@@ -12,13 +12,14 @@ import { locationState, navState, renditionState } from '../../state'
 import { reader } from '../Reader'
 
 import { Pane } from './Pane'
+import { View, ViewProps } from './View'
 
-export const TocView: React.FC = () => {
+export const TocView: React.FC<ViewProps> = (props) => {
   return (
-    <>
+    <View {...props}>
       <LibraryPane />
       <TocPane />
-    </>
+    </View>
   )
 }
 

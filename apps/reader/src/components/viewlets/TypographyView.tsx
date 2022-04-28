@@ -6,12 +6,15 @@ import { useRecoilState } from 'recoil'
 import { settingsState } from '@ink/reader/state'
 
 import { Pane } from './Pane'
-import { View } from './View'
+import { View, ViewProps } from './View'
 
-export const TypographyView: React.FC = ({}) => {
+export const TypographyView: React.FC<ViewProps> = ({
+  className,
+  ...props
+}) => {
   const [settings, setSettings] = useRecoilState(settingsState)
   return (
-    <View className="space-y-4">
+    <View className={clsx('space-y-4', className)} {...props}>
       <TextField
         as="input"
         name="font_size"
@@ -59,7 +62,7 @@ export const TypographyView: React.FC = ({}) => {
   )
 }
 
-const typefaces = ['黑体', '宋体', 'sans-serif', 'serif']
+const typefaces = ['sans-serif', 'serif']
 
 const TypeFacePane: React.FC = ({}) => {
   const [sentence, setSentence] = useState(

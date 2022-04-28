@@ -1,10 +1,11 @@
 import { Pane } from './Pane'
+import { View, ViewProps } from './View'
 
-export const SearchView: React.FC = ({}) => {
+export const SearchView: React.FC<ViewProps> = (props) => {
   return (
-    <>
+    <View {...props}>
       <SearchPane />
-    </>
+    </View>
   )
 }
 

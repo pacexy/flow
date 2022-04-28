@@ -111,7 +111,6 @@ function SideBar() {
 
   if (!action) return null
 
-  const View = actionMap[action].View
   return (
     <div
       className="bg-outline/5 hidden flex-col sm:flex"
@@ -123,7 +122,9 @@ function SideBar() {
       >
         {action.toUpperCase()}
       </h2>
-      <View />
+      {Object.entries(actionMap).map(([a, { View }]) => (
+        <View className={clsx(a !== action && '!hidden')} />
+      ))}
     </div>
   )
 }

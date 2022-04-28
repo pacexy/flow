@@ -1,9 +1,12 @@
+import { IS_SERVER } from '@literal-ui/hooks'
 import type { Rendition, Location } from 'epubjs'
 import type Navigation from 'epubjs/types/navigation'
 import { atom, AtomEffect } from 'recoil'
 
 function localStorageEffect<T>(key: string): AtomEffect<T> {
   return ({ setSelf, onSet }) => {
+    if (IS_SERVER) return
+
     const savedValue = localStorage.getItem(key)
     if (savedValue != null) {
       setSelf(JSON.parse(savedValue))
