@@ -33,7 +33,13 @@ export function Tab({
         <div className="bg-tertiary-container absolute inset-x-0 top-0 h-0.5" />
       )}
       <span className="max-w-[200px] truncate">{children}</span>
-      <IconButton Icon={MdClose} onClick={onDelete} />
+      <IconButton
+        Icon={MdClose}
+        onClick={(e) => {
+          e.stopPropagation()
+          onDelete?.()
+        }}
+      />
     </button>
   )
 }

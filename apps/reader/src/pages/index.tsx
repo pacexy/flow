@@ -2,32 +2,29 @@ import clsx from 'clsx'
 import epub, { Book } from 'epubjs'
 import React, { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useSnapshot } from 'valtio'
 
-import { DropZone, SplitView } from '@ink/reader/components/base'
+import { DropZone } from '@ink/reader/components/base'
 
-import { IconButton, ReaderGroup } from '../components'
+import { IconButton, ReaderGridView, reader } from '../components'
 import { db } from '../db'
 import { useAsync, useLibrary } from '../hooks'
-import { readerState } from '../state'
 
 export default function Index() {
-  const bookIds = useRecoilValue(readerState)
-  return bookIds.length ? (
-    <SplitView>
-      <ReaderGroup bookIds={bookIds} />
-    </SplitView>
-  ) : (
-    <DropZone>
-      <Library />
-    </DropZone>
+  return (
+    <>
+      <ReaderGridView />
+      <DropZone>
+        <Library />
+      </DropZone>
+    </>
   )
 }
 
 export const Library: React.FC = () => {
   const books = useLibrary()
-  const setBookIds = useSetRecoilState(readerState)
-
+  const { groups } = useSnapshot(reader)
+  if (groups.length) return null
   return (
     <div className="scroll h-full p-4">
       <ul
@@ -45,7 +42,7 @@ export const Library: React.FC = () => {
                 <Cover
                   role="button"
                   book={book}
-                  onClick={() => setBookIds([id])}
+                  onClick={() => reader.addTab(id)}
                 />
                 <div
                   className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"

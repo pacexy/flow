@@ -105,6 +105,7 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({
             setDragover(false)
           }}
           onDrop={(e) => {
+            console.log('drop', e)
             setDragover(false)
             e.stopPropagation()
             e.preventDefault()

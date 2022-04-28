@@ -4,16 +4,12 @@ import clsx from 'clsx'
 import type { NavItem as INavItem } from 'epubjs'
 import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import { useLibrary } from '@ink/reader/hooks'
 
-import {
-  locationState,
-  navState,
-  readerState,
-  renditionState,
-} from '../../state'
+import { locationState, navState, renditionState } from '../../state'
+import { reader } from '../Reader'
 
 import { Pane } from './Pane'
 
@@ -28,22 +24,15 @@ export const TocView: React.FC = () => {
 
 const LibraryPane: React.FC = () => {
   const books = useLibrary()
-  const setBookIds = useSetRecoilState(readerState)
   return (
     <Pane headline="library" shrinkThreshold={6}>
       {books?.map(({ id, name }) => (
         <button
           key={id}
-          data-book-id={id}
           className="relative w-full truncate px-5 py-1 text-left"
           title={name}
           draggable
-          onClick={() =>
-            setBookIds((prev) => {
-              if (prev.includes(id)) return prev
-              return [...prev, id]
-            })
-          }
+          onClick={() => reader.addTab(id)}
         >
           <StateLayer />
           {name}

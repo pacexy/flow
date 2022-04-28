@@ -1,37 +1,58 @@
 import { StateLayer } from '@literal-ui/core'
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import ePub, { Book, Rendition } from 'epubjs'
+import ePub from 'epubjs'
+import type { Book, Rendition } from 'epubjs'
 import type Navigation from 'epubjs/types/navigation'
-import Section from 'epubjs/types/section'
+import type Section from 'epubjs/types/section'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { BookRecord, db } from '@ink/reader/db'
 import {
   locationState,
   navState,
-  readerState,
   renditionState,
   settingsState,
 } from '@ink/reader/state'
 
+import { Reader } from '../models'
+
 import { Tab } from './Tab'
-import { DropZone, useDndContext } from './base'
+import { DropZone, SplitView, useDndContext } from './base'
+
+export const reader = proxy(new Reader())
+
+subscribe(reader, () => {
+  console.log(snapshot(reader))
+})
+
+export function ReaderGridView() {
+  const { groups } = useSnapshot(reader)
+  if (!groups.length) return null
+  return (
+    <SplitView>
+      {groups.map((_, i) => (
+        <ReaderGroup key={i} index={i} />
+      ))}
+    </SplitView>
+  )
+}
 
 interface ReaderGroupProps {
-  bookIds: string[]
+  index: number
 }
-export function ReaderGroup({ bookIds }: ReaderGroupProps) {
+function ReaderGroup({ index }: ReaderGroupProps) {
   const [books, setBooks] = useState<Array<BookRecord | undefined>>([])
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const setBookIds = useSetRecoilState(readerState)
+  const group = reader.groups[index]
+  const { tabs, selectedIndex } = useSnapshot(group)
   const selectedBook = books[selectedIndex]
 
   useEffect(() => {
-    db?.books.bulkGet(bookIds).then(setBooks)
-  }, [bookIds])
+    db?.books.bulkGet(tabs.map((c) => c.bookId)).then(setBooks)
+  }, [tabs])
 
   return (
     <div className="flex h-full flex-col">
@@ -44,11 +65,9 @@ export function ReaderGroup({ bookIds }: ReaderGroupProps) {
               key={book.id}
               selected={selected}
               focused={selected}
-              onClick={() => setSelectedIndex(i)}
-              onDelete={() => {
-                setBookIds((prev) => prev.filter((id) => id !== book.id))
-                setSelectedIndex(Math.min(i - 1, 0))
-              }}
+              onClick={() => group.selectTab(i)}
+              onDelete={() => reader.removeTab(i)}
+              draggable
             >
               {book.name}
             </Tab>

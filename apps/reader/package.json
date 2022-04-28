@@ -30,7 +30,8 @@
     "react-polymorphic-types": "^2.0.0",
     "recoil": "^0.7.1",
     "rehype-pretty-code": "0.3.0",
-    "shiki": "^0.10.1"
+    "shiki": "^0.10.1",
+    "valtio": "^1.6.0"
   },
   "devDependencies": {
     "@literal-ui/plugins": "^0.0.3",
