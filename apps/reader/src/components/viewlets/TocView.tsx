@@ -83,13 +83,17 @@ const NavItem: React.FC<NavItemProps> = ({
           active && 'bg-outline/20',
         )}
         style={{ paddingLeft: level * 8 }}
-        onClick={isLeaf ? () => tab?.rendition?.display(item.href) : toggle}
+        onClick={() => tab?.rendition?.display(item.href)}
         title={label}
       >
         <StateLayer />
         <Icon
           size={20}
           className={clsx('text-outline shrink-0', isLeaf && 'invisible')}
+          onClick={(e) => {
+            e.stopPropagation()
+            toggle()
+          }}
         />
         <div>{label}</div>
       </a>

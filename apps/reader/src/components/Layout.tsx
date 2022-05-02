@@ -94,7 +94,7 @@ const Action: React.FC<ActionProps> = ({
       {...props}
     >
       {active && (
-        <div className="bg-on-surface absolute inset-y-0 left-0 w-0.5" />
+        <div className="absolute inset-y-0 left-0 w-0.5 bg-blue-400" />
       )}
       <Icon size={28} />
     </button>

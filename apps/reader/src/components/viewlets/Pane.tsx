@@ -38,17 +38,16 @@ export function Pane({
           {headline.toUpperCase()}
         </div>
       </div>
-      {open && (
-        <div
-          className={clsx(
-            'scroll typescale-body-small text-on-surface-variant',
-            className,
-          )}
-          {...props}
-        >
-          {children}
-        </div>
-      )}
+      <div
+        className={clsx(
+          'scroll typescale-body-small text-on-surface-variant',
+          !open && 'hidden',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </div>
     </div>
   )
 }
