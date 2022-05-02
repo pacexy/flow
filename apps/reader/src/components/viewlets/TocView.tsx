@@ -4,11 +4,10 @@ import clsx from 'clsx'
 import type { NavItem as INavItem } from 'epubjs'
 import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
-import { useRecoilValue } from 'recoil'
+import { useSnapshot } from 'valtio'
 
 import { useLibrary } from '@ink/reader/hooks'
 
-import { locationState, navState, renditionState } from '../../state'
 import { reader } from '../Reader'
 
 import { Pane } from './Pane'
@@ -27,16 +26,19 @@ const LibraryPane: React.FC = () => {
   const books = useLibrary()
   return (
     <Pane headline="library" shrinkThreshold={6}>
-      {books?.map(({ id, name }) => (
+      {books?.map((book) => (
         <button
-          key={id}
+          key={book.id}
           className="relative w-full truncate px-5 py-1 text-left"
-          title={name}
+          title={book.name}
           draggable
-          onClick={() => reader.addTab(id)}
+          onClick={() => reader.addTab(book)}
+          onDragStart={(e) => {
+            e.dataTransfer.setData('text/plain', book.id)
+          }}
         >
           <StateLayer />
-          {name}
+          {book.name}
         </button>
       ))}
     </Pane>
@@ -44,10 +46,9 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const nav = useRecoilValue(navState)
   return (
     <Pane headline="toc">
-      {nav?.toc.map((item, i) => (
+      {reader.focusedTab?.nav?.toc.map((item, i) => (
         <NavItem key={i} item={item} />
       ))}
     </Pane>
@@ -65,13 +66,12 @@ const NavItem: React.FC<NavItemProps> = ({
   ...props
 }) => {
   const [open, toggle] = useBoolean(false)
-  const rendition = useRecoilValue(renditionState)
+  const { focusedTab: tab } = useSnapshot(reader)
   let { label, subitems } = item
+
   const isLeaf = !subitems || !subitems.length
   const Icon = open ? MdExpandMore : MdChevronRight
-
-  const location = useRecoilValue(locationState)
-  const active = location?.start.href === item.href
+  const active = tab?.location?.start.href === item.href
 
   label = label.trim()
 
@@ -83,7 +83,7 @@ const NavItem: React.FC<NavItemProps> = ({
           active && 'bg-outline/20',
         )}
         style={{ paddingLeft: level * 8 }}
-        onClick={isLeaf ? () => rendition?.display(item.href) : toggle}
+        onClick={isLeaf ? () => tab?.rendition?.display(item.href) : toggle}
         title={label}
       >
         <StateLayer />

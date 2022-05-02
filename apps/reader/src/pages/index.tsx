@@ -33,29 +33,27 @@ export const Library: React.FC = () => {
           gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
         }}
       >
-        {books?.map(({ id, data, name }) => {
-          const book = epub(data)
-
+        {books?.map((book) => {
           return (
-            <li key={id}>
+            <li key={book.id}>
               <Card className="group relative">
                 <Cover
                   role="button"
-                  book={book}
-                  onClick={() => reader.addTab(id)}
+                  book={epub(book.data)}
+                  onClick={() => reader.addTab(book)}
                 />
                 <div
                   className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
-                  title={name}
+                  title={book.name}
                 >
-                  {name}
+                  {book.name}
                 </div>
                 <IconButton
                   className="!absolute right-1 top-1 hidden group-hover:block"
                   size={20}
                   Icon={MdClose}
                   onClick={() => {
-                    db?.books.delete(id)
+                    db?.books.delete(book.id)
                   }}
                 />
               </Card>

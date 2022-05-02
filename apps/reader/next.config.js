@@ -33,7 +33,7 @@ const opts = {
 module.exports = withPWA(
   withTM(
     withBundleAnalyzer({
-      reactStrictMode: true,
+      reactStrictMode: false,
       pageExtensions: ['tsx', 'mdx'],
       pwa: {
         dest: 'public',

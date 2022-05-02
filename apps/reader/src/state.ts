@@ -1,6 +1,4 @@
 import { IS_SERVER } from '@literal-ui/hooks'
-import type { Rendition, Location } from 'epubjs'
-import type Navigation from 'epubjs/types/navigation'
 import { atom, AtomEffect } from 'recoil'
 
 function localStorageEffect<T>(key: string): AtomEffect<T> {
@@ -19,22 +17,6 @@ function localStorageEffect<T>(key: string): AtomEffect<T> {
     })
   }
 }
-
-export const navState = atom<Navigation | undefined>({
-  key: 'nav',
-  default: undefined,
-})
-
-export const locationState = atom<Location | undefined>({
-  key: 'location',
-  default: undefined,
-})
-
-export const renditionState = atom<Rendition | undefined>({
-  key: 'rendition',
-  default: undefined,
-  dangerouslyAllowMutability: true,
-})
 
 export type Action = 'TOC' | 'Search' | 'Typography'
 export const actionState = atom<Action | undefined>({

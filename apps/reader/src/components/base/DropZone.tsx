@@ -9,6 +9,10 @@ import {
 } from 'react'
 
 import { db } from '@ink/reader/db'
+import { useLibrary } from '@ink/reader/hooks'
+import { ReaderTab } from '@ink/reader/models'
+
+import { reader } from '../Reader'
 
 export const str = 'Hello world'
 
@@ -40,7 +44,8 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({
 }) => {
   const { dragover, setDragover } = useDndContext()
   const [position, setPosition] = useState<Position>()
-  console.log(dragover, position)
+  const books = useLibrary()
+  // console.log(dragover, position)
 
   useEffect(() => {
     if (!dragover) setPosition(undefined)
@@ -111,7 +116,14 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({
             e.preventDefault()
 
             const dt = e.dataTransfer
-            handleFiles(dt.files)
+            const bookId = dt.getData('text/plain')
+            if (bookId) {
+              console.log(bookId)
+              const book = books?.find((b) => b.id === bookId)
+              if (book) reader.addGroup([new ReaderTab(book)])
+            } else {
+              handleFiles(dt.files)
+            }
           }}
         ></div>
       )}

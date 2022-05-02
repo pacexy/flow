@@ -1,24 +1,15 @@
 import { StateLayer } from '@literal-ui/core'
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import ePub from 'epubjs'
-import type { Book, Rendition } from 'epubjs'
-import type Navigation from 'epubjs/types/navigation'
 import type Section from 'epubjs/types/section'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
-import { BookRecord, db } from '@ink/reader/db'
-import {
-  locationState,
-  navState,
-  renditionState,
-  settingsState,
-} from '@ink/reader/state'
+import { settingsState } from '@ink/reader/state'
 
-import { Reader } from '../models'
+import { Reader, ReaderTab } from '../models'
 
 import { Tab } from './Tab'
 import { DropZone, SplitView, useDndContext } from './base'
@@ -45,21 +36,15 @@ interface ReaderGroupProps {
   index: number
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
-  const [books, setBooks] = useState<Array<BookRecord | undefined>>([])
-  const group = reader.groups[index]
+  const group = reader.groups[index]!
+  const selectedTab = group.selectedTab!
   const { tabs, selectedIndex } = useSnapshot(group)
-  const selectedBook = books[selectedIndex]
-
-  useEffect(() => {
-    db?.books.bulkGet(tabs.map((c) => c.bookId)).then(setBooks)
-  }, [tabs])
 
   return (
     <div className="flex h-full flex-col">
       <Tab.List>
-        {books.map((book, i) => {
+        {tabs.map(({ book }, i) => {
           const selected = i === selectedIndex
-          if (!book) return null
           return (
             <Tab
               key={book.id}
@@ -67,6 +52,9 @@ function ReaderGroup({ index }: ReaderGroupProps) {
               focused={selected}
               onClick={() => group.selectTab(i)}
               onDelete={() => reader.removeTab(i)}
+              onDragStart={(e) => {
+                e.dataTransfer.setData('text/plain', book.id)
+              }}
               draggable
             >
               {book.name}
@@ -75,26 +63,24 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         })}
       </Tab.List>
 
-      {selectedBook && (
-        <DropZone>
-          <ReaderPane book={selectedBook} />
-        </DropZone>
-      )}
+      <DropZone>
+        <ReaderPane tab={selectedTab} key={selectedTab.book.id} />
+      </DropZone>
     </div>
   )
 }
 
 interface NavButtonProps {
   dir: 'left' | 'right'
+  tab: ReaderTab
 }
-const NavButton: React.FC<NavButtonProps> = ({ dir }) => {
+const NavButton: React.FC<NavButtonProps> = ({ dir, tab }) => {
   const left = dir === 'left'
-  const rendition = useRecoilValue(renditionState)
   const Icon = left ? MdChevronLeft : MdChevronRight
   return (
     <button
       className={clsx('relative flex flex-1 items-center justify-center')}
-      onClick={() => (left ? rendition?.prev() : rendition?.next())}
+      onClick={() => (left ? tab.rendition?.prev() : tab.rendition?.next())}
     >
       <StateLayer />
       <Icon size={40} className="text-outline/30" />
@@ -103,35 +89,21 @@ const NavButton: React.FC<NavButtonProps> = ({ dir }) => {
 }
 
 interface ReaderPaneProps {
-  book: BookRecord
+  tab: ReaderTab
 }
 
-export function ReaderPane({ book }: ReaderPaneProps) {
+export function ReaderPane({ tab }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [, setEpub] = useState<Book>()
-  const [rendition, setRendition] = useRecoilState(renditionState)
-  const [nav, setNav] = useRecoilState(navState)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
+  const { rendition } = useSnapshot(tab)
 
   useEffect(() => {
-    if (!ref.current) return
-
-    const epub = ePub(book.data)
-    setEpub((prev) => {
-      prev?.destroy()
-      return epub
-    })
-    epub.loaded.navigation.then(setNav)
-
-    const rendition = epub.renderTo(ref.current, {
-      width: '100%',
-      height: '100%',
-      allowScriptedContent: true,
-    })
-    setRendition(rendition)
-    rendition.display()
-  }, [book.data, setNav, setRendition])
+    if (ref.current) tab.render(ref.current)
+    return () => {
+      tab.rendition = undefined
+    }
+  }, [tab])
 
   useEffect(() => {
     rendition?.themes.override('font-size', settings.fontSize + 'px')
@@ -168,28 +140,24 @@ export function ReaderPane({ book }: ReaderPaneProps) {
 
   return (
     <>
-      {rendition && nav && <ReaderPaneHeader rendition={rendition} nav={nav} />}
+      <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="scroll flex-1" />
       <div className="flex">
-        <NavButton dir="left" />
-        <NavButton dir="right" />
+        <NavButton dir="left" tab={tab} />
+        <NavButton dir="right" tab={tab} />
       </div>
     </>
   )
 }
 
 interface ReaderPaneHeaderProps {
-  rendition: Rendition
-  nav: Navigation
+  tab: ReaderTab
 }
-export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({
-  rendition,
-  nav,
-}) => {
-  const [location, setLocation] = useRecoilState(locationState)
+export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
+  const { nav, location } = tab
   const breadcrumbs = useMemo(() => {
     const crumbs = []
-    let navItem = location && nav.get(location?.start.href)
+    let navItem = location && nav?.get(location?.start.href)
 
     while (navItem) {
       crumbs.unshift(navItem)
@@ -205,10 +173,6 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({
     }
     return crumbs
   }, [location, nav])
-
-  useEffect(() => {
-    rendition.on('relocated', setLocation)
-  }, [rendition, setLocation])
 
   return (
     <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">

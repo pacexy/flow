@@ -1,5 +1,9 @@
-import type { Rendition } from 'epubjs'
-import { proxy } from 'valtio'
+import type { Rendition, Location } from 'epubjs'
+import ePub from 'epubjs'
+import Navigation from 'epubjs/types/navigation'
+import { proxy, ref } from 'valtio'
+
+import { BookRecord } from '../db'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -7,15 +11,38 @@ function updateIndex(array: any[], deletedItemIndex: number) {
 }
 
 export class ReaderTab {
+  epub = ref(ePub(this.book.data))
   rendition?: Rendition
+  nav?: Navigation
+  location?: Location
 
-  constructor(public readonly bookId: string) {}
+  render(el: HTMLDivElement) {
+    if (this.rendition) return
+
+    this.epub.loaded.navigation.then((nav) => {
+      this.nav = ref(nav)
+    })
+    this.rendition = ref(
+      this.epub.renderTo(el, {
+        width: '100%',
+        height: '100%',
+        allowScriptedContent: true,
+      }),
+    )
+    this.rendition.display(this.location?.start.cfi)
+    this.rendition.on('relocated', (loc: Location) => {
+      this.location = ref(loc)
+    })
+  }
+
+  constructor(public readonly book: BookRecord) {}
 }
 
 export class ReaderGroup {
-  selectedIndex = -1
-
-  constructor(public tabs: ReaderTab[] = []) {}
+  constructor(
+    public tabs: ReaderTab[] = [],
+    public selectedIndex = tabs.length - 1,
+  ) {}
 
   get selectedTab() {
     return this.tabs[this.selectedIndex]
@@ -26,17 +53,15 @@ export class ReaderGroup {
     this.selectedIndex = updateIndex(this.tabs, index)
   }
 
-  addTab(bookId: string) {
-    const index = this.tabs.findIndex((t) => t.bookId === bookId)
+  addTab(book: BookRecord) {
+    const index = this.tabs.findIndex((t) => t.book.id === book.id)
     if (index > -1) {
       this.selectTab(index)
       return this.tabs[index]
     }
 
-    const tab = new ReaderTab(bookId)
-    console.log(this.tabs)
+    const tab = new ReaderTab(book)
     this.tabs.splice(++this.selectedIndex, 0, tab)
-    console.log(this.tabs)
     return tab
   }
 
@@ -53,18 +78,22 @@ export class Reader {
     return this.groups[this.focusedIndex]
   }
 
-  addTab(bookId: string, groupIdx = this.focusedIndex) {
+  get focusedTab() {
+    return this.focusedGroup?.selectedTab
+  }
+
+  addTab(book: BookRecord, groupIdx = this.focusedIndex) {
     const group = this.groups[groupIdx] ?? this.addGroup()
-    return group.addTab(bookId)
+    return group.addTab(book)
   }
 
   removeTab(index: number, groupIdx = this.focusedIndex) {
     const group = this.groups[groupIdx]
-    if (group.tabs.length === 1) {
+    if (group?.tabs.length === 1) {
       this.removeGroup(groupIdx)
       return
     }
-    group.removeTab(index)
+    group?.removeTab(index)
   }
 
   removeGroup(index: number) {

@@ -9,10 +9,12 @@ import {
   MdToc,
 } from 'react-icons/md'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import { useSnapshot } from 'valtio'
 
-import { actionState, renditionState } from '../state'
+import { actionState } from '../state'
 import { keys } from '../utils'
 
+import { reader } from './Reader'
 import { SearchView } from './viewlets/SearchView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
@@ -101,29 +103,34 @@ const Action: React.FC<ActionProps> = ({
 
 function SideBar() {
   const action = useRecoilValue(actionState)
-  const rendition = useRecoilValue(renditionState)
+  const { groups } = useSnapshot(reader)
 
   useEffect(() => {
-    // @ts-ignore
-    rendition?.resize()
+    groups.forEach(({ tabs }) => {
+      tabs.forEach(({ rendition }) => {
+        // @ts-ignore
+        rendition?.resize()
+      })
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!action])
 
-  if (!action) return null
-
   return (
     <div
-      className="bg-outline/5 hidden flex-col sm:flex"
+      className={clsx(
+        'bg-outline/5 hidden flex-col sm:flex',
+        !action && '!hidden',
+      )}
       style={{ width: 240 }}
     >
       <h2
         title={action}
         className="typescale-body-small text-outline px-5 py-3"
       >
-        {action.toUpperCase()}
+        {action?.toUpperCase()}
       </h2>
       {Object.entries(actionMap).map(([a, { View }]) => (
-        <View className={clsx(a !== action && '!hidden')} />
+        <View key={a} className={clsx(a !== action && '!hidden')} />
       ))}
     </div>
   )
