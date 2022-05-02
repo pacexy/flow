@@ -15,5 +15,5 @@ export const SplitView: React.FC<SplitViewProps> = ({
 }) => {
   console.log(orientation)
 
-  return <div className={'scroll-parent h-full'}>{children}</div>
+  return <div className="flex h-full">{children}</div>
 }

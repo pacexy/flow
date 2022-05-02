@@ -40,7 +40,7 @@ export class ReaderTab {
 
 export class ReaderGroup {
   constructor(
-    public tabs: ReaderTab[] = [],
+    public tabs: ReaderTab[],
     public selectedIndex = tabs.length - 1,
   ) {}
 
@@ -83,8 +83,11 @@ export class Reader {
   }
 
   addTab(book: BookRecord, groupIdx = this.focusedIndex) {
-    const group = this.groups[groupIdx] ?? this.addGroup()
-    return group.addTab(book)
+    const group = this.groups[groupIdx]
+    if (group) return group.addTab(book)
+    const tab = new ReaderTab(book)
+    this.addGroup([tab])
+    return tab
   }
 
   removeTab(index: number, groupIdx = this.focusedIndex) {
@@ -101,9 +104,11 @@ export class Reader {
     this.focusedIndex = updateIndex(this.groups, index)
   }
 
-  addGroup(tabs?: ReaderTab[]) {
+  addGroup(tabs: ReaderTab[], index = this.focusedIndex + 1) {
+    console.log(index)
     const group = proxy(new ReaderGroup(tabs))
-    this.groups.splice(++this.focusedIndex, 0, group)
+    this.groups.splice(index, 0, group)
+    this.focusedIndex = index
     return group
   }
 

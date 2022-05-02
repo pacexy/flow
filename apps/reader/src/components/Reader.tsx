@@ -9,6 +9,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { settingsState } from '@ink/reader/state'
 
+import { useLibrary } from '../hooks'
 import { Reader, ReaderTab } from '../models'
 
 import { Tab } from './Tab'
@@ -38,24 +39,26 @@ interface ReaderGroupProps {
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
   const selectedTab = group.selectedTab!
+  const { focusedIndex } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
+  const books = useLibrary()
 
   return (
-    <div className="flex h-full flex-col">
-      <Tab.List>
+    <div
+      className="flex h-full flex-1 flex-col overflow-hidden"
+      onClick={() => reader.selectGroup(index)}
+    >
+      <Tab.List onDelete={() => reader.removeGroup(index)}>
         {tabs.map(({ book }, i) => {
           const selected = i === selectedIndex
+          const focused = index === focusedIndex && selected
           return (
             <Tab
               key={book.id}
               selected={selected}
-              focused={selected}
+              focused={focused}
               onClick={() => group.selectTab(i)}
-              onDelete={() => reader.removeTab(i)}
-              onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', book.id)
-              }}
-              draggable
+              onDelete={() => reader.removeTab(i, index)}
             >
               {book.name}
             </Tab>
@@ -63,7 +66,24 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         })}
       </Tab.List>
 
-      <DropZone>
+      <DropZone
+        split
+        onDrop={(e, position) => {
+          const bookId = e.dataTransfer.getData('text/plain')
+          const book = books?.find((b) => b.id === bookId)
+          if (!book) return
+          switch (position) {
+            case 'left':
+              reader.addGroup([new ReaderTab(book)], index)
+              break
+            case 'right':
+              reader.addGroup([new ReaderTab(book)], index + 1)
+              break
+            default:
+              reader.addTab(book)
+          }
+        }}
+      >
         <ReaderPane tab={selectedTab} key={selectedTab.book.id} />
       </DropZone>
     </div>
@@ -175,17 +195,20 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   }, [location, nav])
 
   return (
-    <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
-      <div className="flex">
+    <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between gap-2 px-2">
+      <div className="scroll-h flex">
         {breadcrumbs.map((item, i) => (
-          <button key={i} className="hover:text-on-surface flex items-center">
+          <button
+            key={i}
+            className="hover:text-on-surface flex shrink-0 items-center"
+          >
             {item.label}
             {i !== breadcrumbs.length - 1 && <MdChevronRight size={20} />}
           </button>
         ))}
       </div>
       {location && (
-        <div>
+        <div className="shrink-0">
           {location.start.displayed.page} / {location.start.displayed.total}
         </div>
       )}

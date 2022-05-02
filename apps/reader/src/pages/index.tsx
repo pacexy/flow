@@ -14,9 +14,7 @@ export default function Index() {
   return (
     <>
       <ReaderGridView />
-      <DropZone>
-        <Library />
-      </DropZone>
+      <Library />
     </>
   )
 }
@@ -26,44 +24,52 @@ export const Library: React.FC = () => {
   const { groups } = useSnapshot(reader)
   if (groups.length) return null
   return (
-    <div className="scroll h-full p-4">
-      <ul
-        className="grid gap-4"
-        style={{
-          gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
-        }}
-      >
-        {books?.map((book) => {
-          return (
-            <li key={book.id}>
-              <Card className="group relative">
-                <Cover
-                  role="button"
-                  book={epub(book.data)}
-                  onClick={() => reader.addTab(book)}
-                />
-                <div
-                  className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
-                  title={book.name}
-                >
-                  {book.name}
-                </div>
-                <IconButton
-                  className="!absolute right-1 top-1 hidden group-hover:block"
-                  size={20}
-                  Icon={MdClose}
-                  onClick={() => {
-                    db?.books.delete(book.id)
-                  }}
-                />
-              </Card>
-            </li>
-          )
-        })}
+    <DropZone
+      onDrop={(e) => {
+        const bookId = e.dataTransfer.getData('text/plain')
+        const book = books?.find((b) => b.id === bookId)
+        if (book) reader.addTab(book)
+      }}
+    >
+      <div className="scroll h-full p-4">
+        <ul
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
+          }}
+        >
+          {books?.map((book) => {
+            return (
+              <li key={book.id}>
+                <Card className="group relative">
+                  <Cover
+                    role="button"
+                    book={epub(book.data)}
+                    onClick={() => reader.addTab(book)}
+                  />
+                  <div
+                    className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
+                    title={book.name}
+                  >
+                    {book.name}
+                  </div>
+                  <IconButton
+                    className="!absolute right-1 top-1 hidden group-hover:block"
+                    size={20}
+                    Icon={MdClose}
+                    onClick={() => {
+                      db?.books.delete(book.id)
+                    }}
+                  />
+                </Card>
+              </li>
+            )
+          })}
 
-        <Card>Add book</Card>
-      </ul>
-    </div>
+          <Card>Add book</Card>
+        </ul>
+      </div>
+    </DropZone>
   )
 }
 

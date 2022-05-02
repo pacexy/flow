@@ -9,15 +9,11 @@ import {
 } from 'react'
 
 import { db } from '@ink/reader/db'
-import { useLibrary } from '@ink/reader/hooks'
-import { ReaderTab } from '@ink/reader/models'
-
-import { reader } from '../Reader'
-
-export const str = 'Hello world'
 
 interface DropZoneProps {
   className?: string
+  onDrop?: (e: DragEvent<HTMLDivElement>, position?: Position) => void
+  split?: boolean
 }
 export const DropZone: React.FC<DropZoneProps> = (props) => {
   return (
@@ -27,53 +23,51 @@ export const DropZone: React.FC<DropZoneProps> = (props) => {
   )
 }
 
-enum Position {
-  Universe,
-  Top,
-  Bottom,
-  Left,
-  Right,
-}
+type Position = 'universe' | 'left' | 'right' | 'top' | 'bottom'
 
-interface DropZoneInnerProps {
-  className?: string
-}
-const DropZoneInner: React.FC<DropZoneInnerProps> = ({
+const DropZoneInner: React.FC<DropZoneProps> = ({
   children,
   className,
+  onDrop,
+  split = false,
 }) => {
   const { dragover, setDragover } = useDndContext()
   const [position, setPosition] = useState<Position>()
-  const books = useLibrary()
   // console.log(dragover, position)
 
   useEffect(() => {
     if (!dragover) setPosition(undefined)
   }, [dragover])
 
-  const handleDragover = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleDragover = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.stopPropagation()
+      e.preventDefault()
 
-    const rect = (e.target as HTMLDivElement).getBoundingClientRect()
-    if (!rect.width || !rect.height) return
+      setPosition(() => {
+        if (!split) return 'universe'
 
-    const offsetLeft = (e.clientX - rect.left) / rect.width
-    const offsetTop = (e.clientY - rect.top) / rect.height
-    const offsetRight = 1 - offsetLeft
-    const offsetBottom = 1 - offsetTop
-    const threshold = 0.15
+        const rect = (e.target as HTMLDivElement).getBoundingClientRect()
+        if (!rect.width || !rect.height) return
 
-    const minOffset = Math.min(offsetLeft, offsetRight, offsetTop, offsetBottom)
+        const offsetLeft = (e.clientX - rect.left) / rect.width
+        const offsetTop = (e.clientY - rect.top) / rect.height
+        const offsetRight = 1 - offsetLeft
+        const offsetBottom = 1 - offsetTop
+        const threshold = 0.15
 
-    setPosition(() => {
-      if (minOffset > threshold) return Position.Universe
-      if (minOffset === offsetLeft) return Position.Left
-      if (minOffset === offsetRight) return Position.Right
-      if (minOffset === offsetTop) return Position.Top
-      if (minOffset === offsetBottom) return Position.Bottom
-    })
-  }, [])
+        // TODO: add `offsetTop` and `offsetBottom`
+        const minOffset = Math.min(offsetLeft, offsetRight)
+
+        if (minOffset > threshold) return 'universe'
+        if (minOffset === offsetLeft) return 'left'
+        if (minOffset === offsetRight) return 'right'
+        if (minOffset === offsetTop) return 'top'
+        if (minOffset === offsetBottom) return 'bottom'
+      })
+    },
+    [split],
+  )
 
   return (
     <div
@@ -93,11 +87,11 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({
         <div
           className={clsx(
             'bg-outline/20 absolute z-10 transition-all',
-            position === Position.Left && 'h-full w-1/2',
-            position === Position.Right && 'h-full w-1/2 translate-x-full',
-            position === Position.Top && 'h-1/2 w-full',
-            position === Position.Bottom && 'h-1/2  w-full translate-y-full',
-            position === Position.Universe && 'h-full w-full',
+            position === 'left' && 'h-full w-1/2',
+            position === 'right' && 'h-full w-1/2 translate-x-full',
+            position === 'top' && 'h-1/2 w-full',
+            position === 'bottom' && 'h-1/2  w-full translate-y-full',
+            position === 'universe' && 'h-full w-full',
           )}
         ></div>
       )}
@@ -114,16 +108,8 @@ const DropZoneInner: React.FC<DropZoneInnerProps> = ({
             setDragover(false)
             e.stopPropagation()
             e.preventDefault()
-
-            const dt = e.dataTransfer
-            const bookId = dt.getData('text/plain')
-            if (bookId) {
-              console.log(bookId)
-              const book = books?.find((b) => b.id === bookId)
-              if (book) reader.addGroup([new ReaderTab(book)])
-            } else {
-              handleFiles(dt.files)
-            }
+            onDrop?.(e, position)
+            handleFiles(e.dataTransfer.files)
           }}
         ></div>
       )}

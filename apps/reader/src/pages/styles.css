@@ -48,15 +48,19 @@ pre {
 .scroll {
   overflow: overlay;
 }
-
 .scroll::-webkit-scrollbar {
   width: 10px;
 }
-
 .scroll:hover::-webkit-scrollbar-thumb {
   @apply bg-on-background/20 hover:bg-on-background/30 active:bg-on-background/40;
 }
-
 .scroll-parent {
   @apply flex flex-col overflow-hidden;
+}
+
+.scroll-h {
+  @apply overflow-x-auto;
+}
+.scroll-h::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
