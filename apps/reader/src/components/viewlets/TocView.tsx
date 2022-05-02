@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import type { NavItem as INavItem } from 'epubjs'
 import { ComponentProps } from 'react'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
+import { ReadonlyDeep } from 'type-fest'
 import { useSnapshot } from 'valtio'
 
 import { useLibrary } from '@ink/reader/hooks'
@@ -46,9 +47,10 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
+  const { focusedTab } = useSnapshot(reader)
   return (
     <Pane headline="toc">
-      {reader.focusedTab?.nav?.toc.map((item, i) => (
+      {focusedTab?.nav?.toc.map((item, i) => (
         <NavItem key={i} item={item} />
       ))}
     </Pane>
@@ -56,7 +58,7 @@ const TocPane: React.FC = () => {
 }
 
 interface NavItemProps extends ComponentProps<'div'> {
-  item: INavItem
+  item: ReadonlyDeep<INavItem>
   level?: number
 }
 const NavItem: React.FC<NavItemProps> = ({

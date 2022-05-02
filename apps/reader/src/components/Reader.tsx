@@ -84,7 +84,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           }
         }}
       >
-        <ReaderPane tab={selectedTab} key={selectedTab.book.id} />
+        <ReaderPane tab={selectedTab} key={selectedTab.book.id} index={index} />
       </DropZone>
     </div>
   )
@@ -110,9 +110,10 @@ const NavButton: React.FC<NavButtonProps> = ({ dir, tab }) => {
 
 interface ReaderPaneProps {
   tab: ReaderTab
+  index: number
 }
 
-export function ReaderPane({ tab }: ReaderPaneProps) {
+export function ReaderPane({ tab, index }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
@@ -155,8 +156,11 @@ export function ReaderPane({ tab }: ReaderPaneProps) {
         console.log('drag enter in iframe')
         setDragover(true)
       }
+      view.window.onclick = () => {
+        reader.selectGroup(index)
+      }
     })
-  }, [rendition, setDragover])
+  }, [index, rendition, setDragover])
 
   return (
     <>
