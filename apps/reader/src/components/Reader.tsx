@@ -1,9 +1,7 @@
-import { StateLayer } from '@literal-ui/core'
 import { useColorScheme } from '@literal-ui/hooks'
-import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
 import { useEffect, useMemo, useRef } from 'react'
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
+import { MdChevronRight } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
@@ -90,24 +88,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   )
 }
 
-interface NavButtonProps {
-  dir: 'left' | 'right'
-  tab: ReaderTab
-}
-const NavButton: React.FC<NavButtonProps> = ({ dir, tab }) => {
-  const left = dir === 'left'
-  const Icon = left ? MdChevronLeft : MdChevronRight
-  return (
-    <button
-      className={clsx('relative flex flex-1 items-center justify-center')}
-      onClick={() => (left ? tab.rendition?.prev() : tab.rendition?.next())}
-    >
-      <StateLayer />
-      <Icon size={40} className="text-outline/30" />
-    </button>
-  )
-}
-
 interface ReaderPaneProps {
   tab: ReaderTab
   index: number
@@ -159,6 +139,13 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
       view.window.onclick = () => {
         reader.selectGroup(index)
       }
+      view.window.onmousewheel = (e: WheelEvent) => {
+        if (e.deltaY < 0) {
+          rendition?.prev()
+        } else {
+          rendition?.next()
+        }
+      }
     })
   }, [index, rendition, setDragover])
 
@@ -166,10 +153,6 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
     <>
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="scroll flex-1" />
-      <div className="flex">
-        <NavButton dir="left" tab={tab} />
-        <NavButton dir="right" tab={tab} />
-      </div>
     </>
   )
 }
