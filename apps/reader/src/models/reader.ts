@@ -1,6 +1,6 @@
 import type { Rendition, Location } from 'epubjs'
 import ePub from 'epubjs'
-import Navigation from 'epubjs/types/navigation'
+import Navigation, { NavItem } from 'epubjs/types/navigation'
 import { proxy, ref } from 'valtio'
 
 import { BookRecord } from '../db'
@@ -10,17 +10,56 @@ function updateIndex(array: any[], deletedItemIndex: number) {
   return deletedItemIndex > last ? last : deletedItemIndex
 }
 
+interface INavItem extends NavItem {
+  depth?: number
+  expanded?: boolean
+}
+
+function flatTree(node: INavItem, depth = 1): INavItem[] {
+  if (!node.subitems || !node.subitems.length || !node.expanded) {
+    return [{ ...node, depth }]
+  }
+  const children = node.subitems.flatMap((i) => flatTree(i, depth + 1))
+  return [{ ...node, depth }, ...children]
+}
+
+function find(nodes: INavItem[] = [], id: string): INavItem | undefined {
+  const node = nodes.find((n) => n.id === id)
+  if (node) return node
+  for (const child of nodes) {
+    const node = find(child.subitems, id)
+    if (node) return node
+  }
+  return undefined
+}
+
 export class ReaderTab {
   epub = ref(ePub(this.book.data))
   rendition?: Rendition
   nav?: Navigation
+  toc: INavItem[] = []
   location?: Location
+
+  calc() {
+    this.toc = this.nav?.toc.flatMap((item) => flatTree(item)) ?? []
+    console.log(
+      '🚀 ~ file: Reader.ts ~ line 45 ~ ReaderTab ~ calc ~ this.toc',
+      this.toc,
+    )
+  }
+
+  toggle(id: string) {
+    const item = find(this.nav?.toc, id) as INavItem
+    item.expanded = !item.expanded
+    this.calc()
+  }
 
   render(el: HTMLDivElement) {
     if (this.rendition) return
 
     this.epub.loaded.navigation.then((nav) => {
       this.nav = ref(nav)
+      this.calc()
     })
     this.rendition = ref(
       this.epub.renderTo(el, {

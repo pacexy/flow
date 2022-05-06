@@ -25,6 +25,7 @@
     "next": "12.1.5",
     "next-seo": "^5.3.0",
     "react": "18.0.0",
+    "react-cool-virtual": "^0.7.0",
     "react-dom": "18.0.0",
     "react-icons": "^4.3.1",
     "react-polymorphic-types": "^2.0.0",

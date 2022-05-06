@@ -74,6 +74,7 @@ importers:
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
       react: 18.0.0
+      react-cool-virtual: ^0.7.0
       react-dom: 18.0.0
       react-icons: ^4.3.1
       react-polymorphic-types: ^2.0.0
@@ -100,6 +101,7 @@ importers:
       next: 12.1.5_react-dom@18.0.0+react@18.0.0
       next-seo: 5.3.0_1cf2cc49e2c27648b440cc4e09213966
       react: 18.0.0
+      react-cool-virtual: 0.7.0_react@18.0.0
       react-dom: 18.0.0_react@18.0.0
       react-icons: 4.3.1_react@18.0.0
       react-polymorphic-types: 2.0.0_@types+react@17.0.43
@@ -1247,7 +1249,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.9
-    dev: true
 
   /@babel/template/7.16.7:
     resolution: {integrity: sha512-I8j/x8kHUrbYRTUxXrrMbfCa7jxkE7tZre39x3kjr9hvI82cK1FfqLygotcWN5kdPGWcLdWMHpSBavse5tWw3w==}
@@ -5980,6 +5981,15 @@ packages:
       safe-buffer: 5.2.1
     dev: true
 
+  /react-cool-virtual/0.7.0_react@18.0.0:
+    resolution: {integrity: sha512-oWRsF0Pf9dRWncpFvsCNWm0W/d/UEbUqxNIuhGEcLzdW16leokcl9gSYG9Ha5raaF/qq029W1cj65zAwgJyR7A==}
+    peerDependencies:
+      react: '>= 16.8.0'
+    dependencies:
+      '@babel/runtime': 7.17.8
+      react: 18.0.0
+    dev: false
+
   /react-dom/18.0.0_react@18.0.0:
     resolution: {integrity: sha512-XqX7uzmFo0pUceWFCt7Gff6IyIMzFUn7QMZrbrQfGxtaxXZIcGQzoNpRLE3fQLnS4XzLLPMZX2T9TRcSrasicw==}
     peerDependencies:
@@ -6103,7 +6113,6 @@ packages:
 
   /regenerator-runtime/0.13.9:
     resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
-    dev: true
 
   /regenerator-transform/0.14.5:
     resolution: {integrity: sha512-eOf6vka5IO151Jfsw2NO9WpGX58W6wWmefK3I1zEGr0lOD0u8rwPaNqQL1aRxUaxLeKO3ArNh3VYg1KbaD+FFw==}

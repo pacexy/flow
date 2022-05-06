@@ -1,5 +1,6 @@
 import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { forwardRef } from 'react'
 import { Children, ComponentProps } from 'react'
 import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
@@ -12,13 +13,10 @@ interface PaneProps extends ComponentProps<'div'> {
    */
   shrinkThreshold?: number
 }
-export function Pane({
-  className,
-  headline,
-  children,
-  shrinkThreshold = 0,
-  ...props
-}: PaneProps) {
+export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
+  { className, headline, children, shrinkThreshold = 0, ...props },
+  ref,
+) {
   const [open, toggle] = useBoolean(true)
   const Icon = open ? MdExpandMore : MdChevronRight
   const n = open ? Children.count(children) : 0
@@ -39,6 +37,7 @@ export function Pane({
         </div>
       </div>
       <div
+        ref={ref}
         className={clsx(
           'scroll typescale-body-small text-on-surface-variant',
           !open && 'hidden',
@@ -50,4 +49,4 @@ export function Pane({
       </div>
     </div>
   )
-}
+})

@@ -1,13 +1,12 @@
 import { StateLayer } from '@literal-ui/core'
-import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import type { NavItem as INavItem } from 'epubjs'
 import { ComponentProps } from 'react'
+import useVirtual from 'react-cool-virtual'
 import { MdChevronRight, MdExpandMore } from 'react-icons/md'
-import { ReadonlyDeep } from 'type-fest'
 import { useSnapshot } from 'valtio'
 
 import { useLibrary } from '@ink/reader/hooks'
+import { ReaderTab } from '@ink/reader/models'
 
 import { reader } from '../Reader'
 
@@ -48,32 +47,44 @@ const LibraryPane: React.FC = () => {
 
 const TocPane: React.FC = () => {
   const { focusedTab } = useSnapshot(reader)
+  const toc = focusedTab?.toc ?? []
+
+  const { outerRef, innerRef, items } = useVirtual<HTMLDivElement>({
+    itemCount: toc.length,
+    itemSize: 24,
+  })
+
   return (
-    <Pane headline="toc">
-      {focusedTab?.nav?.toc.map((item, i) => (
-        <NavItem key={i} item={item} />
-      ))}
+    <Pane headline="toc" ref={outerRef}>
+      <div ref={innerRef}>
+        {items.map(
+          ({ index }) =>
+            reader.focusedTab && (
+              <NavItem key={index} index={index} tab={reader.focusedTab} />
+            ),
+        )}
+      </div>
     </Pane>
   )
 }
 
 interface NavItemProps extends ComponentProps<'div'> {
-  item: ReadonlyDeep<INavItem>
-  level?: number
+  tab: ReaderTab
+  index: number
 }
 const NavItem: React.FC<NavItemProps> = ({
+  tab,
+  index,
   className,
-  item,
-  level = 1,
   ...props
 }) => {
-  const [open, toggle] = useBoolean(false)
-  const { focusedTab: tab } = useSnapshot(reader)
-  let { label, subitems } = item
+  const item = useSnapshot(tab.toc)[index]
+  if (!item) return null
+  let { label, subitems, depth = 0, expanded, id } = item
 
   const isLeaf = !subitems || !subitems.length
-  const Icon = open ? MdExpandMore : MdChevronRight
-  const active = tab?.location?.start.href === item.href
+  const Icon = expanded ? MdExpandMore : MdChevronRight
+  const active = tab.location?.start.href === item.href
 
   label = label.trim()
 
@@ -84,8 +95,8 @@ const NavItem: React.FC<NavItemProps> = ({
           'relative flex w-full cursor-pointer items-center py-0.5 pr-3 text-left',
           active && 'bg-outline/20',
         )}
-        style={{ paddingLeft: level * 8 }}
-        onClick={() => tab?.rendition?.display(item.href)}
+        style={{ paddingLeft: depth * 8 }}
+        onClick={() => tab.rendition?.display(item.href)}
         title={label}
       >
         <StateLayer />
@@ -94,16 +105,11 @@ const NavItem: React.FC<NavItemProps> = ({
           className={clsx('text-outline shrink-0', isLeaf && 'invisible')}
           onClick={(e) => {
             e.stopPropagation()
-            toggle()
+            tab.toggle(id)
           }}
         />
-        <div>{label}</div>
+        <div className="truncate">{label}</div>
       </a>
-
-      {open &&
-        subitems?.map((item, i) => (
-          <NavItem key={i} item={item} level={level + 1} />
-        ))}
     </div>
   )
 }
