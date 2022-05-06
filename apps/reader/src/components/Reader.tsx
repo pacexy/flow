@@ -1,4 +1,5 @@
 import { useColorScheme } from '@literal-ui/hooks'
+import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
 import { useEffect, useMemo, useRef } from 'react'
 import { MdChevronRight } from 'react-icons/md'
@@ -97,7 +98,7 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { rendition } = useSnapshot(tab)
+  const { rendition, prevLocation } = useSnapshot(tab)
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
@@ -136,7 +137,12 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
         console.log('drag enter in iframe')
         setDragover(true)
       }
-      view.window.onclick = () => {
+      view.window.onclick = (e: any) => {
+        // `instanceof` may not work in iframe
+        if (e.path.find((el: HTMLElement) => el.tagName === 'A')) {
+          tab.showPrevLocation()
+        }
+
         reader.selectGroup(index)
       }
       view.window.onmousewheel = (e: WheelEvent) => {
@@ -147,12 +153,35 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
         }
       }
     })
-  }, [index, rendition, setDragover])
+  }, [index, rendition, setDragover, tab])
 
   return (
     <>
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="scroll flex-1" />
+      <div
+        className={clsx(
+          'typescale-body-small text-outline absolute inset-x-0 bottom-0 flex justify-between px-2',
+          prevLocation || 'hidden',
+        )}
+      >
+        <button
+          onClick={() => {
+            tab.hidePrevLocation()
+            rendition?.display(prevLocation?.end.cfi)
+          }}
+        >
+          Back
+        </button>
+        {prevLocation?.start.cfi}
+        <button
+          onClick={() => {
+            tab.hidePrevLocation()
+          }}
+        >
+          Stay
+        </button>
+      </div>
     </>
   )
 }

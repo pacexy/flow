@@ -39,19 +39,24 @@ export class ReaderTab {
   nav?: Navigation
   toc: INavItem[] = []
   location?: Location
+  prevLocation?: Location
 
   calc() {
     this.toc = this.nav?.toc.flatMap((item) => flatTree(item)) ?? []
-    console.log(
-      '🚀 ~ file: Reader.ts ~ line 45 ~ ReaderTab ~ calc ~ this.toc',
-      this.toc,
-    )
   }
 
   toggle(id: string) {
     const item = find(this.nav?.toc, id) as INavItem
     item.expanded = !item.expanded
     this.calc()
+  }
+
+  showPrevLocation() {
+    this.prevLocation = this.location
+  }
+
+  hidePrevLocation() {
+    this.prevLocation = undefined
   }
 
   render(el: HTMLDivElement) {
