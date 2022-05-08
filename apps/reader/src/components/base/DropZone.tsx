@@ -134,7 +134,7 @@ export function useDndContext() {
   return useContext(DndContext)
 }
 
-function handleFiles(files: FileList) {
+export function handleFiles(files: FileList) {
   for (const file of files) {
     console.log(file)
     if (file.type !== 'application/epub+zip') continue

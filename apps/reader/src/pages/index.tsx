@@ -4,7 +4,7 @@ import React, { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
 
-import { DropZone } from '@ink/reader/components/base'
+import { DropZone, handleFiles } from '@ink/reader/components/base'
 
 import { IconButton, ReaderGridView, reader } from '../components'
 import { db } from '../db'
@@ -66,7 +66,17 @@ export const Library: React.FC = () => {
             )
           })}
 
-          <Card>Add book</Card>
+          <Card className="relative">
+            <input
+              type="file"
+              className="absolute inset-0 cursor-pointer opacity-0"
+              onChange={(e) => {
+                const files = e.target.files
+                if (files) handleFiles(files)
+              }}
+            />
+            Add book
+          </Card>
         </ul>
       </div>
     </DropZone>
