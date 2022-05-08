@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "Ink",
-  "short_name": "Ink",
+  "name": "reReader",
+  "short_name": "reReader",
   "description": "",
   "icons": [
     {
