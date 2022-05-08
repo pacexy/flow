@@ -2,15 +2,17 @@ import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
+import { MdSearch, MdToc } from 'react-icons/md'
 import {
-  MdFormatColorText,
-  MdOutlineLightMode,
-  MdSearch,
-  MdToc,
-} from 'react-icons/md'
+  RiFullscreenFill,
+  RiFontSize,
+  RiFullscreenExitFill,
+} from 'react-icons/ri'
+import { VscColorMode } from 'react-icons/vsc'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
+import { useFullScreen } from '../hooks'
 import { actionState } from '../state'
 import { keys } from '../utils'
 
@@ -21,7 +23,7 @@ import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-white dark:bg-[#121212]">
       <ActivityBar />
       <SideBar />
       <Reader className="flex-1 overflow-hidden">{children}</Reader>
@@ -34,7 +36,7 @@ const actionMap = {
   Search: { title: 'Search', Icon: MdSearch, View: SearchView },
   Typography: {
     title: 'Typography',
-    Icon: MdFormatColorText,
+    Icon: RiFontSize,
     View: TypographyView,
   },
 }
@@ -42,8 +44,9 @@ const actionMap = {
 function ActivityBar() {
   const { toggle } = useColorScheme()
   const [action, setAction] = useRecoilState(actionState)
+  const fullscreen = useFullScreen()
   return (
-    <div className="bg-outline/10 hidden flex-col sm:flex">
+    <div className="hidden flex-col sm:flex">
       <ActionBar className="flex-1">
         {keys(actionMap).map((k) => {
           const active = action === k
@@ -60,8 +63,13 @@ function ActivityBar() {
       </ActionBar>
       <ActionBar>
         <Action
+          title="Toggle FullScreen"
+          Icon={fullscreen.active ? RiFullscreenExitFill : RiFullscreenFill}
+          onClick={fullscreen.toggle}
+        />
+        <Action
           title="Toggle Color Scheme"
-          Icon={MdOutlineLightMode}
+          Icon={VscColorMode}
           onClick={toggle}
         />
       </ActionBar>
