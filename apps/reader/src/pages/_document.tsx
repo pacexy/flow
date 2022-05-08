@@ -6,7 +6,6 @@ export default function Document() {
     <Html>
       <Head>
         <link rel="icon" href="/icons/192.png"></link>
-        <title>reReader</title>
         <PWA />
       </Head>
       <body>

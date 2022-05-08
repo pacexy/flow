@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import Head from 'next/head'
 import React, { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
@@ -10,8 +11,12 @@ import { db } from '../db'
 import { useLibrary } from '../hooks'
 
 export default function Index() {
+  const { focusedTab } = useSnapshot(reader)
   return (
     <>
+      <Head>
+        <title>{focusedTab?.book.name ?? 'reReader'}</title>
+      </Head>
       <ReaderGridView />
       <Library />
     </>
