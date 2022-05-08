@@ -1,5 +1,4 @@
 import clsx from 'clsx'
-import epub, { Book } from 'epubjs'
 import React, { ComponentProps } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
@@ -8,7 +7,7 @@ import { DropZone, handleFiles } from '@ink/reader/components/base'
 
 import { IconButton, ReaderGridView, reader } from '../components'
 import { db } from '../db'
-import { useAsync, useLibrary } from '../hooks'
+import { useLibrary } from '../hooks'
 
 export default function Index() {
   return (
@@ -44,7 +43,7 @@ export const Library: React.FC = () => {
                 <Card className="group relative">
                   <Cover
                     role="button"
-                    book={epub(book.data)}
+                    src={book.cover}
                     onClick={() => reader.addTab(book)}
                   />
                   <div
@@ -96,18 +95,9 @@ export function Card({ className, ...props }: CardProps) {
   )
 }
 
-interface CoverProps extends ComponentProps<'img'> {
-  book: Book
-}
-const Cover: React.FC<CoverProps> = ({ book, ...props }) => {
-  const src = useAsync(() => book.coverUrl())
-
+interface CoverProps extends ComponentProps<'img'> {}
+const Cover: React.FC<CoverProps> = ({ src, ...props }) => {
   return (
-    <img
-      src={src ?? undefined}
-      alt="Cover"
-      className="h-56 object-contain"
-      {...props}
-    />
+    <img src={src} alt="Cover" className="h-56 object-contain" {...props} />
   )
 }

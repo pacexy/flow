@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import ePub from 'epubjs'
 import {
   useContext,
   useState,
@@ -148,16 +149,35 @@ export function handleFiles(files: FileList) {
       }
     })
 
-    reader.addEventListener('load', () => {
+    reader.addEventListener('load', async () => {
       if (!(reader.result instanceof ArrayBuffer)) return
+      const epub = ePub(reader.result)
+
+      const url = (await epub.coverUrl()) ?? ''
+      const cover = await toDataUrl(url)
+
       db?.books.add({
         id: crypto.randomUUID(),
         name: file.name,
         data: reader.result,
         createdAt: +new Date(),
+        cover,
       })
     })
 
     reader.readAsArrayBuffer(file)
   }
+}
+
+async function toDataUrl(url: string) {
+  const res = await fetch(url)
+  const buffer = await res.blob()
+
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => {
+      resolve(reader.result as string)
+    })
+    reader.readAsDataURL(buffer)
+  })
 }

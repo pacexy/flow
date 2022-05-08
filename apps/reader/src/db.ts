@@ -6,6 +6,7 @@ export interface BookRecord {
   name: string
   data: ArrayBuffer
   createdAt: number
+  cover: string
 }
 
 export class DB extends Dexie {
@@ -16,7 +17,7 @@ export class DB extends Dexie {
   constructor() {
     super('ink_reader')
     this.version(1).stores({
-      books: 'id, name, data, createdAt', // Primary key and indexed props
+      books: 'id, name, data, createdAt, cover', // Primary key and indexed props
     })
   }
 }
