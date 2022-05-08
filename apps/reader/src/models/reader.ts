@@ -1,6 +1,8 @@
 import type { Rendition, Location } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
+import Section from 'epubjs/types/section'
+import { ReadonlyDeep } from 'type-fest'
 import { proxy, ref } from 'valtio'
 
 import { BookRecord } from '../db'
@@ -10,25 +12,39 @@ function updateIndex(array: any[], deletedItemIndex: number) {
   return deletedItemIndex > last ? last : deletedItemIndex
 }
 
-interface INavItem extends NavItem {
+interface Node {
+  id: string
   depth?: number
   expanded?: boolean
+  subitems?: Node[]
+}
+interface INavItem extends NavItem, Node {
+  subitems?: INavItem[]
 }
 
-function flatTree(node: INavItem, depth = 1): INavItem[] {
+export interface Match extends Node {
+  excerpt: string
+  cfi?: string
+  subitems?: Match[]
+}
+
+export function flatTree<T extends ReadonlyDeep<Node>>(
+  node: T,
+  depth = 1,
+): T[] {
   if (!node.subitems || !node.subitems.length || !node.expanded) {
     return [{ ...node, depth }]
   }
-  const children = node.subitems.flatMap((i) => flatTree(i, depth + 1))
+  const children = node.subitems.flatMap((i) => flatTree(i, depth + 1)) as T[]
   return [{ ...node, depth }, ...children]
 }
 
-function find(nodes: INavItem[] = [], id: string): INavItem | undefined {
+function find<T extends Node>(nodes: T[] = [], id: string): T | undefined {
   const node = nodes.find((n) => n.id === id)
   if (node) return node
   for (const child of nodes) {
     const node = find(child.subitems, id)
-    if (node) return node
+    if (node) return node as T
   }
   return undefined
 }
@@ -40,6 +56,8 @@ export class ReaderTab {
   toc: INavItem[] = []
   location?: Location
   prevLocation?: Location
+  sections?: Section[]
+  results?: Match[]
 
   calc() {
     this.toc = this.nav?.toc.flatMap((item) => flatTree(item)) ?? []
@@ -47,8 +65,13 @@ export class ReaderTab {
 
   toggle(id: string) {
     const item = find(this.nav?.toc, id) as INavItem
-    item.expanded = !item.expanded
+    if (item) item.expanded = !item.expanded
     this.calc()
+  }
+
+  toggleResult(id: string) {
+    const item = find(this.results, id)
+    if (item) item.expanded = !item.expanded
   }
 
   showPrevLocation() {
@@ -59,12 +82,51 @@ export class ReaderTab {
     this.prevLocation = undefined
   }
 
+  search(keyword: string) {
+    if (!keyword) {
+      this.results = undefined
+      return
+    }
+
+    const results: Match[] = []
+    this.sections?.forEach((s) => {
+      const subitems = s.find(keyword) as unknown as Match[]
+      if (!subitems.length) return
+
+      const navItem = this.nav?.get(s.href)
+      if (navItem) {
+        results.push({
+          id: navItem.id,
+          excerpt: navItem.label.trim(),
+          subitems,
+          expanded: true,
+        })
+      }
+    })
+    this.results = results
+  }
+
   render(el: HTMLDivElement) {
     if (this.rendition) return
 
     this.epub.loaded.navigation.then((nav) => {
       this.nav = ref(nav)
       this.calc()
+    })
+    console.log(
+      '🚀 ~ file: Reader.ts ~ line 69 ~ ReaderTab ~ this.epub.loaded.navigation.then ~ this.epub',
+      this.epub,
+    )
+    this.epub.loaded.spine.then((spine: any) => {
+      const sections = spine.spineItems as Section[]
+      // https://github.com/futurepress/epub.js/issues/887#issuecomment-700736486
+      const promises = sections.map((s) =>
+        s.load(this.epub.load.bind(this.epub)),
+      )
+
+      Promise.all(promises).then(() => {
+        this.sections = ref(sections)
+      })
     })
     this.rendition = ref(
       this.epub.renderTo(el, {
@@ -75,6 +137,7 @@ export class ReaderTab {
     )
     this.rendition.display(this.location?.start.cfi)
     this.rendition.on('relocated', (loc: Location) => {
+      console.log(this)
       this.location = ref(loc)
     })
   }

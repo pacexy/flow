@@ -13,7 +13,6 @@ export const SplitView: React.FC<SplitViewProps> = ({
   children,
   orientation = 'horizontal',
 }) => {
-  console.log(orientation)
-
+  orientation
   return <div className="flex h-full">{children}</div>
 }

@@ -1,9 +1,10 @@
 import clsx from 'clsx'
-import { ElementType, useState } from 'react'
-import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
+import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { settingsState } from '@ink/reader/state'
+
+import { TextField } from '../TextField'
 
 import { Pane } from './Pane'
 import { View, ViewProps } from './View'
@@ -109,38 +110,5 @@ export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
       <div>{fontFamily}</div>
       <div style={{ fontFamily }}>{sentence}</div>
     </button>
-  )
-}
-
-type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
-  {
-    name: string
-  },
-  T
->
-export function TextField<T extends ElementType = 'input'>({
-  name,
-  as,
-  className,
-  ...props
-}: TextFieldProps<T>) {
-  const Component = as || 'input'
-  return (
-    <div
-      className={clsx(
-        'text-on-surface-variant flex flex-col gap-2 px-5',
-        className,
-      )}
-    >
-      <label htmlFor={name} className="typescale-label-medium uppercase">
-        {name}
-      </label>
-      <Component
-        name={name}
-        id={name}
-        className="typescale-body-medium p-1"
-        {...props}
-      />
-    </div>
   )
 }
