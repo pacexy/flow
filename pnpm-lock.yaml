@@ -4,24 +4,24 @@ importers:
 
   .:
     specifiers:
-      '@changesets/changelog-github': ^0.4.4
-      '@changesets/cli': ^2.22.0
+      '@changesets/changelog-github': 0.4.4
+      '@changesets/cli': 2.22.0
       '@typescript-eslint/eslint-plugin': 5.19.0
-      cross-env: ^7.0.3
+      cross-env: 7.0.3
       eslint: 8.13.0
       eslint-config-next: 12.1.5
       eslint-config-prettier: 8.5.0
       eslint-plugin-react: 7.29.4
-      esno: ^0.14.1
+      esno: 0.14.1
       husky: 7.0.4
       lint-staged: 12.3.7
       prettier: 2.6.2
       prettier-plugin-tailwindcss: 0.1.8
-      rimraf: ^3.0.2
-      rollup: ^2.70.1
-      rollup-plugin-dts: ^4.2.0
-      rollup-plugin-typescript2: ^0.31.2
-      tsup: ^5.12.3
+      rimraf: 3.0.2
+      rollup: 2.72.1
+      rollup-plugin-dts: 4.2.1
+      rollup-plugin-typescript2: 0.31.2
+      tsup: 5.12.7
       turbo: latest
       typescript: 4.6.3
     devDependencies:
@@ -39,51 +39,51 @@ importers:
       prettier: 2.6.2
       prettier-plugin-tailwindcss: 0.1.8_prettier@2.6.2
       rimraf: 3.0.2
-      rollup: 2.70.1
-      rollup-plugin-dts: 4.2.0_rollup@2.70.1+typescript@4.6.3
-      rollup-plugin-typescript2: 0.31.2_rollup@2.70.1+typescript@4.6.3
-      tsup: 5.12.3_typescript@4.6.3
-      turbo: 1.2.6
+      rollup: 2.72.1
+      rollup-plugin-dts: 4.2.1_rollup@2.72.1+typescript@4.6.3
+      rollup-plugin-typescript2: 0.31.2_rollup@2.72.1+typescript@4.6.3
+      tsup: 5.12.7_typescript@4.6.3
+      turbo: 1.2.8
       typescript: 4.6.3
 
   apps/reader:
     specifiers:
       '@ink/internal': workspace:*
-      '@literal-ui/core': ^0.0.12
-      '@literal-ui/hooks': ^0.0.7
-      '@literal-ui/next': ^0.0.3
-      '@literal-ui/plugins': ^0.0.3
-      '@mdx-js/loader': ^2.1.0
-      '@mdx-js/react': ^2.1.0
-      '@next/bundle-analyzer': ^12.1.5
-      '@tailwindcss/aspect-ratio': ^0.4.0
-      '@tailwindcss/line-clamp': ^0.3.1
+      '@literal-ui/core': 0.0.12
+      '@literal-ui/hooks': 0.0.7
+      '@literal-ui/next': 0.0.3
+      '@literal-ui/plugins': 0.0.3
+      '@mdx-js/loader': 2.1.1
+      '@mdx-js/react': 2.1.1
+      '@next/bundle-analyzer': 12.1.6
+      '@tailwindcss/aspect-ratio': 0.4.0
+      '@tailwindcss/line-clamp': 0.3.1
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       autoprefixer: 10.4.4
-      babel-loader: ^8.2.4
-      clsx: ^1.1.1
-      dexie: ^3.2.1
-      dexie-react-hooks: ^1.1.1
-      epubjs: ^0.3.93
-      gray-matter: ^4.0.3
+      babel-loader: 8.2.5
+      clsx: 1.1.1
+      dexie: 3.2.2
+      dexie-react-hooks: 1.1.1
+      epubjs: 0.3.93
+      gray-matter: 4.0.3
       m3-tokens: 0.0.3
       next: 12.1.5
-      next-pwa: ^5.4.6
-      next-seo: ^5.3.0
+      next-pwa: 5.5.2
+      next-seo: 5.4.0
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
       react: 18.0.0
-      react-cool-virtual: ^0.7.0
+      react-cool-virtual: 0.7.0
       react-dom: 18.0.0
-      react-icons: ^4.3.1
-      react-polymorphic-types: ^2.0.0
-      recoil: ^0.7.1
+      react-icons: 4.3.1
+      react-polymorphic-types: 2.0.0
+      recoil: 0.7.2
       rehype-pretty-code: 0.3.0
-      shiki: ^0.10.1
+      shiki: 0.10.1
       tailwindcss: 3.0.24
-      type-fest: ^2.12.2
-      valtio: ^1.6.0
+      type-fest: 2.12.2
+      valtio: 1.6.0
     dependencies:
       '@ink/internal': link:../../packages/internal
       '@literal-ui/core': 0.0.12_6f59ad6826e985587dc9ea5f880b28d3
@@ -91,21 +91,21 @@ importers:
       '@literal-ui/next': 0.0.3_next@12.1.5+react@18.0.0
       '@mdx-js/loader': 2.1.1
       '@mdx-js/react': 2.1.1_react@18.0.0
-      '@next/bundle-analyzer': 12.1.5
-      babel-loader: 8.2.4
+      '@next/bundle-analyzer': 12.1.6
+      babel-loader: 8.2.5
       clsx: 1.1.1
-      dexie: 3.2.1
-      dexie-react-hooks: 1.1.1_828f0a640d9024223dfb6d44c4d9c007
+      dexie: 3.2.2
+      dexie-react-hooks: 1.1.1_4d34ebc4bcbfc4317855c83bb6357142
       epubjs: 0.3.93
       gray-matter: 4.0.3
       next: 12.1.5_react-dom@18.0.0+react@18.0.0
-      next-seo: 5.3.0_1cf2cc49e2c27648b440cc4e09213966
+      next-seo: 5.4.0_1cf2cc49e2c27648b440cc4e09213966
       react: 18.0.0
       react-cool-virtual: 0.7.0_react@18.0.0
       react-dom: 18.0.0_react@18.0.0
       react-icons: 4.3.1_react@18.0.0
       react-polymorphic-types: 2.0.0_@types+react@17.0.43
-      recoil: 0.7.1_react-dom@18.0.0+react@18.0.0
+      recoil: 0.7.2_react-dom@18.0.0+react@18.0.0
       rehype-pretty-code: 0.3.0_shiki@0.10.1
       shiki: 0.10.1
       valtio: 1.6.0_react@18.0.0
@@ -117,7 +117,7 @@ importers:
       '@types/react': 17.0.43
       autoprefixer: 10.4.4_postcss@8.4.12
       m3-tokens: 0.0.3
-      next-pwa: 5.4.6_next@12.1.5
+      next-pwa: 5.5.2_next@12.1.5
       next-transpile-modules: 9.0.0
       postcss: 8.4.12
       tailwindcss: 3.0.24
@@ -1648,8 +1648,8 @@ packages:
       react: 18.0.0
     dev: false
 
-  /@next/bundle-analyzer/12.1.5:
-    resolution: {integrity: sha512-A9MkhWCPvSp1vl0Ox7IjJ/qpugDC5YAb40btGGIPPXHQtkal107Sf8dbay4fqw4Hekee5gdS0WUMfe1BaSur7w==}
+  /@next/bundle-analyzer/12.1.6:
+    resolution: {integrity: sha512-WLydwytAeHoC/neXsiIgK+a6Me12PuSpwopnsZgX5JFNwXQ9MlwPeMGS3aTZkYsv8QmSm0Ns9Yh9FkgLKYaUuQ==}
     dependencies:
       webpack-bundle-analyzer: 4.3.0
     transitivePeerDependencies:
@@ -2451,8 +2451,8 @@ packages:
     resolution: {integrity: sha512-Td525n+iPOOyUQIeBfcASuG6uJsDOITl7Mds5gFyerkWiX7qhUTdYUBlSgNMyVqtSJqwpt1kXGLdUt6SykLMRA==}
     dev: true
 
-  /babel-loader/8.2.4:
-    resolution: {integrity: sha512-8dytA3gcvPPPv4Grjhnt8b5IIiTcq/zeXOPk4iTYI0SVXcsmuGg7JtBRDp8S9X+gJfhQ8ektjXZlDu1Bb33U8A==}
+  /babel-loader/8.2.5:
+    resolution: {integrity: sha512-OSiFfH89LrEMiWd4pLNqGz4CwJDtbs2ZVc+iGu2HrkRfPxId9F2anQj38IxWpmRfsUY0aBZYi1EFcd3mhtRMLQ==}
     engines: {node: '>= 8.9'}
     peerDependencies:
       '@babel/core': ^7.0.0
@@ -3021,7 +3021,7 @@ packages:
       minimist: 1.2.6
     dev: true
 
-  /dexie-react-hooks/1.1.1_828f0a640d9024223dfb6d44c4d9c007:
+  /dexie-react-hooks/1.1.1_4d34ebc4bcbfc4317855c83bb6357142:
     resolution: {integrity: sha512-Cam5JP6PxHN564RvWEoe8cqLhosW0O4CAZ9XEVYeGHJBa6KEJlOpd9CUpV3kmU9dm2MrW97/lk7qkf1xpij7gA==}
     peerDependencies:
       '@types/react': '>=16'
@@ -3029,12 +3029,12 @@ packages:
       react: '>=16'
     dependencies:
       '@types/react': 17.0.43
-      dexie: 3.2.1
+      dexie: 3.2.2
       react: 18.0.0
     dev: false
 
-  /dexie/3.2.1:
-    resolution: {integrity: sha512-Y8oz3t2XC9hvjkP35B5I8rUkKKwM36GGRjWQCMjzIYScg7W+GHKDXobSYswkisW7CxL1/tKQtggMDsiWqDUc1g==}
+  /dexie/3.2.2:
+    resolution: {integrity: sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==}
     engines: {node: '>=6.0'}
     dev: false
 
@@ -5366,12 +5366,12 @@ packages:
     resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
     dev: true
 
-  /next-pwa/5.4.6_next@12.1.5:
-    resolution: {integrity: sha512-cJVxfn4a1DqwKGP+zhqE9QikqFuUhCYi7wiaucxhFLeShC6DVX1Gy5Qh3HAs1i6VHQcEOnaOwfk0Q9Z08yRkCg==}
+  /next-pwa/5.5.2_next@12.1.5:
+    resolution: {integrity: sha512-NOZxIS/4Qa4lsPG99CNh3ZA1vfVJ3vpZjBvfouXOfWn0K9CLjBRZwGkJAcWsMWngSGoTN1hUkg97Pe+9xESzWQ==}
     peerDependencies:
       next: '>=9.0.0'
     dependencies:
-      babel-loader: 8.2.4
+      babel-loader: 8.2.5
       clean-webpack-plugin: 4.0.0
       globby: 11.1.0
       next: 12.1.5_react-dom@18.0.0+react@18.0.0
@@ -5388,8 +5388,8 @@ packages:
       - webpack
     dev: true
 
-  /next-seo/5.3.0_1cf2cc49e2c27648b440cc4e09213966:
-    resolution: {integrity: sha512-ofXUGGZ4l6j4oCxu6aecTWTkNbN/g+zbYUOvLRBKl96bJrt+WWyo4riRxQqqczvk1niGH4ibN7cCEwVjlYZs2g==}
+  /next-seo/5.4.0_1cf2cc49e2c27648b440cc4e09213966:
+    resolution: {integrity: sha512-R9DhajPwJnR/lsF2hZ8cN8uqr5CVITsRrCG1AF5+ufcaybKYOvnH8sH9MaH4/hpkps3PQ9H71S7J7SPYixAYzQ==}
     peerDependencies:
       next: ^8.1.1-canary.54 || >=9.0.0
       react: '>=16.0.0'
@@ -5822,16 +5822,19 @@ packages:
       postcss: 8.4.12
     dev: true
 
-  /postcss-load-config/3.1.3:
-    resolution: {integrity: sha512-5EYgaM9auHGtO//ljHH+v/aC/TQ5LHXtL7bQajNAUBKUVKiYE8rYpFms7+V26D9FncaGe2zwCoPQsFKb5zF/Hw==}
+  /postcss-load-config/3.1.4:
+    resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
     peerDependencies:
+      postcss: '>=8.0.9'
       ts-node: '>=9.0.0'
     peerDependenciesMeta:
+      postcss:
+        optional: true
       ts-node:
         optional: true
     dependencies:
-      lilconfig: 2.0.4
+      lilconfig: 2.0.5
       yaml: 1.10.2
     dev: true
 
@@ -6075,8 +6078,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /recoil/0.7.1_react-dom@18.0.0+react@18.0.0:
-    resolution: {integrity: sha512-gRaiLLZKfAMe/QszIY1OLzNdd9m3Hf57c1b6bWrdZvOksw7Mr6c5YPThOh+HORbZ/cJV0L82OCH2sPyAr05oBw==}
+  /recoil/0.7.2_react-dom@18.0.0+react@18.0.0:
+    resolution: {integrity: sha512-OT4pI7FOUHcIoRtjsL5Lqq+lFFzQfir4MIbUkqyJ3nqv3WfBP1pHepyurqTsK5gw+T+I2R8+uOD28yH+Lg5o4g==}
     peerDependencies:
       react: '>=16.13.1'
       react-dom: '*'
@@ -6265,15 +6268,15 @@ packages:
       glob: 7.2.0
     dev: true
 
-  /rollup-plugin-dts/4.2.0_rollup@2.70.1+typescript@4.6.3:
-    resolution: {integrity: sha512-lx6irWVhz/x4//tIqRhzk4FOqGQ0n37ZM2wpPCn4uafl/EmiV92om7ZdAsq7Bzho6C+Xh5GfsyuP9H+Udv72Lg==}
-    engines: {node: '>=v12.22.10'}
+  /rollup-plugin-dts/4.2.1_rollup@2.72.1+typescript@4.6.3:
+    resolution: {integrity: sha512-eaxQZNUJ5iQcxNGlpJ1CUgG4OSVqWjDZ3nNSWBIoGrpcote2aNphSe1RJOaSYkb8dwn3o+rYm1vvld/5z3EGSQ==}
+    engines: {node: '>=v12.22.11'}
     peerDependencies:
-      rollup: ^2.55
-      typescript: ^4.1
+      rollup: ^2.70
+      typescript: ^4.6
     dependencies:
       magic-string: 0.26.1
-      rollup: 2.70.1
+      rollup: 2.72.1
       typescript: 4.6.3
     optionalDependencies:
       '@babel/code-frame': 7.16.7
@@ -6291,7 +6294,7 @@ packages:
       terser: 5.12.1
     dev: true
 
-  /rollup-plugin-typescript2/0.31.2_rollup@2.70.1+typescript@4.6.3:
+  /rollup-plugin-typescript2/0.31.2_rollup@2.72.1+typescript@4.6.3:
     resolution: {integrity: sha512-hRwEYR1C8xDGVVMFJQdEVnNAeWRvpaY97g5mp3IeLnzhNXzSVq78Ye/BJ9PAaUfN4DXa/uDnqerifMOaMFY54Q==}
     peerDependencies:
       rollup: '>=1.26.3'
@@ -6302,7 +6305,7 @@ packages:
       find-cache-dir: 3.3.2
       fs-extra: 10.0.1
       resolve: 1.22.0
-      rollup: 2.70.1
+      rollup: 2.72.1
       tslib: 2.3.1
       typescript: 4.6.3
     transitivePeerDependencies:
@@ -6311,6 +6314,14 @@ packages:
 
   /rollup/2.70.1:
     resolution: {integrity: sha512-CRYsI5EuzLbXdxC6RnYhOuRdtz4bhejPMSWjsFLfVM/7w/85n2szZv6yExqUXsBdz5KT8eoubeyDUDjhLHEslA==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /rollup/2.72.1:
+    resolution: {integrity: sha512-NTc5UGy/NWFGpSqF1lFY8z9Adri6uhyMLI6LvPAXdBKoPRFhIIiBUpt+Qg2awixqO3xvzSijjhnb4+QEZwJmxA==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -6961,8 +6972,8 @@ packages:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: true
 
-  /tsup/5.12.3_typescript@4.6.3:
-    resolution: {integrity: sha512-H1NANXhG01koKC5DWblNiPzsIwFBzGDvoEdxR1jrlNcWN0ydIEMsPhafrz5mhLNrYFn2suGlOwYZWfJO0HIPEg==}
+  /tsup/5.12.7_typescript@4.6.3:
+    resolution: {integrity: sha512-+OxYroGLByY0Fm8DLZaB4nVMlD59VsQoNXdhnO9wOG+cOsKXUwN3ER9gaKOjZJG26eKUXebmDme0Cy3emfRvOQ==}
     hasBin: true
     peerDependencies:
       typescript: ^4.1.0
@@ -6978,14 +6989,15 @@ packages:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 3.1.3
+      postcss-load-config: 3.1.4
       resolve-from: 5.0.0
-      rollup: 2.70.1
+      rollup: 2.72.1
       source-map: 0.7.3
       sucrase: 3.20.3
       tree-kill: 1.2.2
       typescript: 4.6.3
     transitivePeerDependencies:
+      - postcss
       - supports-color
       - ts-node
     dev: true
@@ -7013,128 +7025,128 @@ packages:
       yargs: 15.4.1
     dev: true
 
-  /turbo-darwin-64/1.2.6:
-    resolution: {integrity: sha512-YNH49cZKw6rrq6ef/PMuryk3lKzE9QI0R72Yj3lcA4C5FIekUA7RZY8xZK7152r6YNgZ6aPWOQN9lauSN58gPQ==}
+  /turbo-darwin-64/1.2.8:
+    resolution: {integrity: sha512-W46D05e1EUBE5TpRYjAHZXvR01EGhY8AcZUZa1mQCLmOb/W3knS1jHDAMEfXoPuDhdlolejEcbSHFCmqFRQ6OQ==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.2.6:
-    resolution: {integrity: sha512-1yk0UK59qGQjFkhmSnrNrGMIVxTeMZSaJ9YhJquyQG7PPHxIpCnz4uQQkZFRb0HQDGMEmsPC49Sx4h6UBQ/3aA==}
+  /turbo-darwin-arm64/1.2.8:
+    resolution: {integrity: sha512-hDcbQzUnKDa5j+MPnt8hbhcENeGD+dxee9O8LkRUGgHFQzqME0YVZsRDwwMCnpRSmr9ZlvZYQJPRELhBdary9Q==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.2.6:
-    resolution: {integrity: sha512-m5G86zILy0Qc/fy/2Auu74c5St/yS+SQi8ka2Wb/uVMPQjh7VpM3mB/z7U5pZTv92w2HJ8q5krC0uLT+pH4n8Q==}
+  /turbo-freebsd-64/1.2.8:
+    resolution: {integrity: sha512-Bd91gNJ9QdsJOjGTpY0YYIa/BIS9BP21gKcpcjZHl4pRpPHraeT9M+RYtpv9bWH3BUWYf0HUzfagOHubrkKq+g==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.2.6:
-    resolution: {integrity: sha512-tjbrRoN8fMuyfyKJ/Dw97cNy9CVlzoT8zZbpo1rVZkMRYpnizIDECdecoiMttBZIP9/ktNcj6nJVHh40+a0EMw==}
+  /turbo-freebsd-arm64/1.2.8:
+    resolution: {integrity: sha512-T+fVnbZNFfQ990F8xazsC16EkV98PkQy091NDKYqbYD6C+PtyV6VpAXX61XDzw01JVJ0GxH/8eiLNttP5lfmnA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.2.6:
-    resolution: {integrity: sha512-NBCeqsNbTQKuP+5rTwfd4dyd/LTdfUuX+4B6FxXswz6IuCHymUaCRwmRfN6TdeGRFnSP4y2tAymU5zqrI4/Leg==}
+  /turbo-linux-32/1.2.8:
+    resolution: {integrity: sha512-wdhssIJQJfYPz9x4XTWZQSRI0mbzsU0Qf3+4kM2XeGsP9k4mi+1g+4PbGutOLBzIWd9OY619dXz/ut43RWqepA==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.2.6:
-    resolution: {integrity: sha512-27NGdEaAOkM/2Bj/QwSNI0b8VxWj9TrfqIE7ATENaMV4B+ukFgFvUkXQuJhnmb4InMxZSc8q01KaSou5P034Sw==}
+  /turbo-linux-64/1.2.8:
+    resolution: {integrity: sha512-9OZhxejgl8qQptTUdGnvNXJeFD+I6xF5jkW/tzu5sY9XcdtVvGJ5S4nXYbzG9kPgg4sC6I2gajMCb1l3f5jxSA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.2.6:
-    resolution: {integrity: sha512-a0aw0kUfvUVLRV7K+5CjscJKDCLwLtb8p28KLHpjvy8EP7Us+n9DH0tZ2M/CAy02cZI7yOzbWEx0L4Q3a1Dajw==}
+  /turbo-linux-arm/1.2.8:
+    resolution: {integrity: sha512-RFLScvJPiuVoTDl83iCFNhXICi+F26A0dhBRaOdD9xP5CjcRTS7ITrPpfiELZ/oQzDdZpk3kD+6MxJPtWxoUkg==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.2.6:
-    resolution: {integrity: sha512-zvk7vQ3N3QU2kKKJQ/qalAen3wkPhcoBD3NIlEwKVL2OYaSCa4UDgOSjpwLw+FAmbWh0zB5Jm8mcLXcok9xyUQ==}
+  /turbo-linux-arm64/1.2.8:
+    resolution: {integrity: sha512-S7Xu5mhEiTOQNVSaERdCEwWn3IdY0hBIBSoU6TNPD8uIR1jw8r2oV/v/hyuNRRbUfq7as+5tmVXW+RXY/dSkEA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.2.6:
-    resolution: {integrity: sha512-5sLTNpXedD4aPCtKzbGOo3THImQVgywivFzbLgD5apkF5eYImG/1oRPH0tjdIN/uEqKFJdxniN5EnLE3uUA76g==}
+  /turbo-linux-mips64le/1.2.8:
+    resolution: {integrity: sha512-JXakBXqVhQrNwwe9t/qw1XowTxKuwv4zh3XVjIX4lKrIPjZZq4XRb3zjLRmtNK7MOV9VZ6Tg6JGc87CNYtp2eA==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.2.6:
-    resolution: {integrity: sha512-dNIDtCXZolAdm84tCWynntcTbaOErCEbT0onuWwwhJ3CZfC68vqghkYJu7o4T8rMek0RLLcIh/Y4dNM3bp1Mvg==}
+  /turbo-linux-ppc64le/1.2.8:
+    resolution: {integrity: sha512-GBFcyV6y+KHmBCylJmk9/b8YO7O5jknWf3Radva3YYcfihzn7gm6pCWd17ML28ZLMEvJfWEtbHrU4gDFk+k7Mw==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.2.6:
-    resolution: {integrity: sha512-1rzktj68Ohqi+OPeSvWqbb6Er0yS7FidRku8IQIZJ0bmwP/a5OMqIHXHoIEbn5/ceXry6vJm8aYDgm1FAKkbZw==}
+  /turbo-windows-32/1.2.8:
+    resolution: {integrity: sha512-z6FSmbPDtDxz0vDbP5Odd1wJx7aACtxQ8XvIRB5sR+dvSCW40RZZLh9LTjWb49y3l7YsnqVdjEE0/bTu56M7hQ==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.2.6:
-    resolution: {integrity: sha512-91m+np5oxTRVORjkFVf2BypYjrhB+Q7ZaKqti5q4A0qLIvYs0dqGitT45j547XKWtlk2dP2ziXhYs2btDOCr4w==}
+  /turbo-windows-64/1.2.8:
+    resolution: {integrity: sha512-RiIy6ZfuEquje7k53DXNI9zR34AN5/8JJwZLnVhPzdqYdth9EXROS9pOKNNnYEvcWoG34xbgISezsxTXzcHVAA==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-arm64/1.2.6:
-    resolution: {integrity: sha512-92vhzWNu+ZrjMK1D6y1bjHTQjIVx0YViYCHDSQNY56STQgUleRW+aColVGs2MnZ4lv7vHhA9FIDJ19CRYpTiNA==}
+  /turbo-windows-arm64/1.2.8:
+    resolution: {integrity: sha512-usARU7a51r8bY+Z6d7bO3N+97x2C4d2PftbDQaTTBuHQCdbYoZSKhiTPTJfrij8FaxVWjtfoTBxlTCh3mzuNOQ==}
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.2.6:
-    resolution: {integrity: sha512-7zh48qI2dTb1ktVhTyVLvleRWYVIDNlYnZt9rb8nA/evwZJC5x7ETK4a86f0f4WBAzp3A/TRbE8HNF4cGSkWvw==}
+  /turbo/1.2.8:
+    resolution: {integrity: sha512-Ms5ZvRlTjl3RF+ccWuGK2Gzgm4Zvr6mtaNwtBJR48u8gcDRjg1eSrpkwvCD+ENEVeQ39MxKjNS51ZYPIBnnhUw==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.2.6
-      turbo-darwin-arm64: 1.2.6
-      turbo-freebsd-64: 1.2.6
-      turbo-freebsd-arm64: 1.2.6
-      turbo-linux-32: 1.2.6
-      turbo-linux-64: 1.2.6
-      turbo-linux-arm: 1.2.6
-      turbo-linux-arm64: 1.2.6
-      turbo-linux-mips64le: 1.2.6
-      turbo-linux-ppc64le: 1.2.6
-      turbo-windows-32: 1.2.6
-      turbo-windows-64: 1.2.6
-      turbo-windows-arm64: 1.2.6
+      turbo-darwin-64: 1.2.8
+      turbo-darwin-arm64: 1.2.8
+      turbo-freebsd-64: 1.2.8
+      turbo-freebsd-arm64: 1.2.8
+      turbo-linux-32: 1.2.8
+      turbo-linux-64: 1.2.8
+      turbo-linux-arm: 1.2.8
+      turbo-linux-arm64: 1.2.8
+      turbo-linux-mips64le: 1.2.8
+      turbo-linux-ppc64le: 1.2.8
+      turbo-windows-32: 1.2.8
+      turbo-windows-64: 1.2.8
+      turbo-windows-arm64: 1.2.8
     dev: true
 
   /type-check/0.4.0:
