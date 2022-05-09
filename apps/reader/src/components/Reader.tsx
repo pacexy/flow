@@ -1,7 +1,7 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -96,12 +96,16 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     [next, prev],
   )
 
+  const handleClick = useCallback(() => {
+    reader.selectGroup(index)
+  }, [index])
+
   return (
     <div
       ref={ref}
       className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
       tabIndex={1}
-      onClick={() => reader.selectGroup(index)}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
       <Tab.List onDelete={() => reader.removeGroup(index)}>
@@ -143,7 +147,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         <ReaderPane
           tab={selectedTab}
           key={selectedTab.book.id}
-          index={index}
+          onClick={handleClick}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
         />
@@ -154,21 +158,30 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
 interface ReaderPaneProps {
   tab: ReaderTab
-  index: number
+  onClick: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
   onWheel: (e: WheelEvent) => void
 }
 
 export function ReaderPane({
   tab,
-  index,
+  onClick,
   onKeyDown,
   onWheel,
 }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { rendition, prevLocation } = useSnapshot(tab)
+  const { rendition, prevLocation, results, location } = useSnapshot(tab)
+
+  const result = results?.find((r) => r.id === location?.start.href)
+  const matches = result?.subitems
+
+  useEffect(() => {
+    matches?.forEach((m) => {
+      rendition?.annotations.highlight(m.cfi!)
+    })
+  }, [matches, rendition?.annotations])
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
@@ -194,27 +207,42 @@ export function ReaderPane({
 
   const { setDragover } = useDndContext()
 
+  const [iframe, setIframe] = useState<Window>()
+
   useEffect(() => {
     rendition?.on('rendered', (_: Section, view: any) => {
       const iframe = view.window as Window
-      if (!iframe) return
+      setIframe(iframe)
+    })
+  }, [rendition])
 
+  useEffect(() => {
+    if (iframe)
       // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
       iframe.ondragover = () => {
         console.log('drag enter in iframe')
         setDragover(true)
       }
+  }, [iframe, setDragover])
+
+  useEffect(() => {
+    if (iframe)
       iframe.onclick = (e: any) => {
         // `instanceof` may not work in iframe
         if (e.path.find((el: HTMLElement) => el.tagName === 'A')) {
           tab.showPrevLocation()
         }
-        reader.selectGroup(index)
+        onClick()
       }
-      iframe.onwheel = onWheel
-      iframe.onkeydown = onKeyDown
-    })
-  }, [index, onKeyDown, onWheel, rendition, setDragover, tab])
+  }, [iframe, onClick, tab])
+
+  useEffect(() => {
+    if (iframe) iframe.onwheel = onWheel
+  }, [iframe, onWheel])
+
+  useEffect(() => {
+    if (iframe) iframe.onkeydown = onKeyDown
+  }, [iframe, onKeyDown])
 
   return (
     <>

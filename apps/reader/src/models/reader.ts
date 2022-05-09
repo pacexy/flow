@@ -96,7 +96,7 @@ export class ReaderTab {
       const navItem = this.nav?.get(s.href)
       if (navItem) {
         results.push({
-          id: navItem.id,
+          id: navItem.href,
           excerpt: navItem.label.trim(),
           subitems,
           expanded: true,
@@ -238,6 +238,7 @@ export class Reader {
   }
 
   selectGroup(index: number) {
+    console.log(index)
     this.focusedIndex = index
   }
 }
