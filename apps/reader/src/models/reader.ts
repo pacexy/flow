@@ -137,8 +137,24 @@ export class ReaderTab {
     )
     this.rendition.display(this.location?.start.cfi)
     this.rendition.on('relocated', (loc: Location) => {
-      console.log(this)
+      console.log('relocated', loc)
       this.location = ref(loc)
+    })
+
+    this.rendition.on('attached', (...args: any[]) => {
+      console.log('attached', args)
+    })
+    this.rendition.on('started', (...args: any[]) => {
+      console.log('started', args)
+    })
+    this.rendition.on('displayed', (...args: any[]) => {
+      console.log('displayed', args)
+    })
+    this.rendition.on('rendered', (...args: any[]) => {
+      console.log('rendered', args)
+    })
+    this.rendition.on('removed', (...args: any[]) => {
+      console.log('removed', args)
     })
   }
 
@@ -146,6 +162,8 @@ export class ReaderTab {
 }
 
 export class ReaderGroup {
+  id = crypto.randomUUID()
+
   constructor(
     public tabs: ReaderTab[],
     public selectedIndex = tabs.length - 1,

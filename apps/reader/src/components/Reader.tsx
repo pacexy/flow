@@ -1,7 +1,7 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
-import { useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { MdChevronRight } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -25,8 +25,8 @@ export function ReaderGridView() {
   if (!groups.length) return null
   return (
     <SplitView>
-      {groups.map((_, i) => (
-        <ReaderGroup key={i} index={i} />
+      {groups.map(({ id }, i) => (
+        <ReaderGroup key={id} index={i} />
       ))}
     </SplitView>
   )
@@ -37,15 +37,72 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const selectedTab = group.selectedTab!
   const { focusedIndex } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
+  const selectedTab = group.tabs[selectedIndex]!
   const books = useLibrary()
+  const ref = useRef<HTMLDivElement>(null)
+
+  const focus = useCallback(() => {
+    ref.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    focus()
+  }, [focus])
+
+  const { rendition } = selectedTab
+
+  const prev = useCallback(() => {
+    rendition?.prev()
+    focus()
+  }, [focus, rendition])
+
+  const next = useCallback(() => {
+    rendition?.next()
+    focus()
+  }, [focus, rendition])
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent | KeyboardEvent) => {
+      try {
+        switch (e.code) {
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            prev()
+            break
+          case 'ArrowRight':
+          case 'ArrowDown':
+            next()
+            break
+          case 'Space':
+            e.shiftKey ? prev() : next()
+        }
+      } catch (error) {
+        // ignore `rendition is undefined` error
+      }
+    },
+    [next, prev],
+  )
+
+  const handleWheel = useCallback(
+    (e: WheelEvent) => {
+      if (e.deltaY < 0) {
+        prev()
+      } else {
+        next()
+      }
+    },
+    [next, prev],
+  )
 
   return (
     <div
-      className="flex h-full flex-1 flex-col overflow-hidden"
+      ref={ref}
+      className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
+      tabIndex={1}
       onClick={() => reader.selectGroup(index)}
+      onKeyDown={handleKeyDown}
     >
       <Tab.List onDelete={() => reader.removeGroup(index)}>
         {tabs.map(({ book }, i) => {
@@ -83,7 +140,13 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           }
         }}
       >
-        <ReaderPane tab={selectedTab} key={selectedTab.book.id} index={index} />
+        <ReaderPane
+          tab={selectedTab}
+          key={selectedTab.book.id}
+          index={index}
+          onKeyDown={handleKeyDown}
+          onWheel={handleWheel}
+        />
       </DropZone>
     </div>
   )
@@ -92,9 +155,16 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 interface ReaderPaneProps {
   tab: ReaderTab
   index: number
+  onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
+  onWheel: (e: WheelEvent) => void
 }
 
-export function ReaderPane({ tab, index }: ReaderPaneProps) {
+export function ReaderPane({
+  tab,
+  index,
+  onKeyDown,
+  onWheel,
+}: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
@@ -125,35 +195,26 @@ export function ReaderPane({ tab, index }: ReaderPaneProps) {
   const { setDragover } = useDndContext()
 
   useEffect(() => {
-    rendition?.on('rendered', (section: Section) => {
-      console.log(section)
-
-      // @ts-ignore
-      const [view] = rendition?.views()._views ?? []
-      console.log(view)
+    rendition?.on('rendered', (_: Section, view: any) => {
+      const iframe = view.window as Window
+      if (!iframe) return
 
       // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
-      view.window.ondragover = () => {
+      iframe.ondragover = () => {
         console.log('drag enter in iframe')
         setDragover(true)
       }
-      view.window.onclick = (e: any) => {
+      iframe.onclick = (e: any) => {
         // `instanceof` may not work in iframe
         if (e.path.find((el: HTMLElement) => el.tagName === 'A')) {
           tab.showPrevLocation()
         }
-
         reader.selectGroup(index)
       }
-      view.window.onmousewheel = (e: WheelEvent) => {
-        if (e.deltaY < 0) {
-          rendition?.prev()
-        } else {
-          rendition?.next()
-        }
-      }
+      iframe.onwheel = onWheel
+      iframe.onkeydown = onKeyDown
     })
-  }, [index, rendition, setDragover, tab])
+  }, [index, onKeyDown, onWheel, rendition, setDragover, tab])
 
   return (
     <>
@@ -190,7 +251,7 @@ interface ReaderPaneHeaderProps {
   tab: ReaderTab
 }
 export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
-  const { nav, location } = tab
+  const { nav, location } = useSnapshot(tab)
   const breadcrumbs = useMemo(() => {
     const crumbs = []
     let navItem = location && nav?.get(location?.start.href)
