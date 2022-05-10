@@ -26,13 +26,20 @@ export const DropZone: React.FC<DropZoneProps> = (props) => {
 
 type Position = 'universe' | 'left' | 'right' | 'top' | 'bottom'
 
+// > During the drag, in an event listener for the dragenter and dragover events, you use the data types of the data being dragged to check whether a drop is allowed.
+// https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Drag_operations#drag_data
+function accept(e?: DragEvent) {
+  const dt = e?.dataTransfer
+  return !!dt?.types.every((t) => ['text/plain', 'Files'].includes(t))
+}
+
 const DropZoneInner: React.FC<DropZoneProps> = ({
   children,
   className,
   onDrop,
   split = false,
 }) => {
-  const { dragover, setDragover } = useDndContext()
+  const { dragover, setDragEvent } = useDndContext()
   const [position, setPosition] = useState<Position>()
   // console.log(dragover, position)
 
@@ -75,9 +82,10 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
       className={clsx('scroll-parent relative h-full', className)}
       // https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications#selecting_files_using_drag_and_drop
       onDragEnter={(e) => {
+        console.log('drag enter', e.dataTransfer.types)
         if (dragover) return
-        console.log('drag enter', e.target)
-        setDragover(true)
+
+        setDragEvent(e)
         e.stopPropagation()
         e.preventDefault()
       }}
@@ -102,11 +110,11 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
           onDragOver={handleDragover}
           onDragLeave={(e) => {
             console.log('drag leave', e.target)
-            setDragover(false)
+            setDragEvent()
           }}
           onDrop={(e) => {
             console.log('drop', e)
-            setDragover(false)
+            setDragEvent()
             e.stopPropagation()
             e.preventDefault()
             onDrop?.(e, position)
@@ -120,12 +128,17 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
 
 const DndContext = createContext<{
   dragover: boolean
-  setDragover: (dragover: boolean) => void
-}>({ dragover: false, setDragover: () => {} })
+  setDragEvent: (e?: DragEvent) => void
+}>({ dragover: false, setDragEvent: () => {} })
 const DndProvider: React.FC = ({ children }) => {
   const [dragover, setDragover] = useState(false)
+
+  const setDragEvent = useCallback((e?: DragEvent) => {
+    setDragover(accept(e))
+  }, [])
+
   return (
-    <DndContext.Provider value={{ dragover, setDragover }}>
+    <DndContext.Provider value={{ dragover, setDragEvent }}>
       {children}
     </DndContext.Provider>
   )

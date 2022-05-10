@@ -205,7 +205,7 @@ export function ReaderPane({
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
 
-  const { setDragover } = useDndContext()
+  const { setDragEvent } = useDndContext()
 
   const [iframe, setIframe] = useState<Window>()
 
@@ -219,11 +219,11 @@ export function ReaderPane({
   useEffect(() => {
     if (iframe)
       // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
-      iframe.ondragover = () => {
+      iframe.ondragover = (e: any) => {
         console.log('drag enter in iframe')
-        setDragover(true)
+        setDragEvent(e)
       }
-  }, [iframe, setDragover])
+  }, [iframe, setDragEvent])
 
   useEffect(() => {
     if (iframe)
