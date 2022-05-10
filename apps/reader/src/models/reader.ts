@@ -58,6 +58,7 @@ export class ReaderTab {
   prevLocation?: Location
   sections?: Section[]
   results?: Match[]
+  activeResultID?: string
 
   calc() {
     this.toc = this.nav?.toc.flatMap((item) => flatTree(item)) ?? []
@@ -98,7 +99,7 @@ export class ReaderTab {
         results.push({
           id: navItem.href,
           excerpt: navItem.label.trim(),
-          subitems,
+          subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
           expanded: true,
         })
       }

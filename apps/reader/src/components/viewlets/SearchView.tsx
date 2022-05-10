@@ -70,15 +70,21 @@ interface ResultRowProps {
 const ResultRow: React.FC<ResultRowProps> = ({ result }) => {
   if (!result) return null
   const { cfi, excerpt, depth, expanded, subitems, id } = result
+  const tab = reader.focusedTab
 
   return (
     <Row
       label={excerpt}
       depth={depth}
+      active={tab?.activeResultID === id}
       expanded={expanded}
       children={subitems}
-      onClick={() => reader.focusedTab?.rendition?.display(cfi)}
-      toggle={() => reader.focusedTab?.toggleResult(id)}
+      onClick={() => {
+        if (!tab) return
+        tab.activeResultID = id
+        tab.rendition?.display(cfi)
+      }}
+      toggle={() => tab?.toggleResult(id)}
     />
   )
 }

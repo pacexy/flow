@@ -44,39 +44,44 @@ const LibraryPane: React.FC = () => {
 
 const TocPane: React.FC = () => {
   const { focusedTab } = useSnapshot(reader)
-  const { outerRef, innerRef, items } = useList(focusedTab?.toc)
+  const { outerRef, innerRef, items, scrollToItem } = useList(focusedTab?.toc)
 
   return (
     <Pane headline="toc" ref={outerRef}>
       <div ref={innerRef}>
-        {items.map(
-          ({ index }) =>
-            reader.focusedTab && (
-              <TocRow key={index} index={index} tab={reader.focusedTab} />
-            ),
-        )}
+        {items.map(({ index }) => (
+          <TocRow
+            key={index}
+            index={index}
+            tab={reader.focusedTab}
+            onActivate={() => scrollToItem(index)}
+          />
+        ))}
       </div>
     </Pane>
   )
 }
 
 interface TocRowProps {
-  tab: ReaderTab
+  tab?: ReaderTab
   index: number
+  onActivate: () => void
 }
-const TocRow: React.FC<TocRowProps> = ({ tab, index }) => {
-  const item = useSnapshot(tab.toc)[index]
+const TocRow: React.FC<TocRowProps> = ({ tab, index, onActivate }) => {
+  const item = tab?.toc[index]
   if (!item) return null
-  let { label, subitems, depth, expanded, id } = item
+  const { label, subitems, depth, expanded, id, href } = item
 
   return (
     <Row
       label={label.trim()}
       depth={depth}
+      active={tab.location?.start.href === href}
       expanded={expanded}
       children={subitems}
       onClick={() => tab.rendition?.display(item.href)}
       toggle={() => tab.toggle(id)}
+      onActivate={onActivate}
     />
   )
 }
