@@ -4,29 +4,29 @@ import { ComponentProps, useEffect, useRef } from 'react'
 import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
 interface RowProps extends ComponentProps<'div'> {
-  label: string
   expanded?: boolean
   active?: boolean
   depth?: number
-  children?: Readonly<any[]>
+  subitems?: Readonly<any[]>
   toggle?: () => void
   onActivate?: () => void
 }
 export const Row: React.FC<RowProps> = ({
-  label,
+  title,
   expanded = false,
   active = false,
   depth = 0,
-  children,
+  subitems,
   toggle,
   onActivate,
   className,
+  children,
   ...props
 }) => {
   const onActivateRef = useRef(onActivate)
   onActivateRef.current = onActivate
 
-  const isLeaf = !children || !children.length
+  const isLeaf = !subitems || !subitems.length
   const Icon = expanded ? MdExpandMore : MdChevronRight
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const Row: React.FC<RowProps> = ({
         className,
       )}
       style={{ paddingLeft: depth * 8 }}
-      title={label}
+      title={title}
       {...props}
     >
       <StateLayer />
@@ -54,7 +54,7 @@ export const Row: React.FC<RowProps> = ({
         }}
       />
       <div className="typescale-body-small text-on-surface-variant truncate">
-        {label}
+        {children || title}
       </div>
     </div>
   )

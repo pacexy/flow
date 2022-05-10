@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Highlighter from 'react-highlight-words'
 import { useSnapshot } from 'valtio'
 
 import { useList } from '@ink/reader/hooks'
@@ -33,15 +34,16 @@ export const SearchView: React.FC<ViewProps> = (props) => {
           setKeyword(e.target.value)
         }}
       />
-      {results && <ResultList results={results as Match[]} />}
+      {results && <ResultList results={results as Match[]} keyword={keyword} />}
     </View>
   )
 }
 
 interface ResultListProps {
   results: Match[]
+  keyword: string
 }
-export const ResultList: React.FC<ResultListProps> = ({ results }) => {
+export const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   const rows = results.flatMap((r) => flatTree(r)) ?? []
   const { outerRef, innerRef, items } = useList(rows)
 
@@ -56,7 +58,7 @@ export const ResultList: React.FC<ResultListProps> = ({ results }) => {
       <div ref={outerRef} className="scroll">
         <div ref={innerRef}>
           {items.map(({ index }) => (
-            <ResultRow key={index} result={rows[index]} />
+            <ResultRow key={index} result={rows[index]} keyword={keyword} />
           ))}
         </div>
       </div>
@@ -66,25 +68,34 @@ export const ResultList: React.FC<ResultListProps> = ({ results }) => {
 
 interface ResultRowProps {
   result?: Match
+  keyword: string
 }
-const ResultRow: React.FC<ResultRowProps> = ({ result }) => {
+const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
   if (!result) return null
   const { cfi, excerpt, depth, expanded, subitems, id } = result
   const tab = reader.focusedTab
 
   return (
     <Row
-      label={excerpt}
+      title={excerpt}
       depth={depth}
       active={tab?.activeResultID === id}
       expanded={expanded}
-      children={subitems}
+      subitems={subitems}
       onClick={() => {
         if (!tab) return
         tab.activeResultID = id
         tab.rendition?.display(cfi)
       }}
       toggle={() => tab?.toggleResult(id)}
-    />
+    >
+      {depth === 2 && (
+        <Highlighter
+          highlightClassName="match-highlight"
+          searchWords={[keyword]}
+          textToHighlight={excerpt}
+        />
+      )}
+    </Row>
   )
 }

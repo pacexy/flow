@@ -74,11 +74,11 @@ const TocRow: React.FC<TocRowProps> = ({ tab, index, onActivate }) => {
 
   return (
     <Row
-      label={label.trim()}
+      title={label.trim()}
       depth={depth}
       active={tab.location?.start.href === href}
       expanded={expanded}
-      children={subitems}
+      subitems={subitems}
       onClick={() => tab.rendition?.display(item.href)}
       toggle={() => tab.toggle(id)}
       onActivate={onActivate}

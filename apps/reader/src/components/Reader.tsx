@@ -179,8 +179,23 @@ export function ReaderPane({
 
   useEffect(() => {
     matches?.forEach((m) => {
-      rendition?.annotations.highlight(m.cfi!)
+      rendition?.annotations.highlight(
+        m.cfi!,
+        undefined,
+        undefined,
+        undefined,
+        {
+          fill: 'rgba(255, 223, 93, 0.3)',
+          'fill-opacity': 'unset',
+        },
+      )
     })
+
+    return () => {
+      matches?.forEach((m) => {
+        rendition?.annotations.remove(m.cfi!, 'highlight')
+      })
+    }
   }, [matches, rendition?.annotations])
 
   useEffect(() => {
