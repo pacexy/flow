@@ -82,6 +82,7 @@ const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
       active={tab?.activeResultID === id}
       expanded={expanded}
       subitems={subitems}
+      badge
       onClick={() => {
         if (!tab) return
         tab.activeResultID = id

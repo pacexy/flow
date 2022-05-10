@@ -10,6 +10,7 @@ interface RowProps extends ComponentProps<'div'> {
   subitems?: Readonly<any[]>
   toggle?: () => void
   onActivate?: () => void
+  badge?: boolean
 }
 export const Row: React.FC<RowProps> = ({
   title,
@@ -21,12 +22,13 @@ export const Row: React.FC<RowProps> = ({
   onActivate,
   className,
   children,
+  badge,
   ...props
 }) => {
   const onActivateRef = useRef(onActivate)
   onActivateRef.current = onActivate
 
-  const isLeaf = !subitems || !subitems.length
+  const childCount = subitems?.length
   const Icon = expanded ? MdExpandMore : MdChevronRight
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export const Row: React.FC<RowProps> = ({
       <StateLayer />
       <Icon
         size={20}
-        className={clsx('text-outline shrink-0', isLeaf && 'invisible')}
+        className={clsx('text-outline shrink-0', !childCount && 'invisible')}
         onClick={(e) => {
           e.stopPropagation()
           toggle?.()
@@ -56,6 +58,11 @@ export const Row: React.FC<RowProps> = ({
       <div className="typescale-body-small text-on-surface-variant truncate">
         {children || title}
       </div>
+      {badge && childCount && (
+        <div className="bg-tertiary-container text-on-tertiary-container ml-auto rounded-full px-1.5 py-px text-[11px]">
+          {childCount}
+        </div>
+      )}
     </div>
   )
 }
