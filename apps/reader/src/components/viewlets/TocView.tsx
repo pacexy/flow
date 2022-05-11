@@ -44,7 +44,7 @@ const LibraryPane: React.FC = () => {
 
 const TocPane: React.FC = () => {
   const toc = reader.focusedTab?.nav?.toc as INavItem[] | undefined
-  const rows = toc?.flatMap((i) => flatTree(i)) ?? []
+  const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
@@ -64,15 +64,17 @@ const TocPane: React.FC = () => {
         },
       ]}
     >
-      <div ref={innerRef}>
-        {items.map(({ index }) => (
-          <TocRow
-            key={index}
-            item={rows[index]}
-            onActivate={() => scrollToItem(index)}
-          />
-        ))}
-      </div>
+      {rows && (
+        <div ref={innerRef}>
+          {items.map(({ index }) => (
+            <TocRow
+              key={index}
+              item={rows[index]}
+              onActivate={() => scrollToItem(index)}
+            />
+          ))}
+        </div>
+      )}
     </Pane>
   )
 }
