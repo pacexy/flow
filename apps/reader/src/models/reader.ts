@@ -229,7 +229,6 @@ export class Reader {
   }
 
   addGroup(tabs: ReaderTab[], index = this.focusedIndex + 1) {
-    console.log(index)
     const group = proxy(new ReaderGroup(tabs))
     this.groups.splice(index, 0, group)
     this.focusedIndex = index
@@ -237,7 +236,6 @@ export class Reader {
   }
 
   selectGroup(index: number) {
-    console.log(index)
     this.focusedIndex = index
   }
 }

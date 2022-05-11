@@ -1,5 +1,6 @@
 import { StateLayer } from '@literal-ui/core'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
+import { useSnapshot } from 'valtio'
 
 import { useLibrary, useList } from '@ink/reader/hooks'
 import { dfs, flatTree, INavItem } from '@ink/reader/models'
@@ -43,7 +44,8 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const toc = reader.focusedTab?.nav?.toc as INavItem[] | undefined
+  const { focusedTab } = useSnapshot(reader)
+  const toc = focusedTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)
 
@@ -59,7 +61,9 @@ const TocPane: React.FC = () => {
           title: expanded ? 'Collapse All' : 'Expand All',
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
-            toc?.forEach((r) => dfs(r, (i) => (i.expanded = !expanded)))
+            reader.focusedTab?.nav?.toc?.forEach((r) =>
+              dfs(r as INavItem, (i) => (i.expanded = !expanded)),
+            )
           },
         },
       ]}
