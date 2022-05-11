@@ -20,7 +20,7 @@ export function View({ className, name, title, actions, ...props }: ViewProps) {
         <h2 title={title} className="text-on-surface text-[11px]">
           {name?.toUpperCase()}
         </h2>
-        {actions && <ActionBar actions={actions} className="" />}
+        {actions && <ActionBar actions={actions} className="-mr-1" />}
       </div>
       <div className={clsx('scroll-parent', className)} {...props} />
     </>

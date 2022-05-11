@@ -1,8 +1,8 @@
 import { StateLayer } from '@literal-ui/core'
-import { useSnapshot } from 'valtio'
+import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import { useLibrary, useList } from '@ink/reader/hooks'
-import { ReaderTab } from '@ink/reader/models'
+import { dfs, flatTree, INavItem } from '@ink/reader/models'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
@@ -43,17 +43,32 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const { focusedTab } = useSnapshot(reader)
-  const { outerRef, innerRef, items, scrollToItem } = useList(focusedTab?.toc)
+  const toc = reader.focusedTab?.nav?.toc as INavItem[] | undefined
+  const rows = toc?.flatMap((i) => flatTree(i)) ?? []
+  const expanded = toc?.some((r) => r.expanded)
+
+  const { outerRef, innerRef, items, scrollToItem } = useList(rows)
 
   return (
-    <Pane headline="toc" ref={outerRef}>
+    <Pane
+      headline="toc"
+      ref={outerRef}
+      actions={[
+        {
+          id: expanded ? 'collapse-all' : 'expand-all',
+          title: expanded ? 'Collapse All' : 'Expand All',
+          Icon: expanded ? VscCollapseAll : VscExpandAll,
+          handle() {
+            toc?.forEach((r) => dfs(r, (i) => (i.expanded = !expanded)))
+          },
+        },
+      ]}
+    >
       <div ref={innerRef}>
         {items.map(({ index }) => (
           <TocRow
             key={index}
-            index={index}
-            tab={reader.focusedTab}
+            item={rows[index]}
             onActivate={() => scrollToItem(index)}
           />
         ))}
@@ -63,24 +78,23 @@ const TocPane: React.FC = () => {
 }
 
 interface TocRowProps {
-  tab?: ReaderTab
-  index: number
+  item?: INavItem
   onActivate: () => void
 }
-const TocRow: React.FC<TocRowProps> = ({ tab, index, onActivate }) => {
-  const item = tab?.toc[index]
+const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
   if (!item) return null
   const { label, subitems, depth, expanded, id, href } = item
+  const tab = reader.focusedTab
 
   return (
     <Row
       title={label.trim()}
       depth={depth}
-      active={tab.location?.start.href === href}
+      active={tab?.location?.start.href === href}
       expanded={expanded}
       subitems={subitems}
-      onClick={() => tab.rendition?.display(item.href)}
-      toggle={() => tab.toggle(id)}
+      onClick={() => tab?.rendition?.display(item.href)}
+      toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
     />
   )

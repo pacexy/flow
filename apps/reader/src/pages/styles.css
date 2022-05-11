@@ -9,7 +9,7 @@
   width: 10px;
 }
 .scroll:hover::-webkit-scrollbar-thumb {
-  @apply bg-on-background/20 hover:bg-on-background/30 active:bg-on-background/40;
+  @apply bg-on-background/10 hover:bg-on-background/20 active:bg-on-background/30;
 }
 .scroll-parent {
   @apply flex flex-col overflow-hidden;

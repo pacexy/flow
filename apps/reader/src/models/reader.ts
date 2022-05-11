@@ -18,7 +18,7 @@ interface Node {
   expanded?: boolean
   subitems?: Node[]
 }
-interface INavItem extends NavItem, Node {
+export interface INavItem extends NavItem, Node {
   subitems?: INavItem[]
 }
 
@@ -49,25 +49,24 @@ function find<T extends Node>(nodes: T[] = [], id: string): T | undefined {
   return undefined
 }
 
+export function dfs<T extends Node>(node: T, fn: (node: T) => void) {
+  fn(node)
+  node.subitems?.forEach((child) => dfs(child as T, fn))
+}
+
 export class ReaderTab {
   epub = ref(ePub(this.book.data))
   rendition?: Rendition
   nav?: Navigation
-  toc: INavItem[] = []
   location?: Location
   prevLocation?: Location
   sections?: Section[]
   results?: Match[]
   activeResultID?: string
 
-  calc() {
-    this.toc = this.nav?.toc.flatMap((item) => flatTree(item)) ?? []
-  }
-
   toggle(id: string) {
     const item = find(this.nav?.toc, id) as INavItem
     if (item) item.expanded = !item.expanded
-    this.calc()
   }
 
   toggleResult(id: string) {
@@ -111,8 +110,7 @@ export class ReaderTab {
     if (this.rendition) return
 
     this.epub.loaded.navigation.then((nav) => {
-      this.nav = ref(nav)
-      this.calc()
+      this.nav = nav
     })
     console.log(
       '🚀 ~ file: Reader.ts ~ line 69 ~ ReaderTab ~ this.epub.loaded.navigation.then ~ this.epub',

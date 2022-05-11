@@ -29,23 +29,14 @@ export const SearchView: React.FC<ViewProps> = (props) => {
   return (
     <View
       actions={[
-        expanded
-          ? {
-              id: 'collapse-all',
-              title: 'Collapse All',
-              Icon: VscCollapseAll,
-              handle() {
-                reader.focusedTab?.results?.forEach((r) => (r.expanded = false))
-              },
-            }
-          : {
-              id: 'expand-all',
-              title: 'Expand All',
-              Icon: VscExpandAll,
-              handle() {
-                reader.focusedTab?.results?.forEach((r) => (r.expanded = true))
-              },
-            },
+        {
+          id: expanded ? 'collapse-all' : 'expand-all',
+          title: expanded ? 'Collapse All' : 'Expand All',
+          Icon: expanded ? VscCollapseAll : VscExpandAll,
+          handle() {
+            reader.focusedTab?.results?.forEach((r) => (r.expanded = !expanded))
+          },
+        },
       ]}
       {...props}
     >

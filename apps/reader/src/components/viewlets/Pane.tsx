@@ -4,6 +4,8 @@ import { forwardRef } from 'react'
 import { Children, ComponentProps } from 'react'
 import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
+import { Action, ActionBar } from '../base'
+
 interface PaneProps extends ComponentProps<'div'> {
   headline: string
   /**
@@ -12,9 +14,10 @@ interface PaneProps extends ComponentProps<'div'> {
    * the threshold.
    */
   shrinkThreshold?: number
+  actions?: Action[]
 }
 export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
-  { className, headline, children, shrinkThreshold = 0, ...props },
+  { className, headline, children, shrinkThreshold = 0, actions, ...props },
   ref,
 ) {
   const [open, toggle] = useBoolean(true)
@@ -23,7 +26,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
   const minLine = Math.min(n, shrinkThreshold)
   return (
     <div
-      className="scroll-parent select-none"
+      className="scroll-parent group select-none"
       style={{
         minHeight: (minLine + 1) * 24,
       }}
@@ -35,6 +38,12 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
         <div className="typescale-label-medium text-on-surface-variant">
           {headline.toUpperCase()}
         </div>
+        {actions && (
+          <ActionBar
+            actions={actions}
+            className="ml-auto hidden pr-1 group-hover:flex"
+          />
+        )}
       </div>
       <div
         ref={ref}
