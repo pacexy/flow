@@ -14,7 +14,6 @@ import { useSnapshot } from 'valtio'
 
 import { useFullScreen } from '../hooks'
 import { actionState } from '../state'
-import { keys } from '../utils'
 
 import { reader } from './Reader'
 import { SearchView } from './viewlets/SearchView'
@@ -31,15 +30,21 @@ export const Layout: React.FC = ({ children }) => {
   )
 }
 
-const actionMap = {
-  TOC: { title: 'Table of Content', Icon: MdToc, View: TocView },
-  Search: { title: 'Search', Icon: MdSearch, View: SearchView },
-  Typography: {
+const actions = [
+  { name: 'TOC', title: 'Table of Content', Icon: MdToc, View: TocView },
+  {
+    name: 'Search',
+    title: 'Search',
+    Icon: MdSearch,
+    View: SearchView,
+  },
+  {
+    name: 'Typography',
     title: 'Typography',
     Icon: RiFontSize,
     View: TypographyView,
   },
-}
+] as const
 
 function ActivityBar() {
   const { toggle } = useColorScheme()
@@ -48,15 +53,15 @@ function ActivityBar() {
   return (
     <div className="hidden flex-col sm:flex">
       <ActionBar className="flex-1">
-        {keys(actionMap).map((k) => {
-          const active = action === k
+        {actions.map(({ name, title, Icon }) => {
+          const active = action === name
           return (
             <Action
-              title={actionMap[k].title}
-              Icon={actionMap[k].Icon}
+              title={title}
+              Icon={Icon}
               active={active}
-              onClick={() => setAction(active ? undefined : k)}
-              key={k}
+              onClick={() => setAction(active ? undefined : name)}
+              key={name}
             />
           )
         })}
@@ -131,14 +136,13 @@ function SideBar() {
       )}
       style={{ width: 240 }}
     >
-      <h2
-        title={action}
-        className="typescale-body-small text-outline px-5 py-3"
-      >
-        {action?.toUpperCase()}
-      </h2>
-      {Object.entries(actionMap).map(([a, { View }]) => (
-        <View key={a} className={clsx(a !== action && '!hidden')} />
+      {actions.map(({ name, title, View }) => (
+        <View
+          key={name}
+          name={name}
+          title={title}
+          className={clsx(name !== action && '!hidden')}
+        />
       ))}
     </div>
   )

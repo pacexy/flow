@@ -10,11 +10,11 @@ interface IconButtonProps extends ComponentProps<'div'> {
 export function IconButton({
   className,
   Icon,
-  size = 18,
+  size = 16,
   ...props
 }: IconButtonProps) {
   return (
-    <div role="button" className={clsx('relative', className)} {...props}>
+    <div role="button" className={clsx('relative p-0.5', className)} {...props}>
       <StateLayer />
       <Icon size={size} />
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Highlighter from 'react-highlight-words'
+import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useSnapshot } from 'valtio'
 
 import { useList } from '@ink/reader/hooks'
@@ -16,6 +17,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
   const [keyword, setKeyword] = useState('')
 
   const results = focusedTab?.results
+  const expanded = results?.some((r) => r.expanded)
 
   useEffect(() => {
     // avoid blocking input
@@ -25,7 +27,28 @@ export const SearchView: React.FC<ViewProps> = (props) => {
   }, [keyword])
 
   return (
-    <View {...props}>
+    <View
+      actions={[
+        expanded
+          ? {
+              id: 'collapse-all',
+              title: 'Collapse All',
+              Icon: VscCollapseAll,
+              handle() {
+                reader.focusedTab?.results?.forEach((r) => (r.expanded = false))
+              },
+            }
+          : {
+              id: 'expand-all',
+              title: 'Expand All',
+              Icon: VscExpandAll,
+              handle() {
+                reader.focusedTab?.results?.forEach((r) => (r.expanded = true))
+              },
+            },
+      ]}
+      {...props}
+    >
       <TextField
         as="input"
         name="keyword"
