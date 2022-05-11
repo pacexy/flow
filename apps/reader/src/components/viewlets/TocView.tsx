@@ -88,11 +88,14 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
   const { label, subitems, depth, expanded, id, href } = item
   const tab = reader.focusedTab
 
+  const sHref = tab?.location?.start.href
+  const active = sHref && href.startsWith(sHref)
+
   return (
     <Row
       title={label.trim()}
       depth={depth}
-      active={tab?.location?.start.href === href}
+      active={!!active}
       expanded={expanded}
       subitems={subitems}
       onClick={() => tab?.rendition?.display(item.href)}

@@ -1,5 +1,6 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { NavItem } from 'epubjs'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
@@ -9,7 +10,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
-import { Reader, ReaderTab } from '../models'
+import { dfs, Reader, ReaderTab } from '../models'
 
 import { Tab } from './Tab'
 import { DropZone, SplitView, useDndContext } from './base'
@@ -297,20 +298,30 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const { nav, location } = useSnapshot(tab)
   const breadcrumbs = useMemo(() => {
     const crumbs = []
-    let navItem = location && nav?.get(location?.start.href)
 
-    while (navItem) {
-      crumbs.unshift(navItem)
-      const parentId = navItem.parent
-      if (!parentId) {
-        navItem = undefined
-      } else {
-        // @ts-ignore
-        const index = nav.tocById[parentId]
-        // @ts-ignore
-        navItem = nav.getByIndex(parentId, index, nav.toc)
+    if (nav && location) {
+      let navItem: NavItem | undefined
+
+      nav.toc.forEach((item) =>
+        dfs(item as NavItem, (i) => {
+          if (i.href.startsWith(location.start.href)) navItem = i
+        }),
+      )
+
+      while (navItem) {
+        crumbs.unshift(navItem)
+        const parentId = navItem.parent
+        if (!parentId) {
+          navItem = undefined
+        } else {
+          // @ts-ignore
+          const index = nav.tocById[parentId]
+          // @ts-ignore
+          navItem = nav.getByIndex(parentId, index, nav.toc)
+        }
       }
     }
+
     return crumbs
   }, [location, nav])
 
