@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.next.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "paths": {
       "@ink/reader/*": ["apps/reader/src/*"]
     }

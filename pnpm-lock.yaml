@@ -48,6 +48,7 @@ importers:
 
   apps/reader:
     specifiers:
+      '@github/mini-throttle': ^2.1.0
       '@ink/internal': workspace:*
       '@literal-ui/core': 0.0.12
       '@literal-ui/hooks': 0.0.7
@@ -87,6 +88,7 @@ importers:
       type-fest: 2.12.2
       valtio: 1.6.0
     dependencies:
+      '@github/mini-throttle': 2.1.0
       '@ink/internal': link:../../packages/internal
       '@literal-ui/core': 0.0.12_6f59ad6826e985587dc9ea5f880b28d3
       '@literal-ui/hooks': 0.0.7_react-dom@18.0.0+react@18.0.0
@@ -1506,6 +1508,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@github/mini-throttle/2.1.0:
+    resolution: {integrity: sha512-iEeR2OdVCPkdIPUszL8gJnKNu4MR8ANh7y0u/LPyaatYezgaWxUZEzhFntloqQq+HE6MZkFy+cl+xzCNuljOdw==}
+    dev: false
 
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}

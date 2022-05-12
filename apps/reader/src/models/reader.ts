@@ -1,3 +1,4 @@
+import { debounce } from '@github/mini-throttle/decorators'
 import type { Rendition, Location } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
@@ -82,6 +83,7 @@ export class ReaderTab {
     this.prevLocation = undefined
   }
 
+  @debounce(1000)
   search(keyword: string) {
     if (!keyword) {
       this.results = undefined

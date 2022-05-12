@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@github/mini-throttle": "^2.1.0",
     "@ink/internal": "workspace:*",
     "@literal-ui/core": "0.0.12",
     "@literal-ui/hooks": "0.0.7",
