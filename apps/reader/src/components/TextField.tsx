@@ -1,11 +1,12 @@
 import clsx from 'clsx'
-import { ElementType } from 'react'
+import { ElementType, useRef, useEffect } from 'react'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
 type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
   {
     name: string
     hideLabel?: boolean
+    autoFocus?: boolean
   },
   T
 >
@@ -14,9 +15,16 @@ export function TextField<T extends ElementType = 'input'>({
   as,
   className,
   hideLabel = false,
+  autoFocus,
   ...props
 }: TextFieldProps<T>) {
   const Component = as || 'input'
+  const ref = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (autoFocus) ref.current?.focus()
+  }, [autoFocus])
+
   return (
     <div
       className={clsx(
@@ -34,6 +42,7 @@ export function TextField<T extends ElementType = 'input'>({
         {name}
       </label>
       <Component
+        ref={ref}
         name={name}
         id={name}
         className="typescale-body-medium p-1"

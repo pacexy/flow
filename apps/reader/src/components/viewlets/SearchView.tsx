@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
+import { useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { useList } from '@ink/reader/hooks'
 import { flatTree, Match } from '@ink/reader/models'
+import { actionState } from '@ink/reader/state'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
@@ -13,6 +15,7 @@ import { TextField } from '../TextField'
 import { View, ViewProps } from './View'
 
 export const SearchView: React.FC<ViewProps> = (props) => {
+  const action = useRecoilValue(actionState)
   const { focusedTab } = useSnapshot(reader)
   const [keyword, setKeyword] = useState('')
 
@@ -43,6 +46,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
       <TextField
         as="input"
         name="keyword"
+        autoFocus={action === 'Search'}
         hideLabel
         onChange={(e) => {
           setKeyword(e.target.value)
