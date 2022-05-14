@@ -83,6 +83,16 @@ export class ReaderTab {
     this.prevLocation = undefined
   }
 
+  findNavItem(href: string) {
+    let navItem: NavItem | undefined
+    this.nav?.toc.forEach((item) =>
+      dfs(item as NavItem, (i) => {
+        if (i.href.startsWith(href)) navItem = i
+      }),
+    )
+    return navItem
+  }
+
   @debounce(1000)
   search(keyword: string) {
     if (!keyword) {
@@ -95,7 +105,7 @@ export class ReaderTab {
       const subitems = s.find(keyword) as unknown as Match[]
       if (!subitems.length) return
 
-      const navItem = this.nav?.get(s.href)
+      const navItem = this.findNavItem(s.href)
       if (navItem) {
         results.push({
           id: navItem.href,
@@ -126,6 +136,7 @@ export class ReaderTab {
       )
 
       Promise.all(promises).then(() => {
+        console.log(sections)
         this.sections = ref(sections)
       })
     })

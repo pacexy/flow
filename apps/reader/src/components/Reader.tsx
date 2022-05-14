@@ -1,6 +1,5 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { NavItem } from 'epubjs'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
@@ -10,7 +9,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
-import { dfs, Reader, ReaderTab } from '../models'
+import { Reader, ReaderTab } from '../models'
 
 import { Tab } from './Tab'
 import { DropZone, SplitView, useDndContext } from './base'
@@ -300,13 +299,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
     const crumbs = []
 
     if (nav && location) {
-      let navItem: NavItem | undefined
-
-      nav.toc.forEach((item) =>
-        dfs(item as NavItem, (i) => {
-          if (i.href.startsWith(location.start.href)) navItem = i
-        }),
-      )
+      let navItem = tab.findNavItem(location.start.href)
 
       while (navItem) {
         crumbs.unshift(navItem)
@@ -323,7 +316,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
     }
 
     return crumbs
-  }, [location, nav])
+  }, [location, nav, tab])
 
   return (
     <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between gap-2 px-2">
