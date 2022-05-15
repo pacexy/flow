@@ -29,6 +29,10 @@ export interface Match extends Node {
   subitems?: Match[]
 }
 
+interface ISection extends Section {
+  length: number
+}
+
 export function flatTree<T extends ReadonlyDeep<Node>>(
   node: T,
   depth = 1,
@@ -61,9 +65,30 @@ export class ReaderTab {
   nav?: Navigation
   location?: Location
   prevLocation?: Location
-  sections?: Section[]
+  sections?: ISection[]
   results?: Match[]
   activeResultID?: string
+
+  get totalLength() {
+    return this.sections?.reduce((acc, s) => acc + s.length, 0) ?? 0
+  }
+
+  get percentage() {
+    if (!this.sections || !this.location) return 0
+    const start = this.location.start
+    const i = this.sections.findIndex((s) => s.href === start.href)
+    const previousSectionsLength = this.sections
+      .slice(0, i)
+      .reduce((acc, s) => acc + s.length, 0)
+    const previousSectionsPercentage = previousSectionsLength / this.totalLength
+    const currentSectionPercentage = this.sections[i]!.length / this.totalLength
+    const displayedPercentage = start.displayed.page / start.displayed.total
+
+    return (
+      previousSectionsPercentage +
+      currentSectionPercentage * displayedPercentage
+    )
+  }
 
   toggle(id: string) {
     const item = find(this.nav?.toc, id) as INavItem
@@ -129,14 +154,16 @@ export class ReaderTab {
       this.epub,
     )
     this.epub.loaded.spine.then((spine: any) => {
-      const sections = spine.spineItems as Section[]
+      const sections = spine.spineItems as ISection[]
       // https://github.com/futurepress/epub.js/issues/887#issuecomment-700736486
       const promises = sections.map((s) =>
         s.load(this.epub.load.bind(this.epub)),
       )
 
       Promise.all(promises).then(() => {
-        console.log(sections)
+        sections.forEach((s) => {
+          s.length = s.document.body.textContent?.length ?? 0
+        })
         this.sections = ref(sections)
       })
     })

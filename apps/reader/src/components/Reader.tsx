@@ -172,7 +172,8 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { rendition, prevLocation, results, location } = useSnapshot(tab)
+  const { rendition, prevLocation, results, location, percentage } =
+    useSnapshot(tab)
 
   const result = results?.find((r) => r.id === location?.start.href)
   const matches = result?.subitems
@@ -263,28 +264,28 @@ export function ReaderPane({
     <>
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="scroll flex-1" />
-      <div
-        className={clsx(
-          'typescale-body-small text-outline absolute inset-x-0 bottom-0 flex justify-between px-2',
-          prevLocation || 'hidden',
-        )}
-      >
+      <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
         <button
+          className={clsx(prevLocation || 'invisible')}
           onClick={() => {
             tab.hidePrevLocation()
             rendition?.display(prevLocation?.end.cfi)
           }}
         >
-          Back
+          Return to {prevLocation?.end.cfi}
         </button>
-        {prevLocation?.start.cfi}
-        <button
-          onClick={() => {
-            tab.hidePrevLocation()
-          }}
-        >
-          Stay
-        </button>
+
+        {prevLocation ? (
+          <button
+            onClick={() => {
+              tab.hidePrevLocation()
+            }}
+          >
+            Stay
+          </button>
+        ) : (
+          <div>{(percentage * 100).toFixed()}%</div>
+        )}
       </div>
     </>
   )
