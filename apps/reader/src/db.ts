@@ -7,6 +7,8 @@ export interface BookRecord {
   data: ArrayBuffer
   createdAt: number
   cover: string
+  cfi?: string
+  percentage?: number
 }
 
 export class DB extends Dexie {
@@ -15,9 +17,9 @@ export class DB extends Dexie {
   books!: Table<BookRecord>
 
   constructor() {
-    super('ink_reader')
+    super('re_reader')
     this.version(1).stores({
-      books: 'id, name, data, createdAt, cover', // Primary key and indexed props
+      books: 'id, name, data, createdAt, cover, cfi, percentage', // Primary key and indexed props
     })
   }
 }

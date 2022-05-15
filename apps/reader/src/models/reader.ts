@@ -6,7 +6,7 @@ import Section from 'epubjs/types/section'
 import { ReadonlyDeep } from 'type-fest'
 import { proxy, ref } from 'valtio'
 
-import { BookRecord } from '../db'
+import { BookRecord, db } from '../db'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -84,10 +84,14 @@ export class ReaderTab {
     const currentSectionPercentage = this.sections[i]!.length / this.totalLength
     const displayedPercentage = start.displayed.page / start.displayed.total
 
-    return (
+    const percentage =
       previousSectionsPercentage +
       currentSectionPercentage * displayedPercentage
-    )
+
+    // effect
+    db?.books.update(this.book.id, { cfi: start.cfi, percentage })
+
+    return percentage
   }
 
   toggle(id: string) {
@@ -174,7 +178,7 @@ export class ReaderTab {
         allowScriptedContent: true,
       }),
     )
-    this.rendition.display(this.location?.start.cfi)
+    this.rendition.display(this.book.cfi)
     this.rendition.on('relocated', (loc: Location) => {
       console.log('relocated', loc)
       this.location = ref(loc)

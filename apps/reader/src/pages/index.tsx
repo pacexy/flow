@@ -46,11 +46,21 @@ export const Library: React.FC = () => {
             return (
               <li key={book.id}>
                 <Card className="group relative">
-                  <Cover
-                    role="button"
-                    src={book.cover}
-                    onClick={() => reader.addTab(book)}
-                  />
+                  <div className="relative">
+                    {book.percentage !== undefined && (
+                      <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
+                        {(book.percentage * 100).toFixed()}%
+                      </div>
+                    )}
+                    <img
+                      role="button"
+                      src={book.cover}
+                      onClick={() => reader.addTab(book)}
+                      alt="Cover"
+                      className="h-56 object-contain"
+                    />
+                  </div>
+
                   <div
                     className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
                     title={book.name}
@@ -97,12 +107,5 @@ export function Card({ className, ...props }: CardProps) {
       )}
       {...props}
     />
-  )
-}
-
-interface CoverProps extends ComponentProps<'img'> {}
-const Cover: React.FC<CoverProps> = ({ src, ...props }) => {
-  return (
-    <img src={src} alt="Cover" className="h-56 object-contain" {...props} />
   )
 }
