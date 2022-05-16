@@ -112,14 +112,20 @@ export class ReaderTab {
     this.prevLocation = undefined
   }
 
-  findNavItem(href: string) {
+  mapSectionToNavItem(href: string) {
     let navItem: NavItem | undefined
     this.nav?.toc.forEach((item) =>
       dfs(item as NavItem, (i) => {
-        if (i.href.startsWith(href)) navItem = i
+        if (i.href.startsWith(href)) navItem ??= i
       }),
     )
     return navItem
+  }
+
+  get currentNavItem() {
+    return this.location
+      ? this.mapSectionToNavItem(this.location.start.href)
+      : undefined
   }
 
   @debounce(1000)
@@ -134,7 +140,7 @@ export class ReaderTab {
       const subitems = s.find(keyword) as unknown as Match[]
       if (!subitems.length) return
 
-      const navItem = this.findNavItem(s.href)
+      const navItem = this.mapSectionToNavItem(s.href)
       if (navItem) {
         results.push({
           id: navItem.href,

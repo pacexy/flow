@@ -300,7 +300,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
     const crumbs = []
 
     if (nav && location) {
-      let navItem = tab.findNavItem(location.start.href)
+      let navItem = tab.currentNavItem
 
       while (navItem) {
         crumbs.unshift(navItem)
