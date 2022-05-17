@@ -25,6 +25,7 @@ export interface INavItem extends NavItem, Node {
 
 export interface Match extends Node {
   excerpt: string
+  description?: string
   cfi?: string
   subitems?: Match[]
 }
@@ -128,6 +129,27 @@ export class ReaderTab {
       : undefined
   }
 
+  getNavPath(navItem = this.currentNavItem) {
+    const path = []
+
+    if (this.nav) {
+      while (navItem) {
+        path.unshift(navItem)
+        const parentId = navItem.parent
+        if (!parentId) {
+          navItem = undefined
+        } else {
+          // @ts-ignore
+          const index = this.nav.tocById[parentId]
+          // @ts-ignore
+          navItem = this.nav.getByIndex(parentId, index, this.nav.toc)
+        }
+      }
+    }
+
+    return path
+  }
+
   @debounce(1000)
   search(keyword: string) {
     if (!keyword) {
@@ -142,9 +164,12 @@ export class ReaderTab {
 
       const navItem = this.mapSectionToNavItem(s.href)
       if (navItem) {
+        const path = this.getNavPath(navItem)
+        path.pop()
         results.push({
           id: navItem.href,
-          excerpt: navItem.label.trim(),
+          excerpt: navItem.label,
+          description: path.map((i) => i.label).join(' / '),
           subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
           expanded: true,
         })

@@ -7,6 +7,8 @@ interface RowProps extends ComponentProps<'div'> {
   expanded?: boolean
   active?: boolean
   depth?: number
+  label?: string
+  description?: string
   subitems?: Readonly<any[]>
   toggle?: () => void
   onActivate?: () => void
@@ -14,6 +16,8 @@ interface RowProps extends ComponentProps<'div'> {
 }
 export const Row: React.FC<RowProps> = ({
   title,
+  label,
+  description,
   expanded = false,
   active = false,
   depth = 0,
@@ -23,6 +27,7 @@ export const Row: React.FC<RowProps> = ({
   className,
   children,
   badge,
+  onClick,
   ...props
 }) => {
   const onActivateRef = useRef(onActivate)
@@ -44,6 +49,7 @@ export const Row: React.FC<RowProps> = ({
       )}
       style={{ paddingLeft: depth * 8 }}
       title={title}
+      onClick={onClick ?? toggle}
       {...props}
     >
       <StateLayer />
@@ -56,7 +62,10 @@ export const Row: React.FC<RowProps> = ({
         }}
       />
       <div className="typescale-body-small text-on-surface-variant truncate">
-        {children || title}
+        {children || label || title}
+        {description && (
+          <span className="text-outline ml-1 text-[11px]">{description}</span>
+        )}
       </div>
       {badge && childCount && (
         <div className="bg-tertiary-container text-on-tertiary-container ml-auto rounded-full px-1.5 py-px text-[11px]">

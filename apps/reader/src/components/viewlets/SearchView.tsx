@@ -90,25 +90,34 @@ interface ResultRowProps {
 }
 const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
   if (!result) return null
-  const { cfi, excerpt, depth, expanded, subitems, id } = result
+  let { cfi, excerpt, description, depth, expanded, subitems, id } = result
   const tab = reader.focusedTab
+  const isResult = depth === 1
+
+  excerpt = excerpt.trim()
+  description = description?.trim()
 
   return (
     <Row
-      title={excerpt}
+      title={description ? `${description} / ${excerpt}` : excerpt}
+      label={excerpt}
+      description={description}
       depth={depth}
       active={tab?.activeResultID === id}
       expanded={expanded}
       subitems={subitems}
-      badge
-      onClick={() => {
-        if (!tab) return
-        tab.activeResultID = id
-        tab.rendition?.display(cfi)
-      }}
+      badge={isResult}
+      {...(!isResult && {
+        onClick: () => {
+          if (tab) {
+            tab.activeResultID = id
+            tab.rendition?.display(cfi)
+          }
+        },
+      })}
       toggle={() => tab?.toggleResult(id)}
     >
-      {depth === 2 && (
+      {!isResult && (
         <Highlighter
           highlightClassName="match-highlight"
           searchWords={[keyword]}

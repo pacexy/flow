@@ -1,7 +1,7 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
 import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -180,16 +180,20 @@ export function ReaderPane({
 
   useEffect(() => {
     matches?.forEach((m) => {
-      rendition?.annotations.highlight(
-        m.cfi!,
-        undefined,
-        undefined,
-        undefined,
-        {
-          fill: 'rgba(255, 223, 93, 0.3)',
-          'fill-opacity': 'unset',
-        },
-      )
+      try {
+        rendition?.annotations.highlight(
+          m.cfi!,
+          undefined,
+          undefined,
+          undefined,
+          {
+            fill: 'rgba(255, 223, 93, 0.3)',
+            'fill-opacity': 'unset',
+          },
+        )
+      } catch (error) {
+        // ignore matched text in `<title>`
+      }
     })
 
     return () => {
@@ -295,29 +299,8 @@ interface ReaderPaneHeaderProps {
   tab: ReaderTab
 }
 export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
-  const { nav, location } = useSnapshot(tab)
-  const breadcrumbs = useMemo(() => {
-    const crumbs = []
-
-    if (nav && location) {
-      let navItem = tab.currentNavItem
-
-      while (navItem) {
-        crumbs.unshift(navItem)
-        const parentId = navItem.parent
-        if (!parentId) {
-          navItem = undefined
-        } else {
-          // @ts-ignore
-          const index = nav.tocById[parentId]
-          // @ts-ignore
-          navItem = nav.getByIndex(parentId, index, nav.toc)
-        }
-      }
-    }
-
-    return crumbs
-  }, [location, nav, tab])
+  const { location } = useSnapshot(tab)
+  const breadcrumbs = tab.getNavPath()
 
   return (
     <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between gap-2 px-2">
