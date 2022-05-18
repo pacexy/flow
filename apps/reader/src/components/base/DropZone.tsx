@@ -11,6 +11,8 @@ import {
 
 import { db } from '@ink/reader/db'
 
+import { reader } from '../Reader'
+
 interface DropZoneProps {
   className?: string
   onDrop?: (e: DragEvent<HTMLDivElement>, position?: Position) => void
@@ -148,37 +150,48 @@ export function useDndContext() {
   return useContext(DndContext)
 }
 
-export function handleFiles(files: FileList) {
+export async function handleFiles(files: Iterable<File>, open = false) {
   for (const file of files) {
     console.log(file)
     if (file.type !== 'application/epub+zip') continue
 
-    const reader = new FileReader()
+    const book = await db?.books.where('name').equals(file.name).first()
 
-    reader.addEventListener('progress', ({ loaded, total }) => {
+    if (book) {
+      if (open) reader.addTab(book)
+      continue
+    }
+
+    const fr = new FileReader()
+
+    fr.addEventListener('progress', ({ loaded, total }) => {
       if (loaded && total) {
         const percent = (loaded / total) * 100
         console.log(`Progress: ${Math.round(percent)}`)
       }
     })
 
-    reader.addEventListener('load', async () => {
-      if (!(reader.result instanceof ArrayBuffer)) return
-      const epub = ePub(reader.result)
+    fr.addEventListener('load', async () => {
+      if (!(fr.result instanceof ArrayBuffer)) return
+      const epub = ePub(fr.result)
 
       const url = (await epub.coverUrl()) ?? ''
       const cover = await toDataUrl(url)
 
-      db?.books.add({
+      const book = {
         id: crypto.randomUUID(),
         name: file.name,
-        data: reader.result,
+        data: fr.result,
         createdAt: +new Date(),
         cover,
-      })
+      }
+
+      await db?.books.add(book)
+
+      if (open) reader.addTab(book)
     })
 
-    reader.readAsArrayBuffer(file)
+    fr.readAsArrayBuffer(file)
   }
 }
 

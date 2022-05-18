@@ -31,5 +31,12 @@
   "background_color": "#fff",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": { "application/epub+zip": ".epub" },
+      "launch_type": "single-client"
+    }
+  ]
 }

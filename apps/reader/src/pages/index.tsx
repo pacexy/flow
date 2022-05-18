@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Head from 'next/head'
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, useEffect } from 'react'
 import { MdClose } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
 
@@ -12,6 +12,20 @@ import { useLibrary } from '../hooks'
 
 export default function Index() {
   const { focusedTab } = useSnapshot(reader)
+
+  useEffect(() => {
+    if ('launchQueue' in window && 'LaunchParams' in window) {
+      window.launchQueue.setConsumer((params) => {
+        console.log('launchQueue', params)
+        if (params.files.length) {
+          Promise.all(params.files.map((f) => f.getFile())).then((files) =>
+            handleFiles(files, true),
+          )
+        }
+      })
+    }
+  }, [])
+
   return (
     <>
       <Head>
