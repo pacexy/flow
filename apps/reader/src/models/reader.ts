@@ -214,6 +214,13 @@ export class ReaderTab {
       }),
     )
     this.rendition.display(this.book.cfi)
+    this.rendition.themes.default({
+      a: {
+        color: '#3b82f6 !important',
+        'text-decoration': 'none !important',
+      },
+    })
+
     this.rendition.on('relocated', (loc: Location) => {
       console.log('relocated', loc)
       this.location = ref(loc)
