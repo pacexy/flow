@@ -18,7 +18,7 @@ function localStorageEffect<T>(key: string): AtomEffect<T> {
   }
 }
 
-export type Action = 'TOC' | 'Search' | 'Typography'
+export type Action = 'TOC' | 'Search' | 'Typography' | 'Image'
 export const actionState = atom<Action | undefined>({
   key: 'action',
   default: 'TOC',

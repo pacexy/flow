@@ -2,7 +2,7 @@ import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
-import { MdSearch, MdToc } from 'react-icons/md'
+import { MdOutlineImage, MdSearch, MdToc } from 'react-icons/md'
 import {
   RiFullscreenFill,
   RiFontSize,
@@ -16,6 +16,7 @@ import { useFullScreen } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
+import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
@@ -37,6 +38,12 @@ const actions = [
     title: 'Search',
     Icon: MdSearch,
     View: SearchView,
+  },
+  {
+    name: 'Image',
+    title: 'Image',
+    Icon: MdOutlineImage,
+    View: ImageView,
   },
   {
     name: 'Typography',
@@ -100,8 +107,8 @@ const Action: React.FC<ActionProps> = ({
   return (
     <button
       className={clsx(
-        'text-outline/70 hover:text-on-surface relative flex h-12 w-12 items-center justify-center',
-        active && 'text-on-surface',
+        'text-outline/70 hover:text-on-surface-variant relative flex h-12 w-12 items-center justify-center',
+        active && 'text-on-surface-variant',
         className,
       )}
       {...props}

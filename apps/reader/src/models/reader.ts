@@ -178,6 +178,16 @@ export class ReaderTab {
     this.results = results
   }
 
+  locateToImage(href: string) {
+    for (const s of this.sections ?? []) {
+      const img = s.document.querySelector(`img[src*="${href}"]`)
+      if (img) {
+        this.rendition?.display(s.cfiFromElement(img))
+        break
+      }
+    }
+  }
+
   render(el: HTMLDivElement) {
     if (this.rendition) return
 
