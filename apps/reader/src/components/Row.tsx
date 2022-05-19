@@ -35,6 +35,7 @@ export const Row: React.FC<RowProps> = ({
 
   const childCount = subitems?.length
   const Icon = expanded ? MdExpandMore : MdChevronRight
+  const t = children || label || title
 
   useEffect(() => {
     if (active) onActivateRef.current?.()
@@ -43,7 +44,7 @@ export const Row: React.FC<RowProps> = ({
   return (
     <div
       className={clsx(
-        'relative flex cursor-pointer items-center py-0.5 pr-3 text-left',
+        'relative flex cursor-pointer select-none items-center py-0.5 pr-3 text-left',
         active && 'bg-outline/20',
         className,
       )}
@@ -61,8 +62,13 @@ export const Row: React.FC<RowProps> = ({
           toggle?.()
         }}
       />
-      <div className="typescale-body-small text-on-surface-variant truncate">
-        {children || label || title}
+      <div
+        className={clsx(
+          'typescale-body-small truncate',
+          t ? 'text-on-surface-variant' : 'text-outline/60',
+        )}
+      >
+        {t || 'Untitled'}
         {description && (
           <span className="text-outline ml-1 text-[11px]">{description}</span>
         )}

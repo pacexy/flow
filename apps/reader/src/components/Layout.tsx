@@ -107,8 +107,8 @@ const Action: React.FC<ActionProps> = ({
   return (
     <button
       className={clsx(
-        'text-outline/70 hover:text-on-surface-variant relative flex h-12 w-12 items-center justify-center',
-        active && 'text-on-surface-variant',
+        'hover:text-on-surface-variant relative flex h-12 w-12 items-center justify-center',
+        active ? 'text-on-surface-variant' : 'text-outline/70',
         className,
       )}
       {...props}

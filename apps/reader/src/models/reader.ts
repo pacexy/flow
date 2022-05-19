@@ -30,8 +30,10 @@ export interface Match extends Node {
   subitems?: Match[]
 }
 
-interface ISection extends Section {
+export interface ISection extends Section {
   length: number
+  images: string[]
+  navitem?: INavItem
 }
 
 export function flatTree<T extends ReadonlyDeep<Node>>(
@@ -162,7 +164,7 @@ export class ReaderTab {
       const subitems = s.find(keyword) as unknown as Match[]
       if (!subitems.length) return
 
-      const navItem = this.mapSectionToNavItem(s.href)
+      const navItem = s.navitem
       if (navItem) {
         const path = this.getNavPath(navItem)
         path.pop()
@@ -176,16 +178,6 @@ export class ReaderTab {
       }
     })
     this.results = results
-  }
-
-  locateToImage(href: string) {
-    for (const s of this.sections ?? []) {
-      const img = s.document.querySelector(`img[src*="${href}"]`)
-      if (img) {
-        this.rendition?.display(s.cfiFromElement(img))
-        break
-      }
-    }
   }
 
   render(el: HTMLDivElement) {
@@ -208,6 +200,8 @@ export class ReaderTab {
       Promise.all(promises).then(() => {
         sections.forEach((s) => {
           s.length = s.document.body.textContent?.length ?? 0
+          s.images = [...s.document.querySelectorAll('img')].map((el) => el.src)
+          s.navitem = this.mapSectionToNavItem(s.href)
         })
         this.sections = ref(sections)
       })
