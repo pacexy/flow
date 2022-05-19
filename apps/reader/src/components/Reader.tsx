@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
+import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
@@ -147,6 +148,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         <ReaderPane
           tab={selectedTab}
           key={selectedTab.book.id}
+          focus={focus}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
@@ -158,6 +160,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
 interface ReaderPaneProps {
   tab: ReaderTab
+  focus: () => void
   onClick: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
   onWheel: (e: WheelEvent) => void
@@ -165,6 +168,7 @@ interface ReaderPaneProps {
 
 export function ReaderPane({
   tab,
+  focus,
   onClick,
   onKeyDown,
   onWheel,
@@ -245,15 +249,35 @@ export function ReaderPane({
       }
   }, [iframe, setDragEvent])
 
+  const [src, setSrc] = useState<string>()
+
   useEffect(() => {
-    if (iframe)
-      iframe.onclick = (e: any) => {
+    if (src) {
+      if (document.activeElement instanceof HTMLElement)
+        document.activeElement?.blur()
+    } else {
+      focus()
+    }
+  }, [focus, src])
+
+  useEffect(() => {
+    if (!iframe) return
+    iframe.onclick = (e: any) => {
+      for (const el of e.path) {
         // `instanceof` may not work in iframe
-        if (e.path.find((el: HTMLElement) => el.tagName === 'A')) {
+        if (el.tagName === 'A') {
           tab.showPrevLocation()
+          break
         }
-        onClick()
+
+        if (el.tagName === 'IMG') {
+          setSrc(el.src)
+          break
+        }
       }
+
+      onClick()
+    }
   }, [iframe, onClick, tab])
 
   useEffect(() => {
@@ -266,6 +290,14 @@ export function ReaderPane({
 
   return (
     <>
+      <PhotoSlider
+        className="select-none"
+        images={[{ src, key: 0 }]}
+        visible={!!src}
+        onClose={() => setSrc(undefined)}
+        maskOpacity={0.6}
+        bannerVisible={false}
+      />
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="scroll flex-1" />
       <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">

@@ -31,6 +31,7 @@
     "react-dom": "18.0.0",
     "react-highlight-words": "^0.18.0",
     "react-icons": "4.3.1",
+    "react-photo-view": "^1.1.2",
     "react-polymorphic-types": "2.0.0",
     "recoil": "0.7.2",
     "rehype-pretty-code": "0.3.0",
