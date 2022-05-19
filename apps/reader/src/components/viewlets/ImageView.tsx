@@ -1,4 +1,5 @@
 import { useBoolean } from '@literal-ui/hooks'
+import { ReadonlyDeep } from 'type-fest'
 import { useSnapshot } from 'valtio'
 
 import { ISection } from '@ink/reader/models'
@@ -9,12 +10,12 @@ import { Row } from '../Row'
 import { View, ViewProps } from './View'
 
 export const ImageView: React.FC<ViewProps> = (props) => {
-  const sections = reader.focusedTab?.sections
+  const { focusedTab } = useSnapshot(reader)
 
   return (
     <View {...props}>
       <div className="scroll">
-        {sections?.map((s) => (
+        {focusedTab?.sections?.map((s) => (
           <Block section={s} />
         ))}
       </div>
@@ -23,7 +24,7 @@ export const ImageView: React.FC<ViewProps> = (props) => {
 }
 
 interface BlockProps {
-  section: ISection
+  section: ReadonlyDeep<ISection>
 }
 const Block: React.FC<BlockProps> = ({ section }) => {
   const { focusedTab } = useSnapshot(reader)
