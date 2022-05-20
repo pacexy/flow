@@ -30,7 +30,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
   const { focusedTab } = useSnapshot(reader)
   const [expanded, toggle] = useBoolean(false)
 
-  const resources = focusedTab?.epub.resources
+  const resources = focusedTab?.epub?.resources
   // @ts-ignore
   const blobs = resources?.replacementUrls
   // @ts-ignore

@@ -1,5 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import type { Rendition, Location } from 'epubjs'
+import type { Rendition, Location, Book } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
@@ -63,7 +63,7 @@ export function dfs<T extends Node>(node: T, fn: (node: T) => void) {
 }
 
 export class ReaderTab {
-  epub = ref(ePub(this.book.data))
+  epub?: Book
   rendition?: Rendition
   nav?: Navigation
   location?: Location
@@ -180,8 +180,14 @@ export class ReaderTab {
     this.results = results
   }
 
-  render(el: HTMLDivElement) {
+  async render(el: HTMLDivElement) {
     if (this.rendition) return
+
+    const file = await db?.files.get(this.book.name)
+    if (!file) return
+
+    const data = await file.file.arrayBuffer()
+    this.epub = ref(ePub(data))
 
     this.epub.loaded.navigation.then((nav) => {
       this.nav = nav
@@ -194,7 +200,7 @@ export class ReaderTab {
       const sections = spine.spineItems as ISection[]
       // https://github.com/futurepress/epub.js/issues/887#issuecomment-700736486
       const promises = sections.map((s) =>
-        s.load(this.epub.load.bind(this.epub)),
+        s.load(this.epub?.load.bind(this.epub)),
       )
 
       Promise.all(promises).then(() => {

@@ -151,47 +151,33 @@ export function useDndContext() {
 }
 
 export async function handleFiles(files: Iterable<File>, open = false) {
+  const books = await db?.books.toArray()
+
   for (const file of files) {
     console.log(file)
     if (file.type !== 'application/epub+zip') continue
 
-    const book = await db?.books.where('name').equals(file.name).first()
+    let book = books?.find((b) => b.name === file.name)
 
-    if (book) {
-      if (open) reader.addTab(book)
-      continue
-    }
-
-    const fr = new FileReader()
-
-    fr.addEventListener('progress', ({ loaded, total }) => {
-      if (loaded && total) {
-        const percent = (loaded / total) * 100
-        console.log(`Progress: ${Math.round(percent)}`)
-      }
-    })
-
-    fr.addEventListener('load', async () => {
-      if (!(fr.result instanceof ArrayBuffer)) return
-      const epub = ePub(fr.result)
-
-      const url = (await epub.coverUrl()) ?? ''
-      const cover = await toDataUrl(url)
-
-      const book = {
+    if (!book) {
+      book = {
         id: crypto.randomUUID(),
         name: file.name,
-        data: fr.result,
         createdAt: +new Date(),
-        cover,
       }
+      db?.books.add(book)
+      db?.files.add({ id: file.name, file })
 
-      await db?.books.add(book)
+      window.requestIdleCallback(async () => {
+        const data = await file.arrayBuffer()
+        const epub = ePub(data)
+        const url = await epub.coverUrl()
+        const cover = await toDataUrl(url ?? '')
+        db?.covers.add({ id: file.name, cover })
+      })
+    }
 
-      if (open) reader.addTab(book)
-    })
-
-    fr.readAsArrayBuffer(file)
+    if (open) reader.addTab(book)
   }
 }
 

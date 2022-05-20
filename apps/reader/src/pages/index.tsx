@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
 import React, { ComponentProps, useEffect } from 'react'
 import { MdClose } from 'react-icons/md'
@@ -9,6 +10,8 @@ import { DropZone, handleFiles } from '@ink/reader/components/base'
 import { IconButton, ReaderGridView, reader } from '../components'
 import { db } from '../db'
 import { useLibrary } from '../hooks'
+
+const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
 export default function Index() {
   const { focusedTab } = useSnapshot(reader)
@@ -39,6 +42,7 @@ export default function Index() {
 
 export const Library: React.FC = () => {
   const books = useLibrary()
+  const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const { groups } = useSnapshot(reader)
   if (groups.length) return null
   return (
@@ -57,6 +61,7 @@ export const Library: React.FC = () => {
           }}
         >
           {books?.map((book) => {
+            const cover = covers?.find((c) => c.id === book.name)?.cover
             return (
               <li key={book.id}>
                 <Card className="group relative">
@@ -68,7 +73,7 @@ export const Library: React.FC = () => {
                     )}
                     <img
                       role="button"
-                      src={book.cover}
+                      src={cover ?? placeholder}
                       onClick={() => reader.addTab(book)}
                       alt="Cover"
                       className="h-56 object-contain"
@@ -86,6 +91,8 @@ export const Library: React.FC = () => {
                     size={20}
                     Icon={MdClose}
                     onClick={() => {
+                      db?.files.delete(book.name)
+                      db?.covers.delete(book.name)
                       db?.books.delete(book.id)
                     }}
                   />

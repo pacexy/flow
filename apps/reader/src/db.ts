@@ -1,12 +1,20 @@
 import { IS_SERVER } from '@literal-ui/hooks'
 import Dexie, { Table } from 'dexie'
 
+export interface FileRecord {
+  id: string
+  file: File
+}
+
+export interface CoverRecord {
+  id: string
+  cover: string
+}
+
 export interface BookRecord {
   id: string
   name: string
-  data: ArrayBuffer
   createdAt: number
-  cover: string
   cfi?: string
   percentage?: number
 }
@@ -14,12 +22,16 @@ export interface BookRecord {
 export class DB extends Dexie {
   // 'books' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
+  files!: Table<FileRecord>
+  covers!: Table<CoverRecord>
   books!: Table<BookRecord>
 
   constructor() {
     super('re_reader')
     this.version(1).stores({
-      books: 'id, name, data, createdAt, cover, cfi, percentage', // Primary key and indexed props
+      files: 'id, file',
+      covers: 'id, cover',
+      books: 'id, name, createdAt, cfi, percentage', // Primary key and indexed props
     })
   }
 }

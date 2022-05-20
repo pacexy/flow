@@ -38,9 +38,9 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex } = useSnapshot(reader)
+  const { focusedIndex, focusedTab } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
-  const selectedTab = group.tabs[selectedIndex]!
+  const tab = group.tabs[selectedIndex]!
   const books = useLibrary()
   const ref = useRef<HTMLDivElement>(null)
 
@@ -52,7 +52,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     focus()
   }, [focus])
 
-  const { rendition } = selectedTab
+  const rendition = focusedTab?.rendition
 
   const prev = useCallback(() => {
     rendition?.prev()
@@ -146,8 +146,8 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         }}
       >
         <ReaderPane
-          tab={selectedTab}
-          key={selectedTab.book.id}
+          tab={tab}
+          key={tab.book.id}
           focus={focus}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
