@@ -11,11 +11,14 @@ import { View, ViewProps } from './View'
 
 export const ImageView: React.FC<ViewProps> = (props) => {
   const { focusedTab } = useSnapshot(reader)
+  const sections = focusedTab?.sections?.filter((s) => s.images.length)
+
+  if ((sections?.length ?? 0) > 500) return null
 
   return (
     <View {...props}>
       <div className="scroll">
-        {focusedTab?.sections?.map((s) => (
+        {sections?.map((s) => (
           <Block section={s} />
         ))}
       </div>
@@ -36,7 +39,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
   // @ts-ignore
   const assets = resources?.assets as []
 
-  if (!resources || !section.images.length) return null
+  if (!resources) return null
 
   return (
     <div>
