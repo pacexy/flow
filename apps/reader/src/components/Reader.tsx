@@ -86,17 +86,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     [next, prev],
   )
 
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      if (e.deltaY < 0) {
-        prev()
-      } else {
-        next()
-      }
-    },
-    [next, prev],
-  )
-
   const handleClick = useCallback(() => {
     reader.selectGroup(index)
   }, [index])
@@ -151,7 +140,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           focus={focus}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
-          onWheel={handleWheel}
         />
       </DropZone>
     </div>
@@ -163,7 +151,6 @@ interface ReaderPaneProps {
   focus: () => void
   onClick: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
-  onWheel: (e: WheelEvent) => void
 }
 
 export function ReaderPane({
@@ -171,7 +158,6 @@ export function ReaderPane({
   focus,
   onClick,
   onKeyDown,
-  onWheel,
 }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
@@ -281,8 +267,12 @@ export function ReaderPane({
   }, [iframe, onClick, tab])
 
   useEffect(() => {
-    if (iframe) iframe.onwheel = onWheel
-  }, [iframe, onWheel])
+    if (iframe)
+      iframe.onwheel = (e: WheelEvent) => {
+        e.deltaY < 0 ? rendition?.prev() : rendition?.next()
+        focus()
+      }
+  }, [focus, iframe, rendition])
 
   useEffect(() => {
     if (iframe) iframe.onkeydown = onKeyDown

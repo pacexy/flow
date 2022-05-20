@@ -19,7 +19,7 @@ export const ImageView: React.FC<ViewProps> = (props) => {
     <View {...props}>
       <div className="scroll">
         {sections?.map((s) => (
-          <Block section={s} />
+          <Block key={s.href} section={s} />
         ))}
       </div>
     </View>
