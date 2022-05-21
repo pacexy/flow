@@ -17,6 +17,7 @@
     "@mdx-js/loader": "2.1.1",
     "@mdx-js/react": "2.1.1",
     "@next/bundle-analyzer": "12.1.6",
+    "@supabase/supabase-auth-helpers": "^1.4.1",
     "@types/react-highlight-words": "^0.16.4",
     "babel-loader": "8.2.5",
     "clsx": "1.1.1",

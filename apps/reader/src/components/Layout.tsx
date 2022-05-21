@@ -1,5 +1,6 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { useRouter } from 'next/router'
 import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
 import {
@@ -14,7 +15,7 @@ import {
   RiFontSize,
   RiFullscreenExitFill,
 } from 'react-icons/ri'
-import { VscColorMode } from 'react-icons/vsc'
+import { VscAccount, VscColorMode } from 'react-icons/vsc'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
@@ -77,6 +78,8 @@ function ActivityBar() {
   const { toggle } = useColorScheme()
   const [action, setAction] = useRecoilState(actionState)
   const fullscreen = useFullScreen()
+  const { push } = useRouter()
+
   return (
     <div className="hidden flex-col sm:flex">
       <ActionBar className="flex-1">
@@ -94,6 +97,11 @@ function ActivityBar() {
         })}
       </ActionBar>
       <ActionBar>
+        <Action
+          title="Account"
+          Icon={VscAccount}
+          onClick={() => push('/account')}
+        />
         <Action
           title="Toggle FullScreen"
           Icon={fullscreen.active ? RiFullscreenExitFill : RiFullscreenFill}

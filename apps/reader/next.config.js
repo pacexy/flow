@@ -34,7 +34,7 @@ module.exports = withPWA(
   withTM(
     withBundleAnalyzer({
       reactStrictMode: false,
-      pageExtensions: ['tsx', 'mdx'],
+      pageExtensions: ['ts', 'tsx', 'mdx'],
       pwa: {
         dest: 'public',
       },

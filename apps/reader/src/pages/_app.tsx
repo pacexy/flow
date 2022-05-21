@@ -3,6 +3,8 @@ import 'react-photo-view/dist/react-photo-view.css'
 
 import { LiteralProvider } from '@literal-ui/core'
 import { MDXProvider } from '@mdx-js/react'
+import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
+import { UserProvider } from '@supabase/supabase-auth-helpers/react'
 import type { MDXComponents } from 'mdx/types'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
@@ -21,14 +23,16 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const Layout = pathname === '/' ? AppLayout : PageLayout
 
   return (
-    <LiteralProvider>
-      <MDXProvider components={components}>
-        <RecoilRoot>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </RecoilRoot>
-      </MDXProvider>
-    </LiteralProvider>
+    <UserProvider supabaseClient={supabaseClient}>
+      <LiteralProvider>
+        <MDXProvider components={components}>
+          <RecoilRoot>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </RecoilRoot>
+        </MDXProvider>
+      </LiteralProvider>
+    </UserProvider>
   )
 }
