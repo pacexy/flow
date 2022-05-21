@@ -1,5 +1,6 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { Contents } from 'epubjs'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
@@ -11,6 +12,7 @@ import { settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
 import { Reader, ReaderTab } from '../models'
+import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
 import { DropZone, SplitView, useDndContext } from './base'
@@ -201,11 +203,8 @@ export function ReaderPane({
   }, [tab])
 
   useEffect(() => {
-    rendition?.themes.override('font-size', settings.fontSize + 'px')
-    rendition?.themes.override('font-weight', settings.fontWeight + '')
-    rendition?.themes.override('line-height', settings.lineHeight + '')
-    if (settings.fontFamily)
-      rendition?.themes.override('font-family', settings.fontFamily)
+    const [contents] = (rendition?.getContents() ?? []) as unknown as Contents[]
+    updateCustomStyle(contents?.document, settings)
   }, [rendition, settings])
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -22,11 +23,11 @@ export const TypographyView: React.FC<ViewProps> = ({
         type="number"
         min={14}
         max={28}
-        defaultValue={settings.fontSize}
+        defaultValue={parseInt(settings.fontSize)}
         onChange={(e) => {
           setSettings((prev) => ({
             ...prev,
-            fontSize: Number(e.target.value),
+            fontSize: e.target.value + 'px',
           }))
         }}
       />
@@ -93,7 +94,12 @@ interface TypefaceProps {
 }
 export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
   const [settings, setSettings] = useRecoilState(settingsState)
+
+  // avoid hydration mismatching
+  if (!useMounted()) return null
+
   const active = settings.fontFamily === fontFamily
+
   return (
     <button
       className={clsx(

@@ -7,6 +7,7 @@ import { ReadonlyDeep } from 'type-fest'
 import { proxy, ref } from 'valtio'
 
 import { BookRecord, db } from '../db'
+import { updateCustomStyle } from '../styles'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -225,6 +226,11 @@ export class ReaderTab {
         color: '#3b82f6 !important',
         'text-decoration': 'none !important',
       },
+    })
+    this.rendition.hooks.render.register((view: any) => {
+      const str = localStorage.getItem('settings')
+      const settings = str && JSON.parse(str)
+      updateCustomStyle(view.document, settings)
     })
 
     this.rendition.on('relocated', (loc: Location) => {
