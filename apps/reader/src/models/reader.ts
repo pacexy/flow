@@ -1,5 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import type { Rendition, Location, Book } from 'epubjs'
+import type { Rendition, Location, Book, Contents } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
@@ -227,10 +227,10 @@ export class ReaderTab {
         'text-decoration': 'none !important',
       },
     })
-    this.rendition.hooks.render.register((view: any) => {
+    this.rendition.hooks.content.register((contents: Contents) => {
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
-      updateCustomStyle(view.document, settings)
+      updateCustomStyle(contents, settings)
     })
 
     this.rendition.on('relocated', (loc: Location) => {

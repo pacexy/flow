@@ -1,3 +1,4 @@
+import { Contents } from 'epubjs'
 import { CSSProperties } from 'react'
 
 import { Settings } from './state'
@@ -14,27 +15,19 @@ function mapToCss(o: CSSProperties) {
 }
 
 enum Style {
-  Custom = 'custom-theme',
+  Custom = 'custom',
 }
 
 export function updateCustomStyle(
-  document: Document | undefined,
-  settings?: Settings,
+  contents: Contents | undefined,
+  settings: Settings | undefined,
 ) {
-  if (!document) return
+  if (!contents || !settings) return
 
-  let el = document.getElementById(Style.Custom)
-  if (!el) {
-    el = document.createElement('style')
-    el.id = Style.Custom
-    document.head.appendChild(el)
-  }
-
-  if (settings) {
-    el.innerHTML = `
-      a, article, cite, div, li, p, pre, span, table, body {
+  contents.addStylesheetCss(
+    `a, article, cite, div, li, p, pre, span, table, body {
         ${mapToCss(settings)}
-      }
-    `
-  }
+    }`,
+    Style.Custom,
+  )
 }

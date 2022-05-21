@@ -204,7 +204,7 @@ export function ReaderPane({
 
   useEffect(() => {
     const [contents] = (rendition?.getContents() ?? []) as unknown as Contents[]
-    updateCustomStyle(contents?.document, settings)
+    updateCustomStyle(contents, settings)
   }, [rendition, settings])
 
   useEffect(() => {
