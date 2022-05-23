@@ -42,7 +42,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
   const { focusedIndex, focusedTab } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
-  const tab = group.tabs[selectedIndex]!
   const books = useLibrary()
   const ref = useRef<HTMLDivElement>(null)
 
@@ -119,6 +118,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       </Tab.List>
 
       <DropZone
+        className="flex-1"
         split
         onDrop={(e, position) => {
           const bookId = e.dataTransfer.getData('text/plain')
@@ -136,13 +136,15 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           }
         }}
       >
-        <ReaderPane
-          tab={tab}
-          key={tab.book.id}
-          focus={focus}
-          onClick={handleClick}
-          onKeyDown={handleKeyDown}
-        />
+        {group.tabs.map((tab) => (
+          <ReaderPane
+            tab={tab}
+            key={tab.book.id}
+            focus={focus}
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
+          />
+        ))}
       </DropZone>
     </div>
   )
@@ -164,6 +166,7 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
+  const { focusedTab } = useSnapshot(reader)
   const { rendition, prevLocation, results, location, percentage } =
     useSnapshot(tab)
 
@@ -277,8 +280,10 @@ export function ReaderPane({
     if (iframe) iframe.onkeydown = onKeyDown
   }, [iframe, onKeyDown])
 
+  const active = tab.book.id === focusedTab?.book.id
+
   return (
-    <>
+    <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
       <PhotoSlider
         className="select-none"
         images={[{ src, key: 0 }]}
@@ -288,7 +293,7 @@ export function ReaderPane({
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className="scroll flex-1" />
+      <div ref={ref} className="flex-1" />
       <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
         <button
           className={clsx(prevLocation || 'invisible')}
@@ -312,7 +317,7 @@ export function ReaderPane({
           <div>{(percentage * 100).toFixed()}%</div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

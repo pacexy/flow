@@ -225,7 +225,7 @@ export class ReaderTab {
         allowScriptedContent: true,
       }),
     )
-    this.rendition.display(this.book.cfi)
+    this.rendition.display(this.location?.start.cfi ?? this.book.cfi)
     this.rendition.themes.default({
       a: {
         color: '#3b82f6 !important',

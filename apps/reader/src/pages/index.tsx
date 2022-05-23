@@ -47,6 +47,7 @@ export const Library: React.FC = () => {
   if (groups.length) return null
   return (
     <DropZone
+      className="scroll-parent h-full"
       onDrop={(e) => {
         const bookId = e.dataTransfer.getData('text/plain')
         const book = books?.find((b) => b.id === bookId)
