@@ -155,30 +155,33 @@ export class ReaderTab {
 
   @debounce(1000)
   search(keyword: string) {
-    if (!keyword) {
-      this.results = undefined
-      return
-    }
-
-    const results: Match[] = []
-    this.sections?.forEach((s) => {
-      const subitems = s.find(keyword) as unknown as Match[]
-      if (!subitems.length) return
-
-      const navItem = s.navitem
-      if (navItem) {
-        const path = this.getNavPath(navItem)
-        path.pop()
-        results.push({
-          id: navItem.href,
-          excerpt: navItem.label,
-          description: path.map((i) => i.label).join(' / '),
-          subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
-          expanded: true,
-        })
+    // avoid blocking input
+    requestIdleCallback(() => {
+      if (!keyword) {
+        this.results = undefined
+        return
       }
+
+      const results: Match[] = []
+      this.sections?.forEach((s) => {
+        const subitems = s.find(keyword) as unknown as Match[]
+        if (!subitems.length) return
+
+        const navItem = s.navitem
+        if (navItem) {
+          const path = this.getNavPath(navItem)
+          path.pop()
+          results.push({
+            id: navItem.href,
+            excerpt: navItem.label,
+            description: path.map((i) => i.label).join(' / '),
+            subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
+            expanded: true,
+          })
+        }
+      })
+      this.results = results
     })
-    this.results = results
   }
 
   async render(el: HTMLDivElement) {
@@ -208,7 +211,9 @@ export class ReaderTab {
         sections.forEach((s) => {
           s.length = s.document.body.textContent?.length ?? 0
           s.images = [...s.document.querySelectorAll('img')].map((el) => el.src)
-          s.navitem = this.mapSectionToNavItem(s.href)
+          this.epub!.loaded.navigation.then(() => {
+            s.navitem = this.mapSectionToNavItem(s.href)
+          })
         })
         this.sections = ref(sections)
       })

@@ -23,10 +23,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
   const expanded = results?.some((r) => r.expanded)
 
   useEffect(() => {
-    // avoid blocking input
-    setTimeout(() => {
-      reader.focusedTab?.search(keyword)
-    })
+    reader.focusedTab?.search(keyword)
   }, [keyword])
 
   return (
