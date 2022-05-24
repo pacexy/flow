@@ -5,30 +5,6 @@ import { useCallback, useState } from 'react'
 
 type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
 
-function roundValues(_rect: ClientRect) {
-  const rect = {
-    ..._rect,
-  }
-  for (const key of Object.keys(rect)) {
-    // @ts-ignore
-    rect[key] = Math.round(rect[key])
-  }
-  return rect
-}
-
-function shallowDiff(prev: any, next: any) {
-  if (prev != null && next != null) {
-    for (const key of Object.keys(next)) {
-      if (prev[key] != next[key]) {
-        return true
-      }
-    }
-  } else if (prev != next) {
-    return true
-  }
-  return false
-}
-
 type TextSelectionState = {
   rect?: ClientRect
   isCollapsed?: boolean
@@ -48,44 +24,29 @@ export function useTextSelection(win?: Window) {
   const [{ rect, isCollapsed, textContent }, setState] = useState(defaultState)
 
   const handler = useCallback(() => {
-    let newRect: ClientRect
-    const selection = win?.getSelection()
-    let newState: TextSelectionState = {}
+    setState(() => {
+      const selection = win?.getSelection()
+      let newState: TextSelectionState = {}
 
-    if (selection == null || selection.isCollapsed) {
-      setState(newState)
-      return
-    }
+      if (!selection || selection.isCollapsed) {
+        return newState
+      }
 
-    const range = selection.getRangeAt(0)
+      const range = selection.getRangeAt(0)
 
-    if (range == null) {
-      setState(newState)
-      return
-    }
+      const contents = range.cloneContents()
+      if (contents.textContent !== null) {
+        newState.textContent = contents.textContent
+      }
 
-    const contents = range.cloneContents()
+      const [rect] = [...range.getClientRects()].filter((r) => r.width)
+      if (rect) newState.rect = rect
 
-    if (contents.textContent != null) {
-      newState.textContent = contents.textContent
-    }
+      newState.isCollapsed = range.collapsed
 
-    const rects = [...range.getClientRects()].filter((r) => r.width)
-
-    if (rects.length === 0 && range.commonAncestorContainer != null) {
-      const el = range.commonAncestorContainer as HTMLElement
-      newRect = roundValues(el.getBoundingClientRect().toJSON())
-    } else {
-      if (!rects[0]) return
-      newRect = roundValues(rects[0].toJSON())
-    }
-    if (shallowDiff(rect, newRect)) {
-      newState.rect = newRect
-    }
-    newState.isCollapsed = range.collapsed
-
-    setState(newState)
-  }, [rect, win])
+      return newState
+    })
+  }, [win])
 
   useIsomorphicEffect(() => {
     win?.document.addEventListener('selectionchange', handler)
