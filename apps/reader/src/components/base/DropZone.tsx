@@ -97,7 +97,7 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
       {dragover && (
         <div
           className={clsx(
-            'bg-outline/20 absolute z-10 transition-all',
+            'bg-outline/20 absolute top-0 z-10',
             position === 'left' && 'h-full w-1/2',
             position === 'right' && 'h-full w-1/2 translate-x-full',
             position === 'top' && 'h-1/2 w-full',
