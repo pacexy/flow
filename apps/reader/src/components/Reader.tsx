@@ -133,14 +133,15 @@ function ReaderGroup({ index }: ReaderGroupProps) {
               reader.addGroup([new ReaderTab(book)], index + 1)
               break
             default:
-              reader.addTab(book)
+              group.addTab(book)
           }
         }}
       >
-        {group.tabs.map((tab) => (
+        {group.tabs.map((tab, i) => (
           <ReaderPane
             tab={tab}
             key={tab.book.id}
+            active={i === selectedIndex}
             focus={focus}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
@@ -153,6 +154,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
 interface ReaderPaneProps {
   tab: ReaderTab
+  active: boolean
   focus: () => void
   onClick: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
@@ -160,6 +162,7 @@ interface ReaderPaneProps {
 
 export function ReaderPane({
   tab,
+  active,
   focus,
   onClick,
   onKeyDown,
@@ -167,7 +170,6 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { focusedTab } = useSnapshot(reader)
   const { rendition, prevLocation, results, location, percentage } =
     useSnapshot(tab)
 
@@ -280,8 +282,6 @@ export function ReaderPane({
   useEffect(() => {
     if (iframe) iframe.onkeydown = onKeyDown
   }, [iframe, onKeyDown])
-
-  const active = tab.book.id === focusedTab?.book.id
 
   return (
     <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
