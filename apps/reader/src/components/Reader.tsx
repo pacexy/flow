@@ -10,11 +10,12 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { settingsState } from '@ink/reader/state'
 
-import { useLibrary, useTextSelection } from '../hooks'
+import { useLibrary } from '../hooks'
 import { Reader, ReaderTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
+import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext } from './base'
 
 export const reader = proxy(new Reader())
@@ -280,8 +281,6 @@ export function ReaderPane({
     if (iframe) iframe.onkeydown = onKeyDown
   }, [iframe, onKeyDown])
 
-  const { rect } = useTextSelection(iframe)
-
   const active = tab.book.id === focusedTab?.book.id
 
   return (
@@ -296,14 +295,7 @@ export function ReaderPane({
       />
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="relative flex-1">
-        {rect && (
-          <div
-            className="bg-surface1 absolute"
-            style={{ top: rect.top - 40, left: rect.left }}
-          >
-            Search
-          </div>
-        )}
+        <TextSelectionMenu win={iframe} />
       </div>
       <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
         <button

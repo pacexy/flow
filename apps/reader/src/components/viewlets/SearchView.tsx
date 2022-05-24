@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
@@ -17,14 +16,10 @@ import { View, ViewProps } from './View'
 export const SearchView: React.FC<ViewProps> = (props) => {
   const action = useRecoilValue(actionState)
   const { focusedTab } = useSnapshot(reader)
-  const [keyword, setKeyword] = useState('')
 
+  const keyword = focusedTab?.keyword
   const results = focusedTab?.results
   const expanded = results?.some((r) => r.expanded)
-
-  useEffect(() => {
-    reader.focusedTab?.search(keyword)
-  }, [keyword])
 
   return (
     <View
@@ -45,11 +40,14 @@ export const SearchView: React.FC<ViewProps> = (props) => {
         name="keyword"
         autoFocus={action === 'Search'}
         hideLabel
+        value={keyword}
         onChange={(e) => {
-          setKeyword(e.target.value)
+          reader.focusedTab?.setKeyword(e.target.value)
         }}
       />
-      {results && <ResultList results={results as Match[]} keyword={keyword} />}
+      {keyword && results && (
+        <ResultList results={results as Match[]} keyword={keyword} />
+      )}
     </View>
   )
 }

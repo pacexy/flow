@@ -73,6 +73,12 @@ export class ReaderTab {
   results?: Match[]
   activeResultID?: string
 
+  keyword = ''
+  setKeyword(keyword: string) {
+    this.keyword = keyword
+    this.search()
+  }
+
   get totalLength() {
     return this.sections?.reduce((acc, s) => acc + s.length, 0) ?? 0
   }
@@ -154,17 +160,17 @@ export class ReaderTab {
   }
 
   @debounce(1000)
-  search(keyword: string) {
+  search() {
     // avoid blocking input
     requestIdleCallback(() => {
-      if (!keyword) {
+      if (!this.keyword) {
         this.results = undefined
         return
       }
 
       const results: Match[] = []
       this.sections?.forEach((s) => {
-        const subitems = s.find(keyword) as unknown as Match[]
+        const subitems = s.find(this.keyword) as unknown as Match[]
         if (!subitems.length) return
 
         const navItem = s.navitem
