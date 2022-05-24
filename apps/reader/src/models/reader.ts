@@ -4,7 +4,7 @@ import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
 import { ReadonlyDeep } from 'type-fest'
-import { proxy, ref } from 'valtio'
+import { proxy, ref, snapshot } from 'valtio'
 
 import { BookRecord, db } from '../db'
 import { updateCustomStyle } from '../styles'
@@ -73,10 +73,24 @@ export class ReaderTab {
   results?: Match[]
   activeResultID?: string
 
+  definitions = this.book.definitions ?? []
+  addDefinition(definition: string) {
+    if (this.definitions.includes(definition)) return
+    this.definitions.push(definition)
+    db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
+  }
+
   keyword = ''
   setKeyword(keyword: string) {
+    if (this.keyword === keyword) return
     this.keyword = keyword
-    this.search()
+    this.onKeywordChange()
+  }
+
+  // only use throttle/debounce for side effects
+  @debounce(1000)
+  async onKeywordChange() {
+    this.results = await this.search()
   }
 
   get totalLength() {
@@ -159,34 +173,36 @@ export class ReaderTab {
     return path
   }
 
-  @debounce(1000)
-  search() {
+  search(keyword = this.keyword) {
     // avoid blocking input
-    requestIdleCallback(() => {
-      if (!this.keyword) {
-        this.results = undefined
-        return
-      }
-
-      const results: Match[] = []
-      this.sections?.forEach((s) => {
-        const subitems = s.find(this.keyword) as unknown as Match[]
-        if (!subitems.length) return
-
-        const navItem = s.navitem
-        if (navItem) {
-          const path = this.getNavPath(navItem)
-          path.pop()
-          results.push({
-            id: navItem.href,
-            excerpt: navItem.label,
-            description: path.map((i) => i.label).join(' / '),
-            subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
-            expanded: true,
-          })
+    return new Promise<Match[] | undefined>((resolve) => {
+      requestIdleCallback(() => {
+        if (!keyword) {
+          resolve(undefined)
+          return
         }
+
+        const results: Match[] = []
+        this.sections?.forEach((s) => {
+          const subitems = s.find(keyword) as unknown as Match[]
+          if (!subitems.length) return
+
+          const navItem = s.navitem
+          if (navItem) {
+            const path = this.getNavPath(navItem)
+            path.pop()
+            results.push({
+              id: navItem.href,
+              excerpt: navItem.label,
+              description: path.map((i) => i.label).join(' / '),
+              subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
+              expanded: true,
+            })
+          }
+        })
+
+        resolve(results)
       })
-      this.results = results
     })
   }
 

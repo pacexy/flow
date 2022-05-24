@@ -17,6 +17,7 @@ export interface BookRecord {
   createdAt: number
   cfi?: string
   percentage?: number
+  definitions?: string[]
 }
 
 export class DB extends Dexie {
@@ -31,7 +32,7 @@ export class DB extends Dexie {
     this.version(1).stores({
       files: 'id, file',
       covers: 'id, cover',
-      books: 'id, name, createdAt, cfi, percentage', // Primary key and indexed props
+      books: 'id, name, createdAt, cfi, percentage, definitions', // Primary key and indexed props
     })
   }
 }

@@ -11,7 +11,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
-import { Reader, ReaderTab } from '../models'
+import { Match, Reader, ReaderTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
@@ -170,13 +170,18 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { rendition, prevLocation, results, location, percentage } =
-    useSnapshot(tab)
-
-  const result = results?.find((r) => r.id === location?.start.href)
-  const matches = result?.subitems
+  const {
+    rendition,
+    prevLocation,
+    results,
+    location,
+    percentage,
+    definitions,
+  } = useSnapshot(tab)
 
   useEffect(() => {
+    const result = results?.find((r) => r.id === location?.start.href)
+    const matches = result?.subitems
     matches?.forEach((m) => {
       try {
         rendition?.annotations.highlight(
@@ -199,7 +204,41 @@ export function ReaderPane({
         rendition?.annotations.remove(m.cfi!, 'highlight')
       })
     }
-  }, [matches, rendition?.annotations])
+  }, [location?.start.href, rendition?.annotations, results, settings])
+
+  useEffect(() => {
+    let matches: Match[] | undefined
+
+    definitions.forEach(async (d) => {
+      const results = await tab.search(d)
+      const result = results?.find((r) => r.id === location?.start.href)
+      matches = result?.subitems
+      matches?.forEach((m) => {
+        try {
+          rendition?.annotations.underline(
+            m.cfi!,
+            undefined,
+            () => {
+              tab.setKeyword(d)
+            },
+            undefined,
+            {
+              stroke: '',
+              'stroke-opacity': 1,
+            },
+          )
+        } catch (error) {
+          // ignore matched text in `<title>`
+        }
+      })
+    })
+
+    return () => {
+      matches?.forEach((m) => {
+        rendition?.annotations.remove(m.cfi!, 'underline')
+      })
+    }
+  }, [definitions, location?.start.href, rendition?.annotations, tab, settings])
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
