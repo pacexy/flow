@@ -10,7 +10,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { settingsState } from '@ink/reader/state'
 
-import { useLibrary } from '../hooks'
+import { useLibrary, useTextSelection } from '../hooks'
 import { Reader, ReaderTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -280,6 +280,8 @@ export function ReaderPane({
     if (iframe) iframe.onkeydown = onKeyDown
   }, [iframe, onKeyDown])
 
+  const { rect } = useTextSelection(iframe)
+
   const active = tab.book.id === focusedTab?.book.id
 
   return (
@@ -293,7 +295,16 @@ export function ReaderPane({
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className="flex-1" />
+      <div ref={ref} className="relative flex-1">
+        {rect && (
+          <div
+            className="bg-surface1 absolute"
+            style={{ top: rect.top - 40, left: rect.left }}
+          >
+            Search
+          </div>
+        )}
+      </div>
       <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
         <button
           className={clsx(prevLocation || 'invisible')}

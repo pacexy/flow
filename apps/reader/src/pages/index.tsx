@@ -105,6 +105,7 @@ export const Library: React.FC = () => {
           <Card className="relative">
             <input
               type="file"
+              accept="application/epub+zip"
               className="absolute inset-0 cursor-pointer opacity-0"
               onChange={(e) => {
                 const files = e.target.files
