@@ -330,7 +330,6 @@ export function ReaderPane({
   return (
     <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
       <PhotoSlider
-        className="select-none"
         images={[{ src, key: 0 }]}
         visible={!!src}
         onClose={() => setSrc(undefined)}
@@ -341,7 +340,7 @@ export function ReaderPane({
       <div ref={ref} className="relative flex-1">
         <TextSelectionMenu tab={tab} />
       </div>
-      <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
+      <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
         <button
           className={clsx(prevLocation || 'invisible')}
           onClick={() => {
@@ -376,7 +375,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const breadcrumbs = tab.getNavPath()
 
   return (
-    <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between gap-2 px-2">
+    <div className="typescale-body-small text-outline flex h-6 items-center justify-between gap-2 px-2">
       <div className="scroll-h flex">
         {breadcrumbs.map((item, i) => (
           <button

@@ -26,7 +26,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
   const minLine = Math.min(n, shrinkThreshold)
   return (
     <div
-      className="scroll-parent group select-none"
+      className="scroll-parent group"
       style={{
         minHeight: (minLine + 1) * 24,
       }}

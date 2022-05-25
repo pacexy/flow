@@ -48,7 +48,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
       </Row>
 
       {expanded && (
-        <div className="select-none">
+        <div>
           {section.images.map((src) => {
             const i = assets.findIndex((a: any) => src.includes(a.href))
             const asset = assets[i] as any

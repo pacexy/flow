@@ -9,7 +9,7 @@ export default function Document() {
         <link rel="icon" href="/icons/192.png"></link>
         <PWA />
       </Head>
-      <body>
+      <body className="select-none">
         <GoogleTagManagerNoScript />
         <Main />
         <NextScript />

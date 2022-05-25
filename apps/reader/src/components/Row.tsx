@@ -48,7 +48,7 @@ export const Row: React.FC<RowProps> = ({
   return (
     <div
       className={clsx(
-        'relative flex cursor-pointer select-none items-center py-0.5 pr-3 text-left',
+        'relative flex cursor-pointer items-center py-0.5 pr-3 text-left',
         active && 'bg-outline/20',
         className,
       )}
