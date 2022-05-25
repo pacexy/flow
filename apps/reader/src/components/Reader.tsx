@@ -5,13 +5,13 @@ import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MdChevronRight } from 'react-icons/md'
 import { PhotoSlider } from 'react-photo-view'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
-import { settingsState } from '@ink/reader/state'
+import { actionState, settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
-import { Match, Reader, ReaderTab } from '../models'
+import { Reader, ReaderTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
@@ -170,14 +170,8 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const {
-    rendition,
-    prevLocation,
-    results,
-    location,
-    percentage,
-    definitions,
-  } = useSnapshot(tab)
+  const { rendition, prevLocation, results, location, percentage, book } =
+    useSnapshot(tab)
 
   useEffect(() => {
     const result = results?.find((r) => r.id === location?.start.href)
@@ -206,39 +200,47 @@ export function ReaderPane({
     }
   }, [location?.start.href, rendition?.annotations, results, settings])
 
-  useEffect(() => {
-    let matches: Match[] | undefined
+  const setAction = useSetRecoilState(actionState)
 
-    definitions.forEach(async (d) => {
-      const results = await tab.search(d)
+  const underline = useCallback(
+    async (def: string, type: 'add' | 'remove') => {
+      const results = await tab.search(def)
       const result = results?.find((r) => r.id === location?.start.href)
-      matches = result?.subitems
-      matches?.forEach((m) => {
+      result?.subitems?.forEach((m) => {
         try {
-          rendition?.annotations.underline(
-            m.cfi!,
-            undefined,
-            () => {
-              tab.setKeyword(d)
-            },
-            undefined,
-            {
-              stroke: '',
-              'stroke-opacity': 1,
-            },
-          )
+          if (type === 'remove') {
+            rendition?.annotations.remove(m.cfi!, 'underline')
+          } else {
+            rendition?.annotations.underline(
+              m.cfi!,
+              undefined,
+              () => {
+                setAction('Search')
+                tab.setKeyword(def)
+              },
+              undefined,
+              {
+                stroke: '',
+                'stroke-opacity': 1,
+              },
+            )
+          }
         } catch (error) {
           // ignore matched text in `<title>`
         }
       })
-    })
+    },
+    [location?.start.href, rendition?.annotations, setAction, tab],
+  )
 
-    return () => {
-      matches?.forEach((m) => {
-        rendition?.annotations.remove(m.cfi!, 'underline')
-      })
-    }
-  }, [definitions, location?.start.href, rendition?.annotations, tab, settings])
+  useEffect(() => {
+    book.definitions?.forEach((d) => underline(d, 'add'))
+  }, [book.definitions, underline])
+
+  useEffect(() => {
+    tab.onAddDefinition = (d) => underline(d, 'add')
+    tab.onRemoveDefinition = (d) => underline(d, 'remove')
+  }, [tab, underline])
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)

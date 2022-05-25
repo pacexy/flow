@@ -73,10 +73,18 @@ export class ReaderTab {
   results?: Match[]
   activeResultID?: string
 
-  definitions = this.book.definitions ?? []
-  addDefinition(definition: string) {
-    if (this.definitions.includes(definition)) return
-    this.definitions.push(definition)
+  definitions = this.book.definitions
+  onAddDefinition?: (def: string) => void
+  addDefinition(def: string) {
+    if (this.definitions.includes(def)) return
+    this.onAddDefinition?.(def)
+    this.definitions.push(def)
+    db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
+  }
+  onRemoveDefinition?: (def: string) => void
+  removeDefinition(def: string) {
+    this.onRemoveDefinition?.(def)
+    this.definitions = this.definitions.filter((d) => d !== def)
     db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
   }
 
@@ -282,7 +290,9 @@ export class ReaderTab {
     })
   }
 
-  constructor(public readonly book: BookRecord) {}
+  constructor(public readonly book: BookRecord) {
+    this.book = ref(book)
+  }
 }
 
 export class ReaderGroup {

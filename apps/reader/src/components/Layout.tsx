@@ -2,7 +2,12 @@ import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
-import { MdOutlineImage, MdSearch, MdToc } from 'react-icons/md'
+import {
+  MdFormatUnderlined,
+  MdOutlineImage,
+  MdSearch,
+  MdToc,
+} from 'react-icons/md'
 import {
   RiFullscreenFill,
   RiFontSize,
@@ -16,6 +21,7 @@ import { useFullScreen } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
+import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
 import { TocView } from './viewlets/TocView'
@@ -38,6 +44,12 @@ const actions = [
     title: 'Search',
     Icon: MdSearch,
     View: SearchView,
+  },
+  {
+    name: 'Annotation',
+    title: 'Annotation',
+    Icon: MdFormatUnderlined,
+    View: AnnotationView,
   },
   {
     name: 'Image',

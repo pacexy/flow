@@ -164,6 +164,7 @@ export async function handleFiles(files: Iterable<File>, open = false) {
         id: crypto.randomUUID(),
         name: file.name,
         createdAt: +new Date(),
+        definitions: [],
       }
       db?.books.add(book)
       db?.files.add({ id: file.name, file })

@@ -1,7 +1,9 @@
 import { StateLayer } from '@literal-ui/core'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useRef } from 'react'
-import { MdExpandMore, MdChevronRight } from 'react-icons/md'
+import { MdExpandMore, MdChevronRight, MdClose } from 'react-icons/md'
+
+import { IconButton } from './Button'
 
 interface RowProps extends ComponentProps<'div'> {
   expanded?: boolean
@@ -12,6 +14,7 @@ interface RowProps extends ComponentProps<'div'> {
   subitems?: Readonly<any[]>
   toggle?: () => void
   onActivate?: () => void
+  onDelete?: () => void
   badge?: boolean
 }
 export const Row: React.FC<RowProps> = ({
@@ -28,6 +31,7 @@ export const Row: React.FC<RowProps> = ({
   children,
   badge,
   onClick,
+  onDelete,
   ...props
 }) => {
   const onActivateRef = useRef(onActivate)
@@ -73,11 +77,22 @@ export const Row: React.FC<RowProps> = ({
           <span className="text-outline ml-1 text-[11px]">{description}</span>
         )}
       </div>
-      {badge && childCount && (
-        <div className="bg-tertiary-container text-on-tertiary-container ml-auto rounded-full px-1.5 py-px text-[11px]">
-          {childCount}
-        </div>
-      )}
+      <div className="ml-auto">
+        {badge && childCount && (
+          <div className="bg-tertiary-container text-on-tertiary-container rounded-full px-1.5 py-px text-[11px]">
+            {childCount}
+          </div>
+        )}
+        {onDelete && (
+          <IconButton
+            Icon={MdClose}
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete?.()
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }

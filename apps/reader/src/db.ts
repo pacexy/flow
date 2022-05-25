@@ -17,7 +17,7 @@ export interface BookRecord {
   createdAt: number
   cfi?: string
   percentage?: number
-  definitions?: string[]
+  definitions: string[]
 }
 
 export class DB extends Dexie {
