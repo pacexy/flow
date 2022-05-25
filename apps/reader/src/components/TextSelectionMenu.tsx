@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MdSearch } from 'react-icons/md'
-import { VscSymbolVariable } from 'react-icons/vsc'
+import { VscSymbolInterface } from 'react-icons/vsc'
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
@@ -20,18 +20,23 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const setAction = useSetRecoilState(actionState)
   const { rendition } = useSnapshot(tab)
 
-  const view = rendition?.manager?.views._views[0]
-  const el = view?.element as HTMLElement
-  const { rect, textContent } = useTextSelection(view?.window)
+  // `manager` is not reactive, so we need to use getter
+  const view = useCallback(() => {
+    return rendition?.manager?.views._views[0]
+  }, [rendition])
+
+  const { rect, textContent } = useTextSelection(view()?.window)
 
   const [offsetLeft, setOffsetLeft] = useState(0)
 
   const handler = useCallback(() => {
+    const el = view()?.element as HTMLElement
     if (!el) return
+
     const containerLeft = el.parentElement!.getBoundingClientRect().left
     const viewLeft = el.getBoundingClientRect().left
     setOffsetLeft(viewLeft - containerLeft)
-  }, [el])
+  }, [view])
 
   useEffect(() => {
     rendition?.on('relocated', handler)
@@ -42,9 +47,10 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   return (
     <div
       className="bg-inverse-surface text-inverse-on-surface absolute flex gap-1 p-0.5"
-      style={{ top: rect.top - 40, left: rect.left + offsetLeft }}
+      style={{ top: rect.top - rect.height - 4, left: rect.left + offsetLeft }}
     >
       <IconButton
+        title="Search in book"
         Icon={MdSearch}
         size={20}
         onClick={() => {
@@ -53,7 +59,8 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
         }}
       />
       <IconButton
-        Icon={VscSymbolVariable}
+        title="Define"
+        Icon={VscSymbolInterface}
         size={20}
         onClick={() => {
           reader.focusedTab?.addDefinition(textContent)
