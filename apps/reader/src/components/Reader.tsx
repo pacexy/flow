@@ -88,7 +88,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     [next, prev],
   )
 
-  const handleClick = useCallback(() => {
+  const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
   }, [index])
 
@@ -97,7 +97,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       ref={ref}
       className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
       tabIndex={1}
-      onClick={handleClick}
+      onMouseDown={handleMouseDown}
       onKeyDown={handleKeyDown}
     >
       <Tab.List onDelete={() => reader.removeGroup(index)}>
@@ -143,7 +143,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
             key={tab.book.id}
             active={i === selectedIndex}
             focus={focus}
-            onClick={handleClick}
+            onMouseDown={handleMouseDown}
             onKeyDown={handleKeyDown}
           />
         ))}
@@ -156,7 +156,7 @@ interface ReaderPaneProps {
   tab: ReaderTab
   active: boolean
   focus: () => void
-  onClick: () => void
+  onMouseDown: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
 }
 
@@ -164,7 +164,7 @@ export function ReaderPane({
   tab,
   active,
   focus,
-  onClick,
+  onMouseDown,
   onKeyDown,
 }: ReaderPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -292,6 +292,11 @@ export function ReaderPane({
 
   useEffect(() => {
     if (!iframe) return
+    iframe.onmousedown = onMouseDown
+  }, [iframe, onMouseDown, tab])
+
+  useEffect(() => {
+    if (!iframe) return
     iframe.onclick = (e: any) => {
       for (const el of e.path) {
         // `instanceof` may not work in iframe
@@ -305,10 +310,8 @@ export function ReaderPane({
           break
         }
       }
-
-      onClick()
     }
-  }, [iframe, onClick, tab])
+  }, [iframe, , tab])
 
   useEffect(() => {
     if (iframe)
@@ -334,7 +337,7 @@ export function ReaderPane({
       />
       <ReaderPaneHeader tab={tab} />
       <div ref={ref} className="relative flex-1">
-        <TextSelectionMenu win={iframe} />
+        <TextSelectionMenu tab={tab} />
       </div>
       <div className="typescale-body-small text-outline flex h-6 select-none items-center justify-between px-2">
         <button

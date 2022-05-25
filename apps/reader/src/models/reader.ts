@@ -65,7 +65,7 @@ export function dfs<T extends Node>(node: T, fn: (node: T) => void) {
 
 export class ReaderTab {
   epub?: Book
-  rendition?: Rendition
+  rendition?: Rendition & { manager?: any }
   nav?: Navigation
   location?: Location
   prevLocation?: Location
