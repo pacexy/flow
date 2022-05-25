@@ -40,7 +40,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
         name="keyword"
         autoFocus={action === 'Search'}
         hideLabel
-        value={keyword}
+        value={keyword ?? ''}
         onChange={(e) => {
           reader.focusedTab?.setKeyword(e.target.value)
         }}

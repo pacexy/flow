@@ -1,12 +1,14 @@
 import { IS_SERVER } from '@literal-ui/hooks'
 import { atom, AtomEffect } from 'recoil'
 
-function localStorageEffect<T>(key: string): AtomEffect<T> {
+function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
   return ({ setSelf, onSet }) => {
     if (IS_SERVER) return
 
     const savedValue = localStorage.getItem(key)
-    if (savedValue != null) {
+    if (savedValue === null) {
+      localStorage.setItem(key, JSON.stringify(defaultValue))
+    } else {
       setSelf(JSON.parse(savedValue))
     }
 
@@ -31,14 +33,15 @@ export type Settings = {
   lineHeight: number
 }
 
+const defaultSettings = {
+  //typography
+  fontSize: '18px',
+  fontWeight: 400,
+  lineHeight: 1.5,
+}
+
 export const settingsState = atom<Settings>({
   key: 'settings',
-  default: {
-    //typography
-    fontSize: '18px',
-    fontWeight: 400,
-    fontFamily: undefined,
-    lineHeight: 1.5,
-  },
-  effects: [localStorageEffect('settings')],
+  default: defaultSettings,
+  effects: [localStorageEffect('settings', defaultSettings)],
 })
