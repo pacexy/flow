@@ -35,7 +35,7 @@ export function withLayout({ title }: Meta) {
   return function Layout({ children }) {
     return (
       <>
-        <NextSeo title={`${title} - Ink`} />
+        <NextSeo title={`${title}`} />
         <article>{children}</article>
       </>
     )

@@ -6,7 +6,7 @@ module.exports = async function (src) {
 
   const code =
     // based on `baseUrl` in `tsconfig.json`
-    `import {withLayout} from 'apps/next/src/components';
+    `import {withLayout} from 'apps/reader/src/components';
 
 export default withLayout(${JSON.stringify(data)})
 

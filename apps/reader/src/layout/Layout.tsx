@@ -4,7 +4,7 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="container flex-1">{children}</main>
       <Footer />
     </div>
   )
