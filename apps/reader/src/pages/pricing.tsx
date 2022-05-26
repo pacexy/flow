@@ -1,35 +1,39 @@
+import { NextSeo } from 'next-seo'
 import { MdCheck } from 'react-icons/md'
 
 export default function Pricing() {
   return (
-    <div className="mt-10 flex flex-col items-center">
-      <h1 className="typescale-headline-large text-on-surface">
-        Pricing Plans
-      </h1>
-      <div className="mt-10 flex gap-8">
-        <Plan
-          name="Free"
-          privileges={[
-            'PWA',
-            'Tabs',
-            'Search',
-            'Image Preview',
-            'Annotation',
-            'Custom Typography',
-          ]}
-          description="Free includes"
-          price={0}
-          onClick={() => window.open('/', '_blank')}
-        />
-        <Plan
-          name="Premium"
-          privileges={['10GB Cloud Storage', 'Data Synchronization']}
-          description="Everything in Free, plus"
-          price={2}
-          onClick={() => {}}
-        />
+    <>
+      <NextSeo title="Pricing" />
+      <div className="mt-10 flex flex-col items-center">
+        <h1 className="typescale-headline-large text-on-surface">
+          Pricing Plans
+        </h1>
+        <div className="mt-10 flex gap-8">
+          <Plan
+            name="Free"
+            privileges={[
+              'PWA',
+              'Tabs',
+              'Search',
+              'Image Preview',
+              'Annotation',
+              'Custom Typography',
+            ]}
+            description="Free includes"
+            price={0}
+            onClick={() => window.open('/', '_blank')}
+          />
+          <Plan
+            name="Premium"
+            privileges={['10GB Cloud Storage', 'Data Synchronization']}
+            description="Everything in Free, plus"
+            price={2}
+            onClick={() => {}}
+          />
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
