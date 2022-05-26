@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
     <footer className="typescale-body-medium text-outline flex justify-center gap-8 py-2">
       <a href="mailto:pacexy@gmail.com">Contact</a>
       <Link href="/privacy">Privacy Policy</Link>
-      <Link href="/terms">Term of Use</Link>
+      <Link href="/terms">Terms of Use</Link>
     </footer>
   )
 }
