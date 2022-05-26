@@ -2,7 +2,7 @@ import { MdCheck } from 'react-icons/md'
 
 export default function Pricing() {
   return (
-    <div className="flex h-full flex-col items-center justify-center">
+    <div className="mt-10 flex flex-col items-center">
       <h1 className="typescale-headline-large text-on-surface">
         Pricing Plans
       </h1>

@@ -29,7 +29,7 @@ import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
   return (
-    <div className="flex h-screen bg-white dark:bg-[#121212]">
+    <div className="flex h-screen select-none bg-white dark:bg-[#121212]">
       <ActivityBar />
       <SideBar />
       <Reader className="flex-1 overflow-hidden">{children}</Reader>
