@@ -170,8 +170,14 @@ export function ReaderPane({
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
-  const { rendition, prevLocation, results, location, percentage, book } =
-    useSnapshot(tab)
+  const {
+    rendition,
+    prevLocation,
+    results,
+    location,
+    percentage,
+    definitions,
+  } = useSnapshot(tab)
 
   useEffect(() => {
     const result = results?.find((r) => r.id === location?.start.href)
@@ -204,8 +210,7 @@ export function ReaderPane({
 
   const underline = useCallback(
     async (def: string, type: 'add' | 'remove') => {
-      const results = await tab.search(def)
-      const result = results?.find((r) => r.id === location?.start.href)
+      const result = await tab.searchInSection(def)
       result?.subitems?.forEach((m) => {
         try {
           if (type === 'remove') {
@@ -226,16 +231,19 @@ export function ReaderPane({
             )
           }
         } catch (error) {
+          console.log(error, def, m)
           // ignore matched text in `<title>`
         }
       })
     },
-    [location?.start.href, rendition?.annotations, setAction, tab],
+    [rendition?.annotations, setAction, tab],
   )
 
   useEffect(() => {
-    book.definitions?.forEach((d) => underline(d, 'add'))
-  }, [book.definitions, underline])
+    definitions?.forEach((d) => underline(d, 'add'))
+    // re-run when section changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location?.start.href, underline])
 
   useEffect(() => {
     tab.onAddDefinition = (d) => underline(d, 'add')

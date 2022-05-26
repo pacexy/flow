@@ -154,6 +154,10 @@ export class ReaderTab {
     return navItem
   }
 
+  get currentSection() {
+    return this.sections?.find((s) => s.href === this.location?.start.href)
+  }
+
   get currentNavItem() {
     return this.location
       ? this.mapSectionToNavItem(this.location.start.href)
@@ -181,6 +185,26 @@ export class ReaderTab {
     return path
   }
 
+  searchInSection(keyword = this.keyword, section = this.currentSection) {
+    if (!section) return
+
+    const subitems = section.find(keyword) as unknown as Match[]
+    if (!subitems.length) return
+
+    const navItem = section.navitem
+    if (navItem) {
+      const path = this.getNavPath(navItem)
+      path.pop()
+      return {
+        id: navItem.href,
+        excerpt: navItem.label,
+        description: path.map((i) => i.label).join(' / '),
+        subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
+        expanded: true,
+      }
+    }
+  }
+
   search(keyword = this.keyword) {
     // avoid blocking input
     return new Promise<Match[] | undefined>((resolve) => {
@@ -191,22 +215,10 @@ export class ReaderTab {
         }
 
         const results: Match[] = []
-        this.sections?.forEach((s) => {
-          const subitems = s.find(keyword) as unknown as Match[]
-          if (!subitems.length) return
 
-          const navItem = s.navitem
-          if (navItem) {
-            const path = this.getNavPath(navItem)
-            path.pop()
-            results.push({
-              id: navItem.href,
-              excerpt: navItem.label,
-              description: path.map((i) => i.label).join(' / '),
-              subitems: subitems.map((i) => ({ ...i, id: i.cfi! })),
-              expanded: true,
-            })
-          }
+        this.sections?.forEach((s) => {
+          const result = this.searchInSection(keyword, s)
+          if (result) results.push(result)
         })
 
         resolve(results)
