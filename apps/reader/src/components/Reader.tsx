@@ -36,8 +36,17 @@ export function ReaderGridView() {
   )
 }
 
-function markFlashed(tab = reader.focusedTab) {
+// avoid content flash
+function markPrevFlashed(tab = reader.focusedTab) {
   if (tab?.location?.start.displayed.page === 1) {
+    tab.hasFlashed = false
+  }
+}
+
+// avoid annotation flash
+function markNextFlashed(tab = reader.focusedTab) {
+  const displayed = tab?.location?.end.displayed
+  if (displayed && displayed.page === displayed.total) {
     tab.hasFlashed = false
   }
 }
@@ -65,12 +74,13 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const prev = useCallback(() => {
     rendition?.prev()
     focus()
-    markFlashed()
+    markPrevFlashed()
   }, [focus, rendition])
 
   const next = useCallback(() => {
     rendition?.next()
     focus()
+    markNextFlashed()
   }, [focus, rendition])
 
   const handleKeyDown = useCallback(
@@ -339,9 +349,10 @@ export function ReaderPane({
       iframe.onwheel = (e: WheelEvent) => {
         if (e.deltaY < 0) {
           rendition?.prev()
-          markFlashed(tab)
+          markPrevFlashed(tab)
         } else {
           rendition?.next()
+          markNextFlashed(tab)
         }
         focus()
       }
