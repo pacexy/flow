@@ -24,7 +24,7 @@ export function updateCustomStyle(
 ) {
   if (!contents || !settings) return
 
-  contents.addStylesheetCss(
+  return contents.addStylesheetCss(
     `a, article, cite, div, li, p, pre, span, table, body {
         ${mapToCss(settings)}
     }`,

@@ -36,6 +36,12 @@ export function ReaderGridView() {
   )
 }
 
+function markFlashed(tab = reader.focusedTab) {
+  if (tab?.location?.start.displayed.page === 1) {
+    tab.hasFlashed = false
+  }
+}
+
 interface ReaderGroupProps {
   index: number
 }
@@ -59,6 +65,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const prev = useCallback(() => {
     rendition?.prev()
     focus()
+    markFlashed()
   }, [focus, rendition])
 
   const next = useCallback(() => {
@@ -177,6 +184,7 @@ export function ReaderPane({
     location,
     percentage,
     definitions,
+    hasFlashed,
   } = useSnapshot(tab)
 
   useEffect(() => {
@@ -321,15 +329,20 @@ export function ReaderPane({
         }
       }
     }
-  }, [iframe, , tab])
+  }, [iframe, tab])
 
   useEffect(() => {
     if (iframe)
       iframe.onwheel = (e: WheelEvent) => {
-        e.deltaY < 0 ? rendition?.prev() : rendition?.next()
+        if (e.deltaY < 0) {
+          rendition?.prev()
+          markFlashed(tab)
+        } else {
+          rendition?.next()
+        }
         focus()
       }
-  }, [focus, iframe, rendition])
+  }, [focus, iframe, rendition, tab])
 
   useEffect(() => {
     if (iframe) iframe.onkeydown = onKeyDown
@@ -345,7 +358,7 @@ export function ReaderPane({
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className="relative flex-1">
+      <div ref={ref} className={clsx('relative flex-1', hasFlashed || '-z-10')}>
         <TextSelectionMenu tab={tab} />
       </div>
       <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">

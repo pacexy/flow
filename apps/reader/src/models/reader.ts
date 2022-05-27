@@ -1,5 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import type { Rendition, Location, Book, Contents } from 'epubjs'
+import type { Rendition, Location, Book } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
@@ -72,6 +72,7 @@ export class ReaderTab {
   sections?: ISection[]
   results?: Match[]
   activeResultID?: string
+  hasFlashed = true
 
   definitions = this.book.definitions
   onAddDefinition?: (def: string) => void
@@ -162,6 +163,10 @@ export class ReaderTab {
     return this.location
       ? this.mapSectionToNavItem(this.location.start.href)
       : undefined
+  }
+
+  get view() {
+    return this.rendition?.manager?.views._views[0]
   }
 
   getNavPath(navItem = this.currentNavItem) {
@@ -274,10 +279,16 @@ export class ReaderTab {
         'text-decoration': 'none !important',
       },
     })
-    this.rendition.hooks.content.register((contents: Contents) => {
+    this.rendition.hooks.render.register(async (view: any) => {
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
-      updateCustomStyle(contents, settings)
+      await updateCustomStyle(view.contents, settings)
+
+      // run after `counter`
+      // https://github.com/futurepress/epub.js/blob/0963efe979e34d53507fee1dc10827ecb07fdc75/src/managers/default/index.js#L413
+      view.on('resized', () => {
+        this.hasFlashed = true
+      })
     })
 
     this.rendition.on('relocated', (loc: Location) => {
