@@ -88,6 +88,14 @@ export class ReaderTab {
     this.definitions = this.definitions.filter((d) => d !== def)
     db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
   }
+  toggleDefinition(def: string) {
+    def = def.trim()
+    if (this.definitions.includes(def)) {
+      this.removeDefinition(def)
+    } else {
+      this.addDefinition(def)
+    }
+  }
 
   keyword = ''
   setKeyword(keyword: string) {

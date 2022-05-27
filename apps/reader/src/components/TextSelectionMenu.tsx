@@ -63,7 +63,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
         Icon={VscSymbolInterface}
         size={20}
         onClick={() => {
-          reader.focusedTab?.addDefinition(textContent)
+          reader.focusedTab?.toggleDefinition(textContent)
         }}
       />
     </div>
