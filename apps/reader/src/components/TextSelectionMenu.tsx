@@ -47,7 +47,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   return (
     <div
       className="bg-inverse-surface text-inverse-on-surface absolute flex gap-1 p-0.5"
-      style={{ top: rect.top - rect.height - 4, left: rect.left + offsetLeft }}
+      style={{ top: rect.top - rect.height - 6, left: rect.left + offsetLeft }}
     >
       <IconButton
         title="Search in book"

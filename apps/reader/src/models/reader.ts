@@ -282,7 +282,7 @@ export class ReaderTab {
     )
     this.rendition.display(this.location?.start.cfi ?? this.book.cfi)
     this.rendition.themes.default({
-      a: {
+      'a:any-link': {
         color: '#3b82f6 !important',
         'text-decoration': 'none !important',
       },

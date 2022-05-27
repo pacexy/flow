@@ -331,7 +331,7 @@ export function ReaderPane({
     iframe.onclick = (e: any) => {
       for (const el of e.path) {
         // `instanceof` may not work in iframe
-        if (el.tagName === 'A') {
+        if (el.tagName === 'A' && el.href) {
           tab.showPrevLocation()
           break
         }
