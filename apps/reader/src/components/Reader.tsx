@@ -249,6 +249,9 @@ export function ReaderPane({
 
   useEffect(() => {
     definitions?.forEach((d) => underline(d, 'add'))
+    return () => {
+      definitions?.forEach((d) => underline(d, 'remove'))
+    }
     // re-run when section changed
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location?.start.href, underline])
