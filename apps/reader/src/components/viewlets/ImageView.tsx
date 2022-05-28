@@ -67,9 +67,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
                   )
 
                   if (img) {
-                    reader.focusedTab?.rendition?.display(
-                      section?.cfiFromElement(img),
-                    )
+                    reader.focusedTab?.display(section?.cfiFromElement(img))
                   }
                 }}
               />

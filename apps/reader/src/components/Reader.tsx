@@ -36,21 +36,6 @@ export function ReaderGridView() {
   )
 }
 
-// avoid content flash
-function markPrevFlashed(tab = reader.focusedTab) {
-  if (tab?.location?.start.displayed.page === 1) {
-    tab.hasFlashed = false
-  }
-}
-
-// avoid annotation flash
-function markNextFlashed(tab = reader.focusedTab) {
-  const displayed = tab?.location?.end.displayed
-  if (displayed && displayed.page === displayed.total) {
-    tab.hasFlashed = false
-  }
-}
-
 interface ReaderGroupProps {
   index: number
 }
@@ -69,19 +54,15 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     focus()
   }, [focus])
 
-  const rendition = focusedTab?.rendition
-
   const prev = useCallback(() => {
-    rendition?.prev()
+    focusedTab?.prev()
     focus()
-    markPrevFlashed()
-  }, [focus, rendition])
+  }, [focus, focusedTab])
 
   const next = useCallback(() => {
-    rendition?.next()
+    focusedTab?.next()
     focus()
-    markNextFlashed()
-  }, [focus, rendition])
+  }, [focus, focusedTab])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent | KeyboardEvent) => {
@@ -194,17 +175,9 @@ export function ReaderPane({
     location,
     percentage,
     definitions,
-    hasFlashed,
+    rendered,
+    currentHref,
   } = useSnapshot(tab)
-
-  useEffect(() => {
-    if (!location) return
-    const sd = location.start.displayed
-    const ed = location.end.displayed
-    if (ed.page - sd.page + 1 === sd.total) {
-      tab.hasFlashed = true
-    }
-  }, [location, tab])
 
   useEffect(() => {
     const result = results?.find((r) => r.id === location?.start.href)
@@ -273,7 +246,7 @@ export function ReaderPane({
     }
     // re-run when section changed
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location?.start.href, underline])
+  }, [currentHref, underline])
 
   useEffect(() => {
     tab.onAddDefinition = (d) => underline(d, 'add')
@@ -357,15 +330,13 @@ export function ReaderPane({
     if (iframe)
       iframe.onwheel = (e: WheelEvent) => {
         if (e.deltaY < 0) {
-          rendition?.prev()
-          markPrevFlashed(tab)
+          tab.prev()
         } else {
-          rendition?.next()
-          markNextFlashed(tab)
+          tab.next()
         }
         focus()
       }
-  }, [focus, iframe, rendition, tab])
+  }, [focus, iframe, tab])
 
   useEffect(() => {
     if (iframe) iframe.onkeydown = onKeyDown
@@ -381,7 +352,7 @@ export function ReaderPane({
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className={clsx('relative flex-1', hasFlashed || '-z-10')}>
+      <div ref={ref} className={clsx('relative flex-1', rendered || '-z-10')}>
         <TextSelectionMenu tab={tab} />
       </div>
       <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
@@ -389,7 +360,7 @@ export function ReaderPane({
           className={clsx(prevLocation || 'invisible')}
           onClick={() => {
             tab.hidePrevLocation()
-            rendition?.display(prevLocation?.end.cfi)
+            tab.display(prevLocation?.end.cfi)
           }}
         >
           Return to {prevLocation?.end.cfi}

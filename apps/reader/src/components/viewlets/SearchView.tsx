@@ -106,7 +106,7 @@ const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
         onClick: () => {
           if (tab) {
             tab.activeResultID = id
-            tab.rendition?.display(cfi)
+            tab.display(cfi)
           }
         },
       })}

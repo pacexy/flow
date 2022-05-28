@@ -72,7 +72,21 @@ export class ReaderTab {
   sections?: ISection[]
   results?: Match[]
   activeResultID?: string
-  hasFlashed = true
+  rendered = false
+
+  display(target?: string) {
+    this.rendition?.display(target)
+  }
+  prev() {
+    this.rendition?.prev()
+    // avoid content flash
+    if (this?.location?.start.displayed.page === 1) {
+      this.rendered = false
+    }
+  }
+  next() {
+    this.rendition?.next()
+  }
 
   definitions = this.book.definitions
   onAddDefinition?: (def: string) => void
@@ -163,8 +177,12 @@ export class ReaderTab {
     return navItem
   }
 
+  get currentHref() {
+    return this.location?.start.href
+  }
+
   get currentSection() {
-    return this.sections?.find((s) => s.href === this.location?.start.href)
+    return this.sections?.find((s) => s.href === this.currentHref)
   }
 
   get currentNavItem() {
@@ -287,16 +305,10 @@ export class ReaderTab {
         'text-decoration': 'none !important',
       },
     })
-    this.rendition.hooks.render.register(async (view: any) => {
+    this.rendition.hooks.render.register((view: any) => {
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
-      await updateCustomStyle(view.contents, settings)
-
-      // run after `counter`
-      // https://github.com/futurepress/epub.js/blob/0963efe979e34d53507fee1dc10827ecb07fdc75/src/managers/default/index.js#L413
-      view.on('resized', () => {
-        this.hasFlashed = true
-      })
+      updateCustomStyle(view.contents, settings)
     })
 
     this.rendition.on('relocated', (loc: Location) => {
@@ -315,6 +327,7 @@ export class ReaderTab {
     })
     this.rendition.on('rendered', (...args: any[]) => {
       console.log('rendered', args)
+      this.rendered = true
     })
     this.rendition.on('removed', (...args: any[]) => {
       console.log('removed', args)
