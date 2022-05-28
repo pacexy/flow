@@ -198,6 +198,15 @@ export function ReaderPane({
   } = useSnapshot(tab)
 
   useEffect(() => {
+    if (!location) return
+    const sd = location.start.displayed
+    const ed = location.end.displayed
+    if (ed.page - sd.page + 1 === sd.total) {
+      tab.hasFlashed = true
+    }
+  }, [location, tab])
+
+  useEffect(() => {
     const result = results?.find((r) => r.id === location?.start.href)
     const matches = result?.subitems
     matches?.forEach((m) => {
