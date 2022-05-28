@@ -10,7 +10,8 @@ interface RowProps extends ComponentProps<'div'> {
   active?: boolean
   depth?: number
   label?: string
-  description?: string
+  description?: string | number
+  info?: string
   subitems?: Readonly<any[]>
   toggle?: () => void
   onActivate?: () => void
@@ -21,6 +22,7 @@ export const Row: React.FC<RowProps> = ({
   title,
   label,
   description,
+  info,
   expanded = false,
   active = false,
   depth = 0,
@@ -92,6 +94,7 @@ export const Row: React.FC<RowProps> = ({
             }}
           />
         )}
+        <span className="text-outline">{info}</span>
       </div>
     </div>
   )

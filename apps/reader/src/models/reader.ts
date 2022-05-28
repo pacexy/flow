@@ -63,16 +63,25 @@ export function dfs<T extends Node>(node: T, fn: (node: T) => void) {
   node.subitems?.forEach((child) => dfs(child as T, fn))
 }
 
+interface TimelineItem {
+  location: Location
+  timestamp: number
+}
+
 export class ReaderTab {
   epub?: Book
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
-  location?: Location
-  prevLocation?: Location
+  locationToReturn?: Location
   sections?: ISection[]
   results?: Match[]
   activeResultID?: string
   rendered = false
+
+  timeline: TimelineItem[] = []
+  get location() {
+    return this.timeline[0]?.location
+  }
 
   display(target?: string, returnable = true) {
     this.rendition?.display(target)
@@ -161,11 +170,11 @@ export class ReaderTab {
   }
 
   showPrevLocation() {
-    this.prevLocation = this.location
+    this.locationToReturn = this.location
   }
 
   hidePrevLocation() {
-    this.prevLocation = undefined
+    this.locationToReturn = undefined
   }
 
   mapSectionToNavItem(href: string) {
@@ -314,7 +323,10 @@ export class ReaderTab {
 
     this.rendition.on('relocated', (loc: Location) => {
       console.log('relocated', loc)
-      this.location = ref(loc)
+      this.timeline.unshift({
+        location: loc,
+        timestamp: Date.now(),
+      })
     })
 
     this.rendition.on('attached', (...args: any[]) => {

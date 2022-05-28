@@ -170,7 +170,7 @@ export function ReaderPane({
   const { scheme } = useColorScheme()
   const {
     rendition,
-    prevLocation,
+    locationToReturn,
     results,
     location,
     percentage,
@@ -357,16 +357,16 @@ export function ReaderPane({
       </div>
       <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
         <button
-          className={clsx(prevLocation || 'invisible')}
+          className={clsx(locationToReturn || 'invisible')}
           onClick={() => {
             tab.hidePrevLocation()
-            tab.display(prevLocation?.end.cfi, false)
+            tab.display(locationToReturn?.end.cfi, false)
           }}
         >
-          Return to {prevLocation?.end.cfi}
+          Return to {locationToReturn?.end.cfi}
         </button>
 
-        {prevLocation ? (
+        {locationToReturn ? (
           <button
             onClick={() => {
               tab.hidePrevLocation()

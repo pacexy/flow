@@ -7,6 +7,7 @@ import {
   MdOutlineImage,
   MdSearch,
   MdToc,
+  MdTimeline,
 } from 'react-icons/md'
 import {
   RiFullscreenFill,
@@ -24,6 +25,7 @@ import { reader } from './Reader'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
+import { TimelineView } from './viewlets/TimelineView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
 
@@ -56,6 +58,12 @@ const actions = [
     title: 'Image',
     Icon: MdOutlineImage,
     View: ImageView,
+  },
+  {
+    name: 'Timeline',
+    title: 'Timeline',
+    Icon: MdTimeline,
+    View: TimelineView,
   },
   {
     name: 'Typography',

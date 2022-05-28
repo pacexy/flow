@@ -20,6 +20,7 @@
     "@types/react-highlight-words": "^0.16.4",
     "babel-loader": "8.2.5",
     "clsx": "1.1.1",
+    "dayjs": "^1.11.2",
     "dexie": "3.2.2",
     "dexie-react-hooks": "1.1.1",
     "epubjs": "0.3.93",
