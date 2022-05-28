@@ -100,7 +100,7 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
       active={href === navItem?.href}
       expanded={expanded}
       subitems={subitems}
-      onClick={() => tab?.display(href)}
+      onClick={() => tab?.display(href, false)}
       toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
     />

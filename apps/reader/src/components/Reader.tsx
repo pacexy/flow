@@ -360,7 +360,7 @@ export function ReaderPane({
           className={clsx(prevLocation || 'invisible')}
           onClick={() => {
             tab.hidePrevLocation()
-            tab.display(prevLocation?.end.cfi)
+            tab.display(prevLocation?.end.cfi, false)
           }}
         >
           Return to {prevLocation?.end.cfi}

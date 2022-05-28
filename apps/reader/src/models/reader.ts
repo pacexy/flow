@@ -74,8 +74,9 @@ export class ReaderTab {
   activeResultID?: string
   rendered = false
 
-  display(target?: string) {
+  display(target?: string, returnable = true) {
     this.rendition?.display(target)
+    if (returnable) this.showPrevLocation()
   }
   prev() {
     this.rendition?.prev()
