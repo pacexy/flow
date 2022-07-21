@@ -3,7 +3,8 @@ import clsx from 'clsx'
 import { Contents } from 'epubjs'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { MdChevronRight } from 'react-icons/md'
+import { MdChevronRight, MdWebAsset } from 'react-icons/md'
+import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -99,18 +100,19 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       onKeyDown={handleKeyDown}
     >
       <Tab.List onDelete={() => reader.removeGroup(index)}>
-        {tabs.map(({ id, title }, i) => {
+        {tabs.map((tab, i) => {
           const selected = i === selectedIndex
           const focused = index === focusedIndex && selected
           return (
             <Tab
-              key={id}
+              key={tab.id}
               selected={selected}
               focused={focused}
               onClick={() => group.selectTab(i)}
               onDelete={() => reader.removeTab(i, index)}
+              Icon={tab instanceof BookTab ? RiBookLine : MdWebAsset}
             >
-              {title}
+              {tab.title}
             </Tab>
           )
         })}
