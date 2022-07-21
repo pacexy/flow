@@ -1,18 +1,9 @@
 import { supabaseClient } from '@supabase/supabase-auth-helpers/nextjs'
-import { useUser } from '@supabase/supabase-auth-helpers/react'
-import { useRouter } from 'next/router'
-import { ComponentProps, useEffect } from 'react'
+import { ComponentProps } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { RiGithubFill } from 'react-icons/ri'
 
-export default function Auth() {
-  const router = useRouter()
-  const { user } = useUser()
-
-  useEffect(() => {
-    if (user) router.push('/account')
-  }, [router, user])
-
+export const Auth: React.FC = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2">
       <Provider provider="google" />
@@ -36,12 +27,7 @@ export const Provider: React.FC<ButtonProps> = ({ provider, ...props }) => {
   return (
     <button
       className="bg-surface1 text-on-surface typescale-body-medium flex items-center gap-2 p-2"
-      onClick={() => {
-        supabaseClient.auth.signIn(
-          { provider },
-          { redirectTo: `${location.origin}/auth` },
-        )
-      }}
+      onClick={() => supabaseClient.auth.signIn({ provider })}
       {...props}
     >
       {iconMap[provider]}
@@ -49,3 +35,5 @@ export const Provider: React.FC<ButtonProps> = ({ provider, ...props }) => {
     </button>
   )
 }
+
+Auth.displayName = 'Auth'

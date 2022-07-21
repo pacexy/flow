@@ -14,7 +14,7 @@ import { useLibrary } from '../hooks'
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
 export default function Index() {
-  const { focusedTab } = useSnapshot(reader)
+  const { focusedBookTab } = useSnapshot(reader)
 
   useEffect(() => {
     if ('launchQueue' in window && 'LaunchParams' in window) {
@@ -32,7 +32,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>{focusedTab?.book.name ?? 'reReader'}</title>
+        <title>{focusedBookTab?.book.name ?? 'reReader'}</title>
       </Head>
       <ReaderGridView />
       <Library />

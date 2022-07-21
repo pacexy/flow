@@ -15,10 +15,10 @@ import { View, ViewProps } from './View'
 
 export const SearchView: React.FC<ViewProps> = (props) => {
   const action = useRecoilValue(actionState)
-  const { focusedTab } = useSnapshot(reader)
+  const { focusedBookTab } = useSnapshot(reader)
 
-  const keyword = focusedTab?.keyword
-  const results = focusedTab?.results
+  const keyword = focusedBookTab?.keyword
+  const results = focusedBookTab?.results
   const expanded = results?.some((r) => r.expanded)
 
   return (
@@ -29,7 +29,9 @@ export const SearchView: React.FC<ViewProps> = (props) => {
           title: expanded ? 'Collapse All' : 'Expand All',
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
-            reader.focusedTab?.results?.forEach((r) => (r.expanded = !expanded))
+            reader.focusedBookTab?.results?.forEach(
+              (r) => (r.expanded = !expanded),
+            )
           },
         },
       ]}
@@ -42,7 +44,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
         hideLabel
         value={keyword ?? ''}
         onChange={(e) => {
-          reader.focusedTab?.setKeyword(e.target.value)
+          reader.focusedBookTab?.setKeyword(e.target.value)
         }}
       />
       {keyword && results && (
@@ -86,7 +88,7 @@ interface ResultRowProps {
 const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
   if (!result) return null
   let { cfi, excerpt, description, depth, expanded, subitems, id } = result
-  const tab = reader.focusedTab
+  const tab = reader.focusedBookTab
   const isResult = depth === 1
 
   excerpt = excerpt.trim()

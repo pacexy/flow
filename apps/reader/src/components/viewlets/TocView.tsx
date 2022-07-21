@@ -44,8 +44,8 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const { focusedTab } = useSnapshot(reader)
-  const toc = focusedTab?.nav?.toc as INavItem[] | undefined
+  const { focusedBookTab } = useSnapshot(reader)
+  const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)
 
@@ -61,7 +61,7 @@ const TocPane: React.FC = () => {
           title: expanded ? 'Collapse All' : 'Expand All',
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
-            reader.focusedTab?.nav?.toc?.forEach((r) =>
+            reader.focusedBookTab?.nav?.toc?.forEach((r) =>
               dfs(r as INavItem, (i) => (i.expanded = !expanded)),
             )
           },
@@ -90,7 +90,7 @@ interface TocRowProps {
 const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
   if (!item) return null
   const { label, subitems, depth, expanded, id, href } = item
-  const tab = reader.focusedTab
+  const tab = reader.focusedBookTab
   const navItem = tab?.currentNavItem
 
   return (

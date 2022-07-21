@@ -1,6 +1,5 @@
 import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { useRouter } from 'next/router'
 import { ComponentProps, useEffect } from 'react'
 import { IconType } from 'react-icons'
 import {
@@ -23,6 +22,7 @@ import { useFullScreen } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
+import { Account } from './pages/account'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -78,7 +78,6 @@ function ActivityBar() {
   const { toggle } = useColorScheme()
   const [action, setAction] = useRecoilState(actionState)
   const fullscreen = useFullScreen()
-  const { push } = useRouter()
 
   return (
     <div className="hidden flex-col sm:flex">
@@ -100,7 +99,7 @@ function ActivityBar() {
         <Action
           title="Account"
           Icon={VscAccount}
-          onClick={() => push('/account')}
+          onClick={() => reader.addTab(Account)}
         />
         <Action
           title="Toggle FullScreen"
@@ -154,8 +153,8 @@ function SideBar() {
   const { groups } = useSnapshot(reader)
 
   useEffect(() => {
-    groups.forEach(({ tabs }) => {
-      tabs.forEach(({ rendition }) => {
+    groups.forEach(({ bookTabs }) => {
+      bookTabs.forEach(({ rendition }) => {
         // @ts-ignore
         rendition?.resize()
       })
