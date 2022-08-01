@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subscription {
+  cancel_url                  String
+  checkout_id                 String
+  currency                    String
+  email                       String  @unique
+  marketing_consent           Int
+  next_bill_date              String
+  passthrough                 String
+  quantity                    String
+  source                      String
+  status                      State
+  subscription_id             String  @id
+  subscription_plan_id        String
+  unit_price                  String
+  user_id                     String  @unique
+  update_url                  String
+  // paused
+  paused_at                   String?
+  paused_from                 String?
+  paused_reason               String?
+  // deleted
+  cancellation_effective_date String?
+}
+
+enum State {
+  trialing
+  active
+  past_due
+  deleted
+  paused
+}
