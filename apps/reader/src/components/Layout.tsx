@@ -18,7 +18,7 @@ import { VscAccount, VscColorMode } from 'react-icons/vsc'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useFullScreen } from '../hooks'
+import { useFullScreen, useInitSubscription } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
@@ -31,6 +31,8 @@ import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
+  useInitSubscription()
+
   return (
     <div className="flex h-screen select-none bg-white dark:bg-[#121212]">
       <ActivityBar />

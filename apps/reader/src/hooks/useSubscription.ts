@@ -2,19 +2,20 @@ import { Subscription } from '@prisma/client'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useUser } from '@supabase/auth-helpers-react'
 import { useEffect } from 'react'
-import { atom, useRecoilState } from 'recoil'
+import { atom, useRecoilValue, useSetRecoilState } from 'recoil'
 
 export const subscriptionState = atom<Subscription | undefined | null>({
   key: 'subscription',
   default: undefined,
 })
 
-export function useSubscription() {
+export function useInitSubscription() {
   const { user } = useUser()
-  const [subscription, setSubscription] = useRecoilState(subscriptionState)
+  const setSubscription = useSetRecoilState(subscriptionState)
 
   useEffect(() => {
     if (!user) return
+
     supabaseClient
       .from('Subscription')
       .select('*')
@@ -22,7 +23,16 @@ export function useSubscription() {
       .then(({ data }) => {
         setSubscription(data ?? null)
       })
-  }, [user])
 
-  return subscription
+    supabaseClient
+      .from('Subscription')
+      .on('*', (payload) => {
+        setSubscription(payload.new ?? null)
+      })
+      .subscribe()
+  }, [user])
+}
+
+export function useSubscription() {
+  return useRecoilValue(subscriptionState)
 }
