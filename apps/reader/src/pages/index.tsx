@@ -1,15 +1,16 @@
+import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
 import React, { ComponentProps, useEffect } from 'react'
-import { MdClose } from 'react-icons/md'
+import { MdCheckCircle, MdClose } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
 
 import { DropZone, handleFiles } from '@ink/reader/components/base'
 
 import { IconButton, ReaderGridView, reader } from '../components'
 import { db } from '../db'
-import { useLibrary } from '../hooks'
+import { useLibrary, useRemoteFiles, useSubscription } from '../hooks'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -44,6 +45,31 @@ export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const { groups } = useSnapshot(reader)
+  const subscription = useSubscription()
+  const remoteFiles = useRemoteFiles()
+
+  useEffect(() => {
+    if (subscription?.status !== 'active') return
+    if (remoteFiles === undefined) return
+    const owner = subscription.email
+
+    books?.forEach(async (b) => {
+      const file = await db?.files.get(b.name)
+      if (!file) return
+
+      supabaseClient.from('Book').upsert({
+        owner,
+        ...b,
+      })
+
+      if (!remoteFiles?.find((f) => f.name.startsWith(b.id))) {
+        supabaseClient.storage
+          .from('books')
+          .upload(`${owner}/${b.id}.epub`, file.file)
+      }
+    })
+  }, [subscription, books, remoteFiles])
+
   if (groups.length) return null
   return (
     <DropZone
@@ -63,6 +89,7 @@ export const Library: React.FC = () => {
         >
           {books?.map((book) => {
             const cover = covers?.find((c) => c.id === book.name)?.cover
+            const synced = remoteFiles?.find((f) => f.name.startsWith(book.id))
             return (
               <li key={book.id}>
                 <Card className="group relative">
@@ -82,9 +109,15 @@ export const Library: React.FC = () => {
                   </div>
 
                   <div
-                    className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
+                    className="line-clamp-2 text-on-surface-variant typescale-body-medium mt-4 w-full"
                     title={book.name}
                   >
+                    {synced && (
+                      <MdCheckCircle
+                        className="text-outline/60 mr-1 mb-0.5 inline"
+                        size={16}
+                      />
+                    )}
                     {book.name}
                   </div>
                   <IconButton

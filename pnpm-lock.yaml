@@ -66,6 +66,7 @@ importers:
       '@prisma/client': ^4.1.0
       '@supabase/auth-helpers-nextjs': ^0.2.5
       '@supabase/auth-helpers-react': ^0.2.3
+      '@supabase/storage-js': ^1.7.3
       '@supabase/supabase-js': ^1.35.4
       '@tailwindcss/aspect-ratio': 0.4.0
       '@tailwindcss/line-clamp': 0.3.1
@@ -113,6 +114,7 @@ importers:
       '@prisma/client': 4.1.0_prisma@4.1.0
       '@supabase/auth-helpers-nextjs': 0.2.5
       '@supabase/auth-helpers-react': 0.2.3
+      '@supabase/storage-js': 1.7.3
       '@supabase/supabase-js': 1.35.4
       '@types/react-highlight-words': 0.16.4
       babel-loader: 8.2.5
@@ -1972,8 +1974,8 @@ packages:
       - supports-color
     dev: false
 
-  /@supabase/storage-js/1.7.2:
-    resolution: {integrity: sha512-HX4HAfLUJznVgAwiKVgdTe5QD0bpUcqgc0hpk/s5Uy8qoe1tHZAc5qE9kI+tqk7rQKyymFpiA7+bAHlzyZXxxQ==}
+  /@supabase/storage-js/1.7.3:
+    resolution: {integrity: sha512-jnIZWqOc9TGclOozgX9v/RWGFCgJAyW/yvmauexgRZhWknUXoA4b2i8tj7vfwE0WTvNRuA5JpXID98rfJeSG7Q==}
     dependencies:
       cross-fetch: 3.1.5
     transitivePeerDependencies:
@@ -1987,7 +1989,7 @@ packages:
       '@supabase/gotrue-js': 1.22.21
       '@supabase/postgrest-js': 0.37.4
       '@supabase/realtime-js': 1.7.3
-      '@supabase/storage-js': 1.7.2
+      '@supabase/storage-js': 1.7.3
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -7351,7 +7353,7 @@ packages:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
 
   /tr46/1.0.1:
-    resolution: {integrity: sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=}
+    resolution: {integrity: sha512-dTpowEjclQ7Kgx5SdBkqRzVhERQXov8/l9Ft9dVM9fmg0W0KQSVaXX9T4i6twCPNtYiZM53lpSSUAwJbFPOHxA==}
     dependencies:
       punycode: 2.1.1
     dev: true

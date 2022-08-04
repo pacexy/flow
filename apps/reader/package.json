@@ -22,6 +22,7 @@
     "@prisma/client": "^4.1.0",
     "@supabase/auth-helpers-nextjs": "^0.2.5",
     "@supabase/auth-helpers-react": "^0.2.3",
+    "@supabase/storage-js": "^1.7.3",
     "@supabase/supabase-js": "^1.35.4",
     "@types/react-highlight-words": "^0.16.4",
     "babel-loader": "8.2.5",
