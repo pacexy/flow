@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Book {
+  id          String   @id
+  owner       String
+  name        String
+  createdAt   BigInt
+  cfi         String?
+  percentage  Float?
+  definitions String[]
+}
+
 model Subscription {
   cancel_url                  String
   checkout_id                 String
