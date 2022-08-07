@@ -11,8 +11,6 @@ import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 import { IconButton, ReaderGridView, reader } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import {
-  useInitRemoteBooks,
-  useInitRemoteFiles,
   useLibrary,
   useRemoteBooks,
   useRemoteFiles,
@@ -49,9 +47,6 @@ export default function Index() {
 }
 
 export const Library: React.FC = () => {
-  useInitRemoteBooks()
-  useInitRemoteFiles()
-
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const remoteBooks = useRemoteBooks()
@@ -60,11 +55,8 @@ export const Library: React.FC = () => {
   const subscription = useSubscription()
 
   useEffect(() => {
-    if (subscription?.status !== 'active') return
-
-    remoteBooks?.forEach(async (b) => {
-      if (await db?.books.get(b.id)) return
-      db?.books.add(b)
+    remoteBooks?.forEach((b) => {
+      db?.books.put(b)
     })
   }, [remoteBooks, subscription])
 
@@ -116,20 +108,20 @@ export const Book: React.FC<BookProps> = ({ book, covers }) => {
   const subscription = useSubscription()
 
   const cover = covers?.find((c) => c.id === book.name)?.cover
-  const synced = remoteFiles?.find((f) => f.name.startsWith(book.id))
+  const remoteFile = remoteFiles?.find((f) => f.name.startsWith(book.id))
 
   useEffect(() => {
-    if (subscription?.status !== 'active') return
+    if (!remoteFile) return
     db?.files.get(book.name).then((file) => {
       if (file) return
       supabaseClient.storage
         .from('books')
-        .download(`${subscription.email}/${book.id}.epub`)
+        .download(`${subscription?.email}/${book.id}.epub`)
         .then(({ data }) => {
           if (data) addFile(new File([data], book.name))
         })
     })
-  }, [book, subscription])
+  }, [book, remoteFile, subscription])
 
   return (
     <Card className="group relative">
@@ -152,7 +144,7 @@ export const Book: React.FC<BookProps> = ({ book, covers }) => {
         className="line-clamp-2 text-on-surface-variant typescale-body-medium mt-4 w-full"
         title={book.name}
       >
-        {synced && (
+        {remoteFile && (
           <MdCheckCircle
             className="text-outline/60 mr-1 mb-0.5 inline"
             size={16}

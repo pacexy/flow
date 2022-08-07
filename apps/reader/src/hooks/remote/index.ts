@@ -1,3 +1,4 @@
-export * from './useRemoteBooks'
-export * from './useRemoteFiles'
+export * from './useRemote'
+export * from './useStorage'
 export * from './useSubscription'
+export * from './useSupabase'
