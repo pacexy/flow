@@ -30,7 +30,7 @@ export function useInitSubscription() {
         setSubscription(payload.new ?? null)
       })
       .subscribe()
-  }, [user])
+  }, [setSubscription, user])
 }
 
 export function useSubscription() {
