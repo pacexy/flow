@@ -313,7 +313,9 @@ export class BookTab extends BaseTab {
         allowScriptedContent: true,
       }),
     )
-    this.rendition.display(this.location?.start.cfi ?? this.book.cfi)
+    this.rendition.display(
+      this.location?.start.cfi ?? this.book.cfi ?? undefined,
+    )
     this.rendition.themes.default({
       'a:any-link': {
         color: '#3b82f6 !important',
