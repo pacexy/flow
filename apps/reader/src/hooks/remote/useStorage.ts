@@ -1,5 +1,5 @@
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
 import { useSubscription } from './useSubscription'
 
@@ -13,7 +13,7 @@ const fetcher = (bucket: string, path: string) => {
 export function useStorage(bucket: string) {
   const subscription = useSubscription()
 
-  return useSWRImmutable(
+  return useSWR(
     [subscription?.status === 'active' ? bucket : null, subscription?.email],
     fetcher,
   )

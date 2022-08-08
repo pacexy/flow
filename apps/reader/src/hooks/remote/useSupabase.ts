@@ -1,5 +1,5 @@
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
-import useSWRImmutable from 'swr/immutable'
+import useSWR from 'swr'
 
 import { useSubscription } from './useSubscription'
 
@@ -13,8 +13,5 @@ const fetcher = (table: string) => {
 export function useSupabase<T>(table: string) {
   const subscription = useSubscription()
 
-  return useSWRImmutable<T[]>(
-    subscription?.status === 'active' ? table : null,
-    fetcher,
-  )
+  return useSWR<T[]>(subscription?.status === 'active' ? table : null, fetcher)
 }

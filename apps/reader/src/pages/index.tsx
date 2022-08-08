@@ -56,6 +56,8 @@ export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const remoteBooks = useRemoteBooks()
+  const remoteFiles = useRemoteFiles()
+
   const [select, toggleSelect] = useBoolean(false)
   const [selectedBooks, { add, has, toggle, reset }] = useSet<string>()
   const allSelected = selectedBooks.size === books?.length
@@ -101,13 +103,39 @@ export const Library: React.FC = () => {
         <div className="space-x-4">
           {select ? (
             <>
-              <Button onClick={() => {}}>Upload</Button>
               <Button
                 onClick={() => {
-                  selectedBooks.forEach((id) => {
+                  toggleSelect()
+                  if (subscription?.status !== 'active') return
+                  selectedBooks.forEach(async (id) => {
+                    if (remoteFiles?.find((f) => f.name === id)) return
+
+                    const file = await db?.files.get(id)
+                    if (!file) return
+
+                    const book = books?.find((b) => b.id === id)
+                    const owner = subscription?.email
+                    await supabaseClient.from('Book').upsert({ ...book, owner })
+                    supabaseClient.storage
+                      .from('books')
+                      .upload(`${owner}/${id}`, file.file)
+                  })
+                }}
+              >
+                Upload
+              </Button>
+              <Button
+                onClick={() => {
+                  toggleSelect()
+                  selectedBooks.forEach(async (id) => {
                     db?.files.delete(id)
                     db?.covers.delete(id)
                     db?.books.delete(id)
+
+                    await supabaseClient.from('Book').delete().eq('id', id)
+                    supabaseClient.storage
+                      .from('books')
+                      .remove([`${subscription?.email}/${id}`])
                   })
                 }}
               >
@@ -171,7 +199,7 @@ export const Book: React.FC<BookProps> = ({
   const subscription = useSubscription()
 
   const cover = covers?.find((c) => c.id === book.id)?.cover
-  const remoteFile = remoteFiles?.find((f) => f.name.startsWith(book.id))
+  const remoteFile = remoteFiles?.find((f) => f.name === book.id)
 
   useEffect(() => {
     if (!remoteFile) return
@@ -179,7 +207,7 @@ export const Book: React.FC<BookProps> = ({
       if (file) return
       supabaseClient.storage
         .from('books')
-        .download(`${subscription?.email}/${book.id}.epub`)
+        .download(`${subscription?.email}/${book.id}`)
         .then(({ data }) => {
           if (data) addFile(book.id, new File([data], book.name))
         })
