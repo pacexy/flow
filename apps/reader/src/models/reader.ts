@@ -275,7 +275,7 @@ export class BookTab extends BaseTab {
   async render(el: HTMLDivElement) {
     if (this.rendition) return
 
-    const file = await db?.files.get(this.book.name)
+    const file = await db?.files.get(this.book.id)
     if (!file) return
 
     const data = await file.file.arrayBuffer()

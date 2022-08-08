@@ -170,18 +170,18 @@ export const Book: React.FC<BookProps> = ({
   const remoteFiles = useRemoteFiles()
   const subscription = useSubscription()
 
-  const cover = covers?.find((c) => c.id === book.name)?.cover
+  const cover = covers?.find((c) => c.id === book.id)?.cover
   const remoteFile = remoteFiles?.find((f) => f.name.startsWith(book.id))
 
   useEffect(() => {
     if (!remoteFile) return
-    db?.files.get(book.name).then((file) => {
+    db?.files.get(book.id).then((file) => {
       if (file) return
       supabaseClient.storage
         .from('books')
         .download(`${subscription?.email}/${book.id}.epub`)
         .then(({ data }) => {
-          if (data) addFile(new File([data], book.name))
+          if (data) addFile(book.id, new File([data], book.name))
         })
     })
   }, [book, remoteFile, subscription])
