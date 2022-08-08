@@ -1,14 +1,20 @@
+import { useBoolean } from '@literal-ui/hooks'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
 import React, { ComponentProps, useEffect } from 'react'
-import { MdCheckCircle, MdClose } from 'react-icons/md'
+import {
+  MdCheckBox,
+  MdCheckBoxOutlineBlank,
+  MdCheckCircle,
+} from 'react-icons/md'
+import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
 import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 
-import { IconButton, ReaderGridView, reader } from '../components'
+import { ReaderGridView, reader, Button } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import {
   useLibrary,
@@ -50,6 +56,9 @@ export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const remoteBooks = useRemoteBooks()
+  const [select, toggleSelect] = useBoolean(false)
+  const [selectedBooks, { add, has, toggle, reset }] = useSet<string>()
+  const allSelected = selectedBooks.size === books?.length
 
   const { groups } = useSnapshot(reader)
   const subscription = useSubscription()
@@ -70,6 +79,57 @@ export const Library: React.FC = () => {
         if (book) reader.addTab(book)
       }}
     >
+      <div className="flex justify-between p-4">
+        <div className="space-x-4">
+          <Button variant="secondary" onClick={toggleSelect}>
+            {select ? 'Cancel' : 'Select'}
+          </Button>
+          {select &&
+            (allSelected ? (
+              <Button variant="secondary" onClick={reset}>
+                Deselect all
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => books?.forEach((b) => add(b.id))}
+              >
+                Select all
+              </Button>
+            ))}
+        </div>
+        <div className="space-x-4">
+          {select ? (
+            <>
+              <Button onClick={() => {}}>Upload</Button>
+              <Button
+                onClick={() => {
+                  selectedBooks.forEach((id) => {
+                    db?.files.delete(id)
+                    db?.covers.delete(id)
+                    db?.books.delete(id)
+                  })
+                }}
+              >
+                Delete
+              </Button>
+            </>
+          ) : (
+            <Button className="relative">
+              <input
+                type="file"
+                accept="application/epub+zip"
+                className="absolute inset-0 cursor-pointer opacity-0"
+                onChange={(e) => {
+                  const files = e.target.files
+                  if (files) handleFiles(files)
+                }}
+              />
+              Import
+            </Button>
+          )}
+        </div>
+      </div>
       <div className="scroll h-full p-4">
         <ul
           className="grid gap-4"
@@ -78,21 +138,15 @@ export const Library: React.FC = () => {
           }}
         >
           {books?.map((book) => (
-            <Book key={book.id} book={book} covers={covers} />
-          ))}
-
-          <Card className="relative">
-            <input
-              type="file"
-              accept="application/epub+zip"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => {
-                const files = e.target.files
-                if (files) handleFiles(files)
-              }}
+            <Book
+              key={book.id}
+              book={book}
+              covers={covers}
+              select={select}
+              selected={has(book.id)}
+              toggle={toggle}
             />
-            Add book
-          </Card>
+          ))}
         </ul>
       </div>
     </DropZone>
@@ -102,8 +156,17 @@ export const Library: React.FC = () => {
 interface BookProps {
   book: BookRecord
   covers?: CoverRecord[]
+  select?: boolean
+  selected?: boolean
+  toggle: (id: string) => void
 }
-export const Book: React.FC<BookProps> = ({ book, covers }) => {
+export const Book: React.FC<BookProps> = ({
+  book,
+  covers,
+  select,
+  selected,
+  toggle,
+}) => {
   const remoteFiles = useRemoteFiles()
   const subscription = useSubscription()
 
@@ -123,21 +186,37 @@ export const Book: React.FC<BookProps> = ({ book, covers }) => {
     })
   }, [book, remoteFile, subscription])
 
+  const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
+
   return (
-    <Card className="group relative">
-      <div className="relative">
+    <Card className="relative">
+      <div
+        role="button"
+        className="border-inverse-on-surface relative border"
+        onClick={() => (select ? toggle(book.id) : reader.addTab(book))}
+      >
         {book.percentage !== undefined && (
           <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
             {(book.percentage * 100).toFixed()}%
           </div>
         )}
         <img
-          role="button"
           src={cover ?? placeholder}
-          onClick={() => reader.addTab(book)}
           alt="Cover"
-          className="h-56 object-contain"
+          className="mx-auto h-56 object-contain"
+          draggable={false}
         />
+        {select && (
+          <div className="absolute bottom-1 right-1">
+            <Icon
+              size={24}
+              className={clsx(
+                '-m-1',
+                selected ? 'text-tertiary' : 'text-outline',
+              )}
+            />
+          </div>
+        )}
       </div>
 
       <div
@@ -152,16 +231,6 @@ export const Book: React.FC<BookProps> = ({ book, covers }) => {
         )}
         {book.name}
       </div>
-      <IconButton
-        className="!absolute right-1 top-1 hidden group-hover:block"
-        size={20}
-        Icon={MdClose}
-        onClick={() => {
-          db?.files.delete(book.name)
-          db?.covers.delete(book.name)
-          db?.books.delete(book.id)
-        }}
-      />
     </Card>
   )
 }
@@ -169,12 +238,6 @@ export const Book: React.FC<BookProps> = ({ book, covers }) => {
 interface CardProps extends ComponentProps<'div'> {}
 export function Card({ className, ...props }: CardProps) {
   return (
-    <div
-      className={clsx(
-        'bg-outline/5 flex h-80 flex-col items-center justify-center rounded p-4',
-        className,
-      )}
-      {...props}
-    />
+    <div className={clsx('flex h-80 flex-col p-4', className)} {...props} />
   )
 }
