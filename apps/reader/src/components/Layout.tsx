@@ -22,7 +22,7 @@ import { useFullScreen, useInitSubscription } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
-import { Account } from './pages/account'
+import { Account } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'

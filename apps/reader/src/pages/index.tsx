@@ -14,7 +14,7 @@ import { useSnapshot } from 'valtio'
 
 import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 
-import { ReaderGridView, reader, Button } from '../components'
+import { ReaderGridView, reader, Button, Account } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import {
   useLibrary,
@@ -106,7 +106,9 @@ export const Library: React.FC = () => {
               <Button
                 onClick={() => {
                   toggleSelect()
-                  if (subscription?.status !== 'active') return
+                  if (subscription?.status !== 'active') {
+                    return reader.addTab(Account)
+                  }
                   selectedBooks.forEach(async (id) => {
                     if (remoteFiles?.find((f) => f.name === id)) return
 

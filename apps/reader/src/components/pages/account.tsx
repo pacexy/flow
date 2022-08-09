@@ -61,7 +61,7 @@ enum Status {
   PAUSED = 1 << 1,
 }
 
-export const Subscription: React.FC = () => {
+const Subscription: React.FC = () => {
   const { user } = useUser()
   const subscription = useSubscription()
   if (subscription === undefined) return null
@@ -121,6 +121,14 @@ export const Subscription: React.FC = () => {
           {active ? 'Active' : 'Inactive'}
         </span>
       </div>
+
+      <Link
+        href="/pricing"
+        target="_blank"
+        className="typescale-body-small text-on-surface"
+      >
+        Detail
+      </Link>
 
       <div className="typescale-body-small text-outline my-1">
         {descriptionMap[status]}

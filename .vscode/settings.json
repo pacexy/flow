@@ -4,6 +4,7 @@
     "/apps/reader/src/components",
     "/apps/reader/src/hooks",
     "/apps/reader/src/components/base",
-    "/apps/reader/src/hooks/remote"
+    "/apps/reader/src/hooks/remote",
+    "/apps/reader/src/components/pages"
   ]
 }
