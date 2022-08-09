@@ -12,8 +12,8 @@ import { View, ViewProps } from './View'
 
 dayjs.extend(relativeTime)
 export const TimelineView: React.FC<ViewProps> = (props) => {
-  const { focusedTab } = useSnapshot(reader)
-  const rows = focusedTab?.timeline
+  const { focusedBookTab } = useSnapshot(reader)
+  const rows = focusedBookTab?.timeline
   const { outerRef, innerRef, items } = useList(rows)
 
   return (
@@ -32,9 +32,9 @@ export const TimelineView: React.FC<ViewProps> = (props) => {
                   key={timestamp}
                   description={displayed.page}
                   info={dayjs(timestamp).format('HH:mm')}
-                  title={focusedTab.mapSectionToNavItem(href)?.label}
+                  title={focusedBookTab.mapSectionToNavItem(href)?.label}
                   onClick={() => {
-                    reader.focusedTab?.display(cfi)
+                    reader.focusedBookTab?.display(cfi)
                   }}
                 />
               )

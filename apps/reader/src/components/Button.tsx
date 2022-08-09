@@ -20,3 +20,28 @@ export function IconButton({
     </div>
   )
 }
+
+const variantMap = {
+  primary: 'bg-tertiary-container text-on-surface',
+  secondary: 'bg-outline/10 text-on-surface-variant',
+}
+
+export interface ButtonProps extends ComponentProps<'button'> {
+  variant?: keyof typeof variantMap
+}
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  className,
+  ...props
+}) => {
+  return (
+    <button
+      className={clsx(
+        'typescale-label-large disabled:bg-disabled disabled:text-on-disabled px-3 py-1.5',
+        variantMap[variant],
+        className,
+      )}
+      {...props}
+    />
+  )
+}

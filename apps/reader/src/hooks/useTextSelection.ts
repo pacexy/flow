@@ -26,7 +26,7 @@ export function useTextSelection(win?: Window) {
   const handler = useCallback(() => {
     setState(() => {
       const selection = win?.getSelection()
-      let newState: TextSelectionState = {}
+      const newState: TextSelectionState = {}
 
       if (!selection || selection.isCollapsed) {
         return newState

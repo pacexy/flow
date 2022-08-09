@@ -14,14 +14,15 @@ import {
   RiFontSize,
   RiFullscreenExitFill,
 } from 'react-icons/ri'
-import { VscColorMode } from 'react-icons/vsc'
+import { VscAccount, VscColorMode } from 'react-icons/vsc'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useFullScreen } from '../hooks'
+import { useFullScreen, useInitSubscription } from '../hooks'
 import { actionState } from '../state'
 
 import { reader } from './Reader'
+import { Account } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -30,6 +31,8 @@ import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
+  useInitSubscription()
+
   return (
     <div className="flex h-screen select-none bg-white dark:bg-[#121212]">
       <ActivityBar />
@@ -77,6 +80,7 @@ function ActivityBar() {
   const { toggle } = useColorScheme()
   const [action, setAction] = useRecoilState(actionState)
   const fullscreen = useFullScreen()
+
   return (
     <div className="hidden flex-col sm:flex">
       <ActionBar className="flex-1">
@@ -94,6 +98,11 @@ function ActivityBar() {
         })}
       </ActionBar>
       <ActionBar>
+        <Action
+          title="Account"
+          Icon={VscAccount}
+          onClick={() => reader.addTab(Account)}
+        />
         <Action
           title="Toggle FullScreen"
           Icon={fullscreen.active ? RiFullscreenExitFill : RiFullscreenFill}
@@ -146,8 +155,8 @@ function SideBar() {
   const { groups } = useSnapshot(reader)
 
   useEffect(() => {
-    groups.forEach(({ tabs }) => {
-      tabs.forEach(({ rendition }) => {
+    groups.forEach(({ bookTabs }) => {
+      bookTabs.forEach(({ rendition }) => {
         // @ts-ignore
         rendition?.resize()
       })

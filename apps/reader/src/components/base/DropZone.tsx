@@ -167,19 +167,22 @@ export async function handleFiles(files: Iterable<File>, open = false) {
         definitions: [],
       }
       db?.books.add(book)
-      db?.files.add({ id: file.name, file })
-
-      window.requestIdleCallback(async () => {
-        const data = await file.arrayBuffer()
-        const epub = ePub(data)
-        const url = await epub.coverUrl()
-        const cover = await toDataUrl(url ?? '')
-        db?.covers.add({ id: file.name, cover })
-      })
+      addFile(book.id, file)
     }
 
     if (open) reader.addTab(book)
   }
+}
+
+export function addFile(id: string, file: File) {
+  db?.files.add({ id, file })
+  window.requestIdleCallback(async () => {
+    const data = await file.arrayBuffer()
+    const epub = ePub(data)
+    const url = await epub.coverUrl()
+    const cover = await toDataUrl(url ?? '')
+    db?.covers.add({ id, cover })
+  })
 }
 
 async function toDataUrl(url: string) {

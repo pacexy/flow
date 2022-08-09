@@ -5,14 +5,14 @@ import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { useTextSelection } from '../hooks'
-import { ReaderTab } from '../models'
+import { BookTab } from '../models'
 import { actionState } from '../state'
 
 import { IconButton } from './Button'
 import { reader } from './Reader'
 
 interface TextSelectionMenuProps {
-  tab: ReaderTab
+  tab: BookTab
 }
 export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   tab,
@@ -55,7 +55,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
         size={20}
         onClick={() => {
           setAction('Search')
-          reader.focusedTab?.setKeyword(textContent)
+          reader.focusedBookTab?.setKeyword(textContent)
         }}
       />
       <IconButton
@@ -63,7 +63,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
         Icon={VscSymbolInterface}
         size={20}
         onClick={() => {
-          reader.focusedTab?.toggleDefinition(textContent)
+          reader.focusedBookTab?.toggleDefinition(textContent)
         }}
       />
     </div>

@@ -10,8 +10,8 @@ import { Row } from '../Row'
 import { View, ViewProps } from './View'
 
 export const ImageView: React.FC<ViewProps> = (props) => {
-  const { focusedTab } = useSnapshot(reader)
-  const sections = focusedTab?.sections?.filter((s) => s.images.length)
+  const { focusedBookTab } = useSnapshot(reader)
+  const sections = focusedBookTab?.sections?.filter((s) => s.images.length)
 
   if ((sections?.length ?? 0) > 500) return null
 
@@ -30,10 +30,10 @@ interface BlockProps {
   section: ReadonlyDeep<ISection>
 }
 const Block: React.FC<BlockProps> = ({ section }) => {
-  const { focusedTab } = useSnapshot(reader)
+  const { focusedBookTab } = useSnapshot(reader)
   const [expanded, toggle] = useBoolean(false)
 
-  const resources = focusedTab?.epub?.resources
+  const resources = focusedBookTab?.epub?.resources
   // @ts-ignore
   const blobs = resources?.replacementUrls
   // @ts-ignore
@@ -67,7 +67,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
                   )
 
                   if (img) {
-                    reader.focusedTab?.display(section?.cfiFromElement(img))
+                    reader.focusedBookTab?.display(section?.cfiFromElement(img))
                   }
                 }}
               />

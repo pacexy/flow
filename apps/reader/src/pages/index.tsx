@@ -1,20 +1,32 @@
+import { useBoolean } from '@literal-ui/hooks'
+import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
 import React, { ComponentProps, useEffect } from 'react'
-import { MdClose } from 'react-icons/md'
+import {
+  MdCheckBox,
+  MdCheckBoxOutlineBlank,
+  MdCheckCircle,
+} from 'react-icons/md'
+import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
-import { DropZone, handleFiles } from '@ink/reader/components/base'
+import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 
-import { IconButton, ReaderGridView, reader } from '../components'
-import { db } from '../db'
-import { useLibrary } from '../hooks'
+import { ReaderGridView, reader, Button, Account } from '../components'
+import { BookRecord, CoverRecord, db } from '../db'
+import {
+  useLibrary,
+  useRemoteBooks,
+  useRemoteFiles,
+  useSubscription,
+} from '../hooks'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
 export default function Index() {
-  const { focusedTab } = useSnapshot(reader)
+  const { focusedBookTab } = useSnapshot(reader)
 
   useEffect(() => {
     if ('launchQueue' in window && 'LaunchParams' in window) {
@@ -32,7 +44,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>{focusedTab?.book.name ?? 'reReader'}</title>
+        <title>{focusedBookTab?.book.name ?? 'reReader'}</title>
       </Head>
       <ReaderGridView />
       <Library />
@@ -43,7 +55,22 @@ export default function Index() {
 export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
+  const remoteBooks = useRemoteBooks()
+  const remoteFiles = useRemoteFiles()
+
+  const [select, toggleSelect] = useBoolean(false)
+  const [selectedBooks, { add, has, toggle, reset }] = useSet<string>()
+  const allSelected = selectedBooks.size === books?.length
+
   const { groups } = useSnapshot(reader)
+  const subscription = useSubscription()
+
+  useEffect(() => {
+    remoteBooks?.forEach((b) => {
+      db?.books.put(b)
+    })
+  }, [remoteBooks, subscription])
+
   if (groups.length) return null
   return (
     <DropZone
@@ -54,6 +81,85 @@ export const Library: React.FC = () => {
         if (book) reader.addTab(book)
       }}
     >
+      <div className="flex justify-between p-4">
+        <div className="space-x-4">
+          <Button variant="secondary" onClick={toggleSelect}>
+            {select ? 'Cancel' : 'Select'}
+          </Button>
+          {select &&
+            (allSelected ? (
+              <Button variant="secondary" onClick={reset}>
+                Deselect all
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => books?.forEach((b) => add(b.id))}
+              >
+                Select all
+              </Button>
+            ))}
+        </div>
+        <div className="space-x-4">
+          {select ? (
+            <>
+              <Button
+                onClick={() => {
+                  toggleSelect()
+                  if (subscription?.status !== 'active') {
+                    return reader.addTab(Account)
+                  }
+                  selectedBooks.forEach(async (id) => {
+                    if (remoteFiles?.find((f) => f.name === id)) return
+
+                    const file = await db?.files.get(id)
+                    if (!file) return
+
+                    const book = books?.find((b) => b.id === id)
+                    const owner = subscription?.email
+                    await supabaseClient.from('Book').upsert({ ...book, owner })
+                    supabaseClient.storage
+                      .from('books')
+                      .upload(`${owner}/${id}`, file.file)
+                  })
+                }}
+              >
+                Upload
+              </Button>
+              <Button
+                onClick={() => {
+                  toggleSelect()
+                  selectedBooks.forEach(async (id) => {
+                    db?.files.delete(id)
+                    db?.covers.delete(id)
+                    db?.books.delete(id)
+
+                    await supabaseClient.from('Book').delete().eq('id', id)
+                    supabaseClient.storage
+                      .from('books')
+                      .remove([`${subscription?.email}/${id}`])
+                  })
+                }}
+              >
+                Delete
+              </Button>
+            </>
+          ) : (
+            <Button className="relative">
+              <input
+                type="file"
+                accept="application/epub+zip"
+                className="absolute inset-0 cursor-pointer opacity-0"
+                onChange={(e) => {
+                  const files = e.target.files
+                  if (files) handleFiles(files)
+                }}
+              />
+              Import
+            </Button>
+          )}
+        </div>
+      </div>
       <div className="scroll h-full p-4">
         <ul
           className="grid gap-4"
@@ -61,74 +167,107 @@ export const Library: React.FC = () => {
             gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
           }}
         >
-          {books?.map((book) => {
-            const cover = covers?.find((c) => c.id === book.name)?.cover
-            return (
-              <li key={book.id}>
-                <Card className="group relative">
-                  <div className="relative">
-                    {book.percentage !== undefined && (
-                      <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
-                        {(book.percentage * 100).toFixed()}%
-                      </div>
-                    )}
-                    <img
-                      role="button"
-                      src={cover ?? placeholder}
-                      onClick={() => reader.addTab(book)}
-                      alt="Cover"
-                      className="h-56 object-contain"
-                    />
-                  </div>
-
-                  <div
-                    className="line-clamp-2 text-on-surface-variant typescale-body-large mt-4 w-full"
-                    title={book.name}
-                  >
-                    {book.name}
-                  </div>
-                  <IconButton
-                    className="!absolute right-1 top-1 hidden group-hover:block"
-                    size={20}
-                    Icon={MdClose}
-                    onClick={() => {
-                      db?.files.delete(book.name)
-                      db?.covers.delete(book.name)
-                      db?.books.delete(book.id)
-                    }}
-                  />
-                </Card>
-              </li>
-            )
-          })}
-
-          <Card className="relative">
-            <input
-              type="file"
-              accept="application/epub+zip"
-              className="absolute inset-0 cursor-pointer opacity-0"
-              onChange={(e) => {
-                const files = e.target.files
-                if (files) handleFiles(files)
-              }}
+          {books?.map((book) => (
+            <Book
+              key={book.id}
+              book={book}
+              covers={covers}
+              select={select}
+              selected={has(book.id)}
+              toggle={toggle}
             />
-            Add book
-          </Card>
+          ))}
         </ul>
       </div>
     </DropZone>
   )
 }
 
+interface BookProps {
+  book: BookRecord
+  covers?: CoverRecord[]
+  select?: boolean
+  selected?: boolean
+  toggle: (id: string) => void
+}
+export const Book: React.FC<BookProps> = ({
+  book,
+  covers,
+  select,
+  selected,
+  toggle,
+}) => {
+  const remoteFiles = useRemoteFiles()
+  const subscription = useSubscription()
+
+  const cover = covers?.find((c) => c.id === book.id)?.cover
+  const remoteFile = remoteFiles?.find((f) => f.name === book.id)
+
+  useEffect(() => {
+    if (!remoteFile) return
+    db?.files.get(book.id).then((file) => {
+      if (file) return
+      supabaseClient.storage
+        .from('books')
+        .download(`${subscription?.email}/${book.id}`)
+        .then(({ data }) => {
+          if (data) addFile(book.id, new File([data], book.name))
+        })
+    })
+  }, [book, remoteFile, subscription])
+
+  const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
+
+  return (
+    <Card className="relative">
+      <div
+        role="button"
+        className="border-inverse-on-surface relative border"
+        onClick={() => (select ? toggle(book.id) : reader.addTab(book))}
+      >
+        {book.percentage !== undefined && (
+          <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
+            {(book.percentage * 100).toFixed()}%
+          </div>
+        )}
+        <img
+          src={cover ?? placeholder}
+          alt="Cover"
+          className="mx-auto h-56 object-contain"
+          draggable={false}
+        />
+        {select && (
+          <div className="absolute bottom-1 right-1">
+            <Icon
+              size={24}
+              className={clsx(
+                '-m-1',
+                selected ? 'text-tertiary' : 'text-outline',
+              )}
+            />
+          </div>
+        )}
+      </div>
+
+      <div
+        className="line-clamp-2 text-on-surface-variant typescale-body-medium mt-4 w-full"
+        title={book.name}
+      >
+        {remoteFile && (
+          <MdCheckCircle
+            className="text-outline/60 mr-1 mb-0.5 inline"
+            size={16}
+          />
+        )}
+        {book.name}
+      </div>
+    </Card>
+  )
+}
+
 interface CardProps extends ComponentProps<'div'> {}
 export function Card({ className, ...props }: CardProps) {
   return (
-    <div
-      className={clsx(
-        'bg-outline/5 flex h-80 flex-col items-center justify-center rounded p-4',
-        className,
-      )}
-      {...props}
-    />
+    <div className={clsx('flex h-80 flex-col p-4', className)} {...props} />
   )
 }

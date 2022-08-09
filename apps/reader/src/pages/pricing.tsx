@@ -1,15 +1,17 @@
 import { NextSeo } from 'next-seo'
 import { MdCheck } from 'react-icons/md'
 
+import { Button } from '../components'
+
 export default function Pricing() {
   return (
     <>
       <NextSeo title="Pricing" />
-      <div className="mt-10 flex flex-col items-center">
+      <div className="mt-5 flex flex-col items-center">
         <h1 className="typescale-headline-large text-on-surface">
           Pricing Plans
         </h1>
-        <div className="mt-10 flex gap-8">
+        <div className="mt-4 flex flex-wrap justify-center gap-8">
           <Plan
             name="Free"
             privileges={[
@@ -22,14 +24,12 @@ export default function Pricing() {
             ]}
             description="Free includes"
             price={0}
-            onClick={() => window.open('/', '_blank')}
           />
           <Plan
             name="Premium"
             privileges={['10GB Cloud Storage', 'Data Synchronization']}
             description="Everything in Free, plus"
             price={2}
-            onClick={() => {}}
           />
         </div>
       </div>
@@ -42,14 +42,12 @@ interface PlanProps {
   privileges: string[]
   description: string
   price: number
-  onClick: () => void
 }
 export const Plan: React.FC<PlanProps> = ({
   name,
   privileges,
   description,
   price,
-  onClick,
 }) => {
   return (
     <div className="bg-outline/5 text-on-surface-variant w-60 p-4">
@@ -60,12 +58,12 @@ export const Plan: React.FC<PlanProps> = ({
         </span>
         <span> /month</span>
       </div>
-      <button
-        className="typescale-title-medium bg-tertiary-container text-on-tertiary-container my-3 w-full p-2"
-        onClick={onClick}
+      <Button
+        className="my-3 w-full"
+        onClick={() => window.open('/', '_blank')}
       >
         Get Started
-      </button>
+      </Button>
       <div className="typescale-title-small text-outline">{description}</div>
       <ul className="typescale-body-large mt-2 space-y-1">
         {privileges.map((p) => (

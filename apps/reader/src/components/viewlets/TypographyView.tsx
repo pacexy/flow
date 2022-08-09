@@ -17,48 +17,50 @@ export const TypographyView: React.FC<ViewProps> = ({
   const [settings, setSettings] = useRecoilState(settingsState)
   return (
     <View className={clsx('space-y-4', className)} {...props}>
-      <TextField
-        as="input"
-        name="font_size"
-        type="number"
-        min={14}
-        max={28}
-        defaultValue={parseInt(settings.fontSize)}
-        onChange={(e) => {
-          setSettings((prev) => ({
-            ...prev,
-            fontSize: e.target.value + 'px',
-          }))
-        }}
-      />
-      <TextField
-        as="input"
-        name="font_weight"
-        type="number"
-        min={100}
-        max={900}
-        step={100}
-        defaultValue={settings.fontWeight}
-        onChange={(e) => {
-          setSettings((prev) => ({
-            ...prev,
-            fontWeight: Number(e.target.value),
-          }))
-        }}
-      />
-      <TextField
-        as="input"
-        name="line_height"
-        type="number"
-        step={0.1}
-        defaultValue={settings.lineHeight}
-        onChange={(e) => {
-          setSettings((prev) => ({
-            ...prev,
-            lineHeight: Number(e.target.value),
-          }))
-        }}
-      />
+      <div className="mx-5 space-y-2">
+        <TextField
+          as="input"
+          name="font_size"
+          type="number"
+          min={14}
+          max={28}
+          defaultValue={parseInt(settings.fontSize)}
+          onChange={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              fontSize: e.target.value + 'px',
+            }))
+          }}
+        />
+        <TextField
+          as="input"
+          name="font_weight"
+          type="number"
+          min={100}
+          max={900}
+          step={100}
+          defaultValue={settings.fontWeight}
+          onChange={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              fontWeight: Number(e.target.value),
+            }))
+          }}
+        />
+        <TextField
+          as="input"
+          name="line_height"
+          type="number"
+          step={0.1}
+          defaultValue={settings.lineHeight}
+          onChange={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              lineHeight: Number(e.target.value),
+            }))
+          }}
+        />
+      </div>
       <TypeFacePane />
     </View>
   )
@@ -66,12 +68,12 @@ export const TypographyView: React.FC<ViewProps> = ({
 
 const typefaces = ['sans-serif', 'serif']
 
-const TypeFacePane: React.FC = ({}) => {
+const TypeFacePane: React.FC = () => {
   const [sentence, setSentence] = useState(
     'The quick brown fox jumps over the lazy dog.',
   )
   return (
-    <Pane headline="Typeface">
+    <Pane headline="Typeface" className="mx-5">
       <TextField
         as="textarea"
         name="sentence"
@@ -103,7 +105,7 @@ export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
   return (
     <button
       className={clsx(
-        'typescale-body-medium space-y-1 px-5 text-left',
+        'typescale-body-medium space-y-1 text-left',
         active ? 'text-on-surface-variant' : 'text-outline/60',
       )}
       onClick={() => {

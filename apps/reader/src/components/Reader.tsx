@@ -3,7 +3,8 @@ import clsx from 'clsx'
 import { Contents } from 'epubjs'
 import type Section from 'epubjs/types/section'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { MdChevronRight } from 'react-icons/md'
+import { MdChevronRight, MdWebAsset } from 'react-icons/md'
+import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -11,7 +12,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { actionState, settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
-import { Reader, ReaderTab } from '../models'
+import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
@@ -41,7 +42,7 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex, focusedTab } = useSnapshot(reader)
+  const { focusedIndex, focusedBookTab } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
   const ref = useRef<HTMLDivElement>(null)
@@ -55,14 +56,14 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   }, [focus])
 
   const prev = useCallback(() => {
-    focusedTab?.prev()
+    focusedBookTab?.prev()
     focus()
-  }, [focus, focusedTab])
+  }, [focus, focusedBookTab])
 
   const next = useCallback(() => {
-    focusedTab?.next()
+    focusedBookTab?.next()
     focus()
-  }, [focus, focusedTab])
+  }, [focus, focusedBookTab])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent | KeyboardEvent) => {
@@ -99,18 +100,19 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       onKeyDown={handleKeyDown}
     >
       <Tab.List onDelete={() => reader.removeGroup(index)}>
-        {tabs.map(({ book }, i) => {
+        {tabs.map((tab, i) => {
           const selected = i === selectedIndex
           const focused = index === focusedIndex && selected
           return (
             <Tab
-              key={book.id}
+              key={tab.id}
               selected={selected}
               focused={focused}
               onClick={() => group.selectTab(i)}
               onDelete={() => reader.removeTab(i, index)}
+              Icon={tab instanceof BookTab ? RiBookLine : MdWebAsset}
             >
-              {book.name}
+              {tab.title}
             </Tab>
           )
         })}
@@ -125,10 +127,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           if (!book) return
           switch (position) {
             case 'left':
-              reader.addGroup([new ReaderTab(book)], index)
+              reader.addGroup([new BookTab(book)], index)
               break
             case 'right':
-              reader.addGroup([new ReaderTab(book)], index + 1)
+              reader.addGroup([new BookTab(book)], index + 1)
               break
             default:
               group.addTab(book)
@@ -136,35 +138,46 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         }}
       >
         {group.tabs.map((tab, i) => (
-          <ReaderPane
-            tab={tab}
-            key={tab.book.id}
-            active={i === selectedIndex}
-            focus={focus}
-            onMouseDown={handleMouseDown}
-            onKeyDown={handleKeyDown}
-          />
+          <PaneContainer active={i === selectedIndex} key={tab.id}>
+            {tab instanceof BookTab ? (
+              <BookPane
+                tab={tab}
+                focus={focus}
+                onMouseDown={handleMouseDown}
+                onKeyDown={handleKeyDown}
+              />
+            ) : (
+              <tab.Component />
+            )}
+          </PaneContainer>
         ))}
       </DropZone>
     </div>
   )
 }
 
-interface ReaderPaneProps {
-  tab: ReaderTab
+interface PaneContainerProps {
   active: boolean
+}
+export const PaneContainer: React.FC<PaneContainerProps> = ({
+  active,
+  children,
+}) => {
+  return (
+    <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
+      {children}
+    </div>
+  )
+}
+
+interface BookPaneProps {
+  tab: BookTab
   focus: () => void
   onMouseDown: () => void
   onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
 }
 
-export function ReaderPane({
-  tab,
-  active,
-  focus,
-  onMouseDown,
-  onKeyDown,
-}: ReaderPaneProps) {
+function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
@@ -343,7 +356,7 @@ export function ReaderPane({
   }, [iframe, onKeyDown])
 
   return (
-    <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
+    <>
       <PhotoSlider
         images={[{ src, key: 0 }]}
         visible={!!src}
@@ -378,12 +391,12 @@ export function ReaderPane({
           <div>{(percentage * 100).toFixed()}%</div>
         )}
       </div>
-    </div>
+    </>
   )
 }
 
 interface ReaderPaneHeaderProps {
-  tab: ReaderTab
+  tab: BookTab
 }
 export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const { location } = useSnapshot(tab)

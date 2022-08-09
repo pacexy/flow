@@ -21,7 +21,7 @@ const Header: React.FC = () => {
 
 const Footer: React.FC = () => {
   return (
-    <footer className="typescale-body-medium text-outline flex justify-center gap-8 py-2">
+    <footer className="typescale-body-medium text-outline mt-10 flex items-center justify-center gap-8 p-2 text-center">
       <a href="mailto:pacexy@gmail.com">Contact</a>
       <Link href="/terms">Terms of Use</Link>
       <Link href="/privacy">Privacy Policy</Link>
