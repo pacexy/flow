@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-*:focus-visible {
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
   outline: none;
   @apply ring-1 ring-inset ring-blue-400;
 }

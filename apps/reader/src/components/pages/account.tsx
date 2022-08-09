@@ -1,10 +1,11 @@
 import { Link } from '@literal-ui/next'
 import { useUser } from '@supabase/auth-helpers-react'
+import clsx from 'clsx'
 import Script from 'next/script'
-import { ComponentProps } from 'react'
 
 import { useSubscription } from '@ink/reader/hooks'
 
+import { Button, ButtonProps } from '../Button'
 import { reader } from '../Reader'
 
 import { Auth } from './auth'
@@ -20,7 +21,7 @@ export const Account: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="mt-5 px-4">
       <Script
         src="https://cdn.paddle.com/paddle/paddle.js"
         onLoad={() => {
@@ -30,12 +31,25 @@ export const Account: React.FC = () => {
           })
         }}
       />
-      <img
-        src={user.user_metadata.avatar_url}
-        alt="Avatar"
-        className="h-10 rounded-full"
-      />
-      <Link href="/api/auth/logout">Sign out</Link>
+      <h1 className="typescale-title-large text-on-surface-variant mb-4">
+        Account
+      </h1>
+      <div className="mb-4 flex gap-4">
+        <img
+          src={user.user_metadata.avatar_url}
+          alt="Avatar"
+          className="h-16 w-16 rounded-full"
+        />
+        <div className="text-on-surface space-y-2">
+          <div>{user.email}</div>
+          <Link
+            className="typescale-body-small text-outline"
+            href="/api/auth/logout"
+          >
+            Sign out
+          </Link>
+        </div>
+      </div>
       <Subscription />
     </div>
   )
@@ -53,7 +67,8 @@ export const Subscription: React.FC = () => {
   if (subscription === undefined) return null
 
   let status = Status.NONE
-  if (subscription?.status === 'active') status |= Status.ACTIVE
+  const active = subscription?.status === 'active'
+  if (active) status |= Status.ACTIVE
   if (subscription?.paused_at) status |= Status.PAUSED
 
   const descriptionMap = {
@@ -64,7 +79,7 @@ export const Subscription: React.FC = () => {
     [Status.PAUSED]: `Your subscription has expired on ${subscription?.next_bill_date}`,
   }
 
-  let buttonProps: ComponentProps<'button'>
+  let buttonProps: ButtonProps
 
   if (status & Status.PAUSED) {
     buttonProps = {
@@ -75,6 +90,7 @@ export const Subscription: React.FC = () => {
     buttonProps = {
       onClick: () => fetch('/api/subscription/pause'),
       children: 'Cancel',
+      variant: 'secondary',
     }
   } else {
     buttonProps = {
@@ -90,8 +106,26 @@ export const Subscription: React.FC = () => {
 
   return (
     <div>
-      <div>{descriptionMap[status]}</div>
-      <button {...buttonProps} />
+      <div className="flex items-center gap-2">
+        <h2 className="typescale-title-medium text-on-surface-variant">
+          Subscription
+        </h2>
+        <span
+          className={clsx(
+            'typescale-label-medium px-1 py-0.5',
+            active
+              ? 'bg-green-400/20 text-green-600 dark:text-green-300'
+              : 'bg-outline/20 text-on-surface-variant',
+          )}
+        >
+          {active ? 'Active' : 'Inactive'}
+        </span>
+      </div>
+
+      <div className="typescale-body-small text-outline my-1">
+        {descriptionMap[status]}
+      </div>
+      <Button {...buttonProps} />
     </div>
   )
 }

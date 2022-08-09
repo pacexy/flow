@@ -26,7 +26,7 @@ const variantMap = {
   secondary: 'bg-outline/10 text-on-surface-variant',
 }
 
-interface ButtonProps extends ComponentProps<'button'> {
+export interface ButtonProps extends ComponentProps<'button'> {
   variant?: keyof typeof variantMap
 }
 export const Button: React.FC<ButtonProps> = ({
