@@ -37,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={clsx(
-        'typescale-label-large px-3 py-1.5',
+        'typescale-label-large disabled:bg-disabled disabled:text-on-disabled px-3 py-1.5',
         variantMap[variant],
         className,
       )}

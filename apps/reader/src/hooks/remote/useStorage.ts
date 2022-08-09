@@ -14,7 +14,7 @@ export function useStorage(bucket: string) {
   const subscription = useSubscription()
 
   return useSWR(
-    [subscription?.status === 'active' ? bucket : null, subscription?.email],
+    subscription?.status === 'active' ? [bucket, subscription?.email] : null,
     fetcher,
   )
 }

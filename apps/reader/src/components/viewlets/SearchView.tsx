@@ -37,16 +37,18 @@ export const SearchView: React.FC<ViewProps> = (props) => {
       ]}
       {...props}
     >
-      <TextField
-        as="input"
-        name="keyword"
-        autoFocus={action === 'Search'}
-        hideLabel
-        value={keyword ?? ''}
-        onChange={(e) => {
-          reader.focusedBookTab?.setKeyword(e.target.value)
-        }}
-      />
+      <div className="px-5 py-px">
+        <TextField
+          as="input"
+          name="keyword"
+          autoFocus={action === 'Search'}
+          hideLabel
+          value={keyword ?? ''}
+          onChange={(e) => {
+            reader.focusedBookTab?.setKeyword(e.target.value)
+          }}
+        />
+      </div>
       {keyword && results && (
         <ResultList results={results as Match[]} keyword={keyword} />
       )}
@@ -87,7 +89,8 @@ interface ResultRowProps {
 }
 const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
   if (!result) return null
-  let { cfi, excerpt, description, depth, expanded, subitems, id } = result
+  const { cfi, depth, expanded, subitems, id } = result
+  let { excerpt, description } = result
   const tab = reader.focusedBookTab
   const isResult = depth === 1
 

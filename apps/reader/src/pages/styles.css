@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+*:focus-visible {
+  outline: none;
+  @apply ring-1 ring-inset ring-blue-400;
+}
+
 .scroll {
   overflow: overlay;
 }
@@ -29,4 +34,22 @@
 
 p {
   @apply py-2;
+}
+
+/* https://daisyui.com/components/divider */
+.divider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: stretch;
+  height: 1rem;
+  white-space: nowrap;
+  @apply my-2 gap-2;
+}
+.divider:before,
+.divider:after {
+  content: '';
+  flex-grow: 1;
+  width: 100%;
+  @apply bg-surface-variant h-px;
 }
