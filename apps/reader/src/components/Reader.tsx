@@ -326,17 +326,29 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
 
   useEffect(() => {
     if (!iframe) return
-    iframe.onclick = (e: any) => {
-      for (const el of e.path) {
+    iframe.onclick = (e: MouseEvent) => {
+      for (const el of e.composedPath() as any) {
         // `instanceof` may not work in iframe
         if (el.tagName === 'A' && el.href) {
           tab.showPrevLocation()
-          break
+          return
         }
-
         if (el.tagName === 'IMG') {
           setSrc(el.src)
-          break
+          return
+        }
+      }
+
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        const w = window.innerWidth
+        const threshold = 0.4
+        const side = w * threshold
+
+        if (e.offsetX < side) {
+          tab.prev()
+        } else if (w - e.offsetX < side) {
+          tab.next()
+        } else {
         }
       }
     }
