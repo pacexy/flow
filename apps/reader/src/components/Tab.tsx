@@ -53,8 +53,13 @@ interface ListProps extends ComponentProps<'ul'> {
 }
 const List: React.FC<ListProps> = ({ className, onDelete, ...props }) => {
   return (
-    <div className="bg-outline/5 flex items-center justify-between">
-      <ul className={clsx('scroll-h flex', className)} {...props} />
+    <div
+      className={clsx(
+        'bg-outline/5 flex items-center justify-between',
+        className,
+      )}
+    >
+      <ul className={clsx('scroll-h flex')} {...props} />
       <IconButton
         className="mx-2"
         Icon={MdClose}

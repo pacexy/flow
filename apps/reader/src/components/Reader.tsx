@@ -99,7 +99,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       onMouseDown={handleMouseDown}
       onKeyDown={handleKeyDown}
     >
-      <Tab.List onDelete={() => reader.removeGroup(index)}>
+      <Tab.List
+        className="hidden sm:flex"
+        onDelete={() => reader.removeGroup(index)}
+      >
         {tabs.map((tab, i) => {
           const selected = i === selectedIndex
           const focused = index === focusedIndex && selected

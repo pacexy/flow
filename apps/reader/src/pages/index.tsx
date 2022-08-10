@@ -83,9 +83,11 @@ export const Library: React.FC = () => {
     >
       <div className="flex justify-between p-4">
         <div className="space-x-4">
-          <Button variant="secondary" onClick={toggleSelect}>
-            {select ? 'Cancel' : 'Select'}
-          </Button>
+          {!!books?.length && (
+            <Button variant="secondary" onClick={toggleSelect}>
+              {select ? 'Cancel' : 'Select'}
+            </Button>
+          )}
           {select &&
             (allSelected ? (
               <Button variant="secondary" onClick={reset}>
