@@ -3,7 +3,7 @@ import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
-import React, { ComponentProps, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
@@ -22,6 +22,7 @@ import {
   useRemoteFiles,
   useSubscription,
 } from '../hooks'
+import { lock } from '../styles'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -164,9 +165,11 @@ export const Library: React.FC = () => {
       </div>
       <div className="scroll h-full p-4">
         <ul
-          className="grid gap-4"
+          className="grid"
           style={{
-            gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
+            gridTemplateColumns: `repeat(auto-fill, minmax(calc(80px + 3vw), 1fr))`,
+            columnGap: lock(16, 32),
+            rowGap: lock(24, 40),
           }}
         >
           {books?.map((book) => (
@@ -221,7 +224,7 @@ export const Book: React.FC<BookProps> = ({
   const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
 
   return (
-    <Card className="relative">
+    <div className="relative flex flex-col">
       <div
         role="button"
         className="border-inverse-on-surface relative border"
@@ -235,7 +238,7 @@ export const Book: React.FC<BookProps> = ({
         <img
           src={cover ?? placeholder}
           alt="Cover"
-          className="mx-auto h-56 object-contain"
+          className="mx-auto aspect-[9/13] object-contain"
           draggable={false}
         />
         {select && (
@@ -252,7 +255,7 @@ export const Book: React.FC<BookProps> = ({
       </div>
 
       <div
-        className="line-clamp-2 text-on-surface-variant typescale-body-medium mt-4 w-full"
+        className="line-clamp-2 text-on-surface-variant typescale-body-small lg:typescale-body-medium mt-2 w-full"
         title={book.name}
       >
         {remoteFile && (
@@ -263,13 +266,6 @@ export const Book: React.FC<BookProps> = ({
         )}
         {book.name}
       </div>
-    </Card>
-  )
-}
-
-interface CardProps extends ComponentProps<'div'> {}
-export function Card({ className, ...props }: CardProps) {
-  return (
-    <div className={clsx('flex h-80 flex-col p-4', className)} {...props} />
+    </div>
   )
 }

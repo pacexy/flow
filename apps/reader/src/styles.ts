@@ -31,3 +31,10 @@ export function updateCustomStyle(
     Style.Custom,
   )
 }
+
+export function lock(l: number, r: number, unit = 'px') {
+  const minw = 400
+  const maxw = 2560
+
+  return `calc(${l}${unit} + ${r - l} * (100vw - ${minw}px) / ${maxw - minw})`
+}
