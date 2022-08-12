@@ -9,7 +9,7 @@ import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
-import { actionState, settingsState } from '@ink/reader/state'
+import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
 import { useLibrary } from '../hooks'
 import { Reader, BookTab } from '../models'
@@ -222,6 +222,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     }
   }, [location?.start.href, rendition?.annotations, results, settings])
 
+  const setNavbar = useSetRecoilState(navbarState)
   const setAction = useSetRecoilState(actionState)
 
   const underline = useCallback(
@@ -341,7 +342,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
 
       if (window.matchMedia('(max-width: 640px)').matches) {
         const w = window.innerWidth
-        const threshold = 0.4
+        const threshold = 0.3
         const side = w * threshold
 
         if (e.offsetX < side) {
@@ -349,10 +350,11 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
         } else if (w - e.offsetX < side) {
           tab.next()
         } else {
+          setNavbar((a) => !a)
         }
       }
     }
-  }, [iframe, tab])
+  }, [iframe, setNavbar, tab])
 
   useEffect(() => {
     if (iframe)

@@ -32,6 +32,11 @@ export const actionState = atom<Action | undefined>({
   default: 'TOC',
 })
 
+export const navbarState = atom<boolean>({
+  key: 'navbar',
+  default: false,
+})
+
 export type Settings = {
   fontSize: string
   fontWeight: number

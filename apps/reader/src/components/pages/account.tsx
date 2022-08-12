@@ -35,11 +35,6 @@ export const Account: React.FC = () => {
         Account
       </h1>
       <div className="mb-4 flex gap-4">
-        <img
-          src={user.user_metadata.avatar_url}
-          alt="Avatar"
-          className="h-16 w-16 rounded-full"
-        />
         <div className="text-on-surface space-y-2">
           <div>{user.email}</div>
           <Link

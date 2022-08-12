@@ -238,7 +238,7 @@ export const Book: React.FC<BookProps> = ({
         <img
           src={cover ?? placeholder}
           alt="Cover"
-          className="mx-auto aspect-[9/13] object-contain"
+          className="mx-auto aspect-[9/12] object-cover"
           draggable={false}
         />
         {select && (
