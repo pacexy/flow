@@ -1,6 +1,5 @@
-import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { ComponentProps, useEffect } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import {
   MdFormatUnderlined,
@@ -9,16 +8,12 @@ import {
   MdToc,
   MdTimeline,
 } from 'react-icons/md'
-import {
-  RiFullscreenFill,
-  RiFontSize,
-  RiFullscreenExitFill,
-} from 'react-icons/ri'
-import { VscAccount, VscColorMode, VscHome } from 'react-icons/vsc'
+import { RiFontSize } from 'react-icons/ri'
+import { VscAccount, VscHome } from 'react-icons/vsc'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useFullScreen, useInitSubscription, useMobile } from '../hooks'
+import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
 import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
@@ -49,99 +44,97 @@ export const Layout: React.FC = ({ children }) => {
   )
 }
 
-type IAction = {
-  name: Action
+interface IAction {
+  name: string
   title: string
   Icon: IconType
-  View: React.FC<any>
-  mobile?: boolean
+  env: number
 }
-const actions: IAction[] = [
+interface IViewAction extends IAction {
+  name: Action
+  View: React.FC<any>
+}
+interface IPageAction extends IAction {
+  onClick: () => void
+}
+const viewActions: IViewAction[] = [
   {
     name: 'TOC',
     title: 'Table of Content',
     Icon: MdToc,
     View: TocView,
-    mobile: true,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Search',
     title: 'Search',
     Icon: MdSearch,
     View: SearchView,
-    mobile: true,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Annotation',
     title: 'Annotation',
     Icon: MdFormatUnderlined,
     View: AnnotationView,
-    mobile: true,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Image',
     title: 'Image',
     Icon: MdOutlineImage,
     View: ImageView,
+    env: ENV.Desktop,
   },
   {
     name: 'Timeline',
     title: 'Timeline',
     Icon: MdTimeline,
     View: TimelineView,
-    mobile: true,
+    env: ENV.Desktop,
   },
   {
     name: 'Typography',
     title: 'Typography',
     Icon: RiFontSize,
     View: TypographyView,
-    mobile: true,
+    env: ENV.Desktop | ENV.MOBILE,
   },
 ]
 
-const pages = [
+const pageActions: IPageAction[] = [
+  {
+    name: 'Home',
+    title: 'Home',
+    Icon: VscHome,
+    onClick: () => reader.removeGroup(0),
+    env: ENV.MOBILE,
+  },
   {
     name: 'Account',
     title: 'Account',
     Icon: VscAccount,
     onClick: () => reader.addTab(Account),
+    env: ENV.Desktop | ENV.MOBILE,
   },
 ]
 
 function ActivityBar() {
-  const { toggle } = useColorScheme()
-  const fullscreen = useFullScreen()
-
   return (
-    <div className="ActivityBar hidden sm:flex sm:flex-col">
-      <MainActionBar />
-      <ActionBar className="mt-auto">
-        {pages.map(({ title, Icon, onClick }, i) => (
-          <Action title={title} Icon={Icon} onClick={onClick} key={i} />
-        ))}
-        <Action
-          title="Toggle FullScreen"
-          Icon={fullscreen.active ? RiFullscreenExitFill : RiFullscreenFill}
-          onClick={fullscreen.toggle}
-        />
-        <Action
-          title="Toggle Color Scheme"
-          Icon={VscColorMode}
-          onClick={toggle}
-        />
-      </ActionBar>
+    <div className="ActivityBar hidden flex-col justify-between sm:flex">
+      <ViewActionBar />
+      <PageActionBar />
     </div>
   )
 }
 
-function MainActionBar() {
+function ViewActionBar() {
   const [action, setAction] = useRecoilState(actionState)
-  const mobile = useMobile()
+  const env = useEnv()
   return (
     <ActionBar>
-      {actions
-        .filter((a) => (mobile ? a.mobile : true))
+      {viewActions
+        .filter((a) => a.env & env)
         .map(({ name, title, Icon }) => {
           const active = action === name
           return (
@@ -158,6 +151,30 @@ function MainActionBar() {
   )
 }
 
+function PageActionBar() {
+  const mobile = useMobile()
+  const env = useEnv()
+  const [action, setAction] = useState('Home')
+  return (
+    <ActionBar>
+      {pageActions
+        .filter((a) => a.env & env)
+        .map(({ name, title, Icon, onClick }, i) => (
+          <Action
+            title={title}
+            Icon={Icon}
+            active={mobile ? action === name : undefined}
+            onClick={() => {
+              onClick()
+              setAction(name)
+            }}
+            key={i}
+          />
+        ))}
+    </ActionBar>
+  )
+}
+
 function NavigationBar() {
   const r = useSnapshot(reader)
   const readMode = r.focusedTab?.isBook
@@ -167,20 +184,7 @@ function NavigationBar() {
   if (!mobile) return null
   return (
     <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-10">
-      {readMode ? (
-        visible && <MainActionBar />
-      ) : (
-        <ActionBar>
-          <Action
-            title="Home"
-            Icon={VscHome}
-            onClick={() => reader.removeGroup(0)}
-          />
-          {pages.map(({ title, Icon, onClick }, i) => (
-            <Action title={title} Icon={Icon} onClick={onClick} key={i} />
-          ))}
-        </ActionBar>
-      )}
+      {readMode ? visible && <ViewActionBar /> : <PageActionBar />}
     </div>
   )
 }
@@ -202,6 +206,7 @@ const Action: React.FC<ActionProps> = ({
   active,
   ...props
 }) => {
+  const mobile = useMobile()
   return (
     <button
       className={clsx(
@@ -212,7 +217,12 @@ const Action: React.FC<ActionProps> = ({
       {...props}
     >
       {active && (
-        <div className="absolute inset-y-0 left-0 hidden w-0.5 bg-blue-400 sm:block" />
+        <div
+          className={clsx(
+            'absolute bg-blue-400',
+            mobile ? 'inset-x-0 bottom-0 h-0.5' : 'inset-y-0 left-0 w-0.5',
+          )}
+        />
       )}
       <Icon size={28} />
     </button>
@@ -241,7 +251,7 @@ function SideBar() {
       )}
       style={{ width: 240 }}
     >
-      {actions.map(({ name, title, View }) => (
+      {viewActions.map(({ name, title, View }) => (
         <View
           key={name}
           name={name}

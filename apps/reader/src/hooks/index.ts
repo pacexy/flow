@@ -1,6 +1,6 @@
 export * from './remote'
 export * from './useAsync'
-export * from './useFullScreen'
+export * from './useEnv'
 export * from './useLibrary'
 export * from './useList'
 export * from './useMobile'
