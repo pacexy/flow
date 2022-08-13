@@ -29,7 +29,7 @@ export type Action =
   | 'Timeline'
 export const actionState = atom<Action | undefined>({
   key: 'action',
-  default: 'TOC',
+  default: undefined,
 })
 
 export const navbarState = atom<boolean>({

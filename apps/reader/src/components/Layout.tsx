@@ -1,3 +1,4 @@
+import { Overlay } from '@literal-ui/core'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
@@ -10,7 +11,7 @@ import {
 } from 'react-icons/md'
 import { RiFontSize } from 'react-icons/ri'
 import { VscAccount, VscHome } from 'react-icons/vsc'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
@@ -128,11 +129,12 @@ function ActivityBar() {
   )
 }
 
-function ViewActionBar() {
+function ViewActionBar({ className }: ComponentProps<'div'>) {
   const [action, setAction] = useRecoilState(actionState)
   const env = useEnv()
+
   return (
-    <ActionBar>
+    <ActionBar className={className}>
       {viewActions
         .filter((a) => a.env & env)
         .map(({ name, title, Icon }) => {
@@ -178,14 +180,26 @@ function PageActionBar() {
 function NavigationBar() {
   const r = useSnapshot(reader)
   const readMode = r.focusedTab?.isBook
-  const visible = useRecoilValue(navbarState)
+  const [visible, setVisible] = useRecoilState(navbarState)
   const mobile = useMobile()
 
   if (!mobile) return null
   return (
-    <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-10">
-      {readMode ? visible && <ViewActionBar /> : <PageActionBar />}
-    </div>
+    <>
+      <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-20">
+        {readMode ? (
+          <ViewActionBar className={clsx(visible || 'hidden')} />
+        ) : (
+          <PageActionBar />
+        )}
+      </div>
+      {visible && (
+        <Overlay
+          className="!bg-transparent"
+          onClick={() => setVisible(false)}
+        />
+      )}
+    </>
   )
 }
 
@@ -230,8 +244,13 @@ const Action: React.FC<ActionProps> = ({
 }
 
 function SideBar() {
-  const action = useRecoilValue(actionState)
+  const [action, setAction] = useRecoilState(actionState)
   const { groups } = useSnapshot(reader)
+  const mobile = useMobile()
+
+  useEffect(() => {
+    if (mobile === false) setAction('TOC')
+  }, [mobile, setAction])
 
   useEffect(() => {
     groups.forEach(({ bookTabs }) => {
@@ -244,22 +263,25 @@ function SideBar() {
   }, [!!action])
 
   return (
-    <div
-      className={clsx(
-        'bg-outline/5 hidden flex-col sm:flex',
-        !action && '!hidden',
-      )}
-      style={{ width: 240 }}
-    >
-      {viewActions.map(({ name, title, View }) => (
-        <View
-          key={name}
-          name={name}
-          title={title}
-          className={clsx(name !== action && '!hidden')}
-        />
-      ))}
-    </div>
+    <>
+      <div
+        className={clsx(
+          'bg-surface flex w-60 flex-col',
+          !action && '!hidden',
+          mobile ? 'absolute bottom-12 right-0 top-0 z-20' : '',
+        )}
+      >
+        {viewActions.map(({ name, title, View }) => (
+          <View
+            key={name}
+            name={name}
+            title={title}
+            className={clsx(name !== action && '!hidden')}
+          />
+        ))}
+      </div>
+      {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
+    </>
   )
 }
 
