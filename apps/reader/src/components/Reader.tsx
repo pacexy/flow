@@ -11,7 +11,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
-import { useLibrary } from '../hooks'
+import { useLibrary, useMobile } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -224,6 +224,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
 
   const setNavbar = useSetRecoilState(navbarState)
   const setAction = useSetRecoilState(actionState)
+  const mobile = useMobile()
 
   const underline = useCallback(
     async (def: string, type: 'add' | 'remove') => {
@@ -334,7 +335,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
           tab.showPrevLocation()
           return
         }
-        if (el.tagName === 'IMG') {
+        if (mobile === false && el.tagName === 'IMG') {
           setSrc(el.src)
           return
         }
@@ -342,19 +343,20 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
 
       if (window.matchMedia('(max-width: 640px)').matches) {
         const w = window.innerWidth
+        const x = e.offsetX % w
         const threshold = 0.3
         const side = w * threshold
 
-        if (e.offsetX < side) {
+        if (x < side) {
           tab.prev()
-        } else if (w - e.offsetX < side) {
+        } else if (w - x < side) {
           tab.next()
         } else {
           setNavbar((a) => !a)
         }
       }
     }
-  }, [iframe, setNavbar, tab])
+  }, [iframe, mobile, setNavbar, tab])
 
   useEffect(() => {
     if (iframe)

@@ -19,7 +19,7 @@ const components = {
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const { pathname } = useRouter()
-  const Layout = pathname === '/' ? AppLayout : PageLayout
+  const Layout = ['/', '/_'].includes(pathname) ? AppLayout : PageLayout
 
   return (
     <UserProvider supabaseClient={supabaseClient}>

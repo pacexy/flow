@@ -108,7 +108,7 @@ const pageActions: IPageAction[] = [
     name: 'Home',
     title: 'Home',
     Icon: VscHome,
-    onClick: () => reader.removeGroup(0),
+    onClick: () => reader.clear(),
     env: ENV.MOBILE,
   },
   {
@@ -186,7 +186,7 @@ function NavigationBar() {
   if (!mobile) return null
   return (
     <>
-      <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-20">
+      <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-20 border-t">
         {readMode ? (
           <ViewActionBar className={clsx(visible || 'hidden')} />
         ) : (

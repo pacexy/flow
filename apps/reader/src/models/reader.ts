@@ -477,4 +477,9 @@ export class Reader {
   selectGroup(index: number) {
     this.focusedIndex = index
   }
+
+  clear() {
+    this.groups = []
+    this.focusedIndex = -1
+  }
 }
