@@ -9,9 +9,9 @@ import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
-import { actionState, settingsState } from '@ink/reader/state'
+import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
-import { useLibrary } from '../hooks'
+import { useLibrary, useMobile } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -99,7 +99,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       onMouseDown={handleMouseDown}
       onKeyDown={handleKeyDown}
     >
-      <Tab.List onDelete={() => reader.removeGroup(index)}>
+      <Tab.List
+        className="hidden sm:flex"
+        onDelete={() => reader.removeGroup(index)}
+      >
         {tabs.map((tab, i) => {
           const selected = i === selectedIndex
           const focused = index === focusedIndex && selected
@@ -219,7 +222,9 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     }
   }, [location?.start.href, rendition?.annotations, results, settings])
 
+  const setNavbar = useSetRecoilState(navbarState)
   const setAction = useSetRecoilState(actionState)
+  const mobile = useMobile()
 
   const underline = useCallback(
     async (def: string, type: 'add' | 'remove') => {
@@ -323,21 +328,35 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
 
   useEffect(() => {
     if (!iframe) return
-    iframe.onclick = (e: any) => {
-      for (const el of e.path) {
+    iframe.onclick = (e: MouseEvent) => {
+      for (const el of e.composedPath() as any) {
         // `instanceof` may not work in iframe
         if (el.tagName === 'A' && el.href) {
           tab.showPrevLocation()
-          break
+          return
         }
-
-        if (el.tagName === 'IMG') {
+        if (mobile === false && el.tagName === 'IMG') {
           setSrc(el.src)
-          break
+          return
+        }
+      }
+
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        const w = window.innerWidth
+        const x = e.offsetX % w
+        const threshold = 0.3
+        const side = w * threshold
+
+        if (x < side) {
+          tab.prev()
+        } else if (w - x < side) {
+          tab.next()
+        } else {
+          setNavbar((a) => !a)
         }
       }
     }
-  }, [iframe, tab])
+  }, [iframe, mobile, setNavbar, tab])
 
   useEffect(() => {
     if (iframe)

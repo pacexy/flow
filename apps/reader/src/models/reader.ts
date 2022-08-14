@@ -5,6 +5,7 @@ import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
+import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
 import { BookRecord, db } from '../db'
@@ -71,6 +72,14 @@ interface TimelineItem {
 
 class BaseTab {
   constructor(public readonly id: string, public readonly title = id) {}
+
+  get isBook(): boolean {
+    return this instanceof BookTab
+  }
+
+  get isPage(): boolean {
+    return this instanceof PageTab
+  }
 }
 
 export class BookTab extends BaseTab {
@@ -362,7 +371,7 @@ export class BookTab extends BaseTab {
 
 class PageTab extends BaseTab {
   constructor(public readonly Component: React.FC<any>) {
-    super(Component.displayName ?? '')
+    super(Component.name ?? '')
   }
 }
 
@@ -370,7 +379,7 @@ type Tab = BookTab | PageTab
 type TabParam = ConstructorParameters<typeof BookTab | typeof PageTab>[0]
 
 export class Group {
-  id = crypto.randomUUID()
+  id = uuidv4()
 
   constructor(public tabs: Tab[], public selectedIndex = tabs.length - 1) {}
 
@@ -389,7 +398,7 @@ export class Group {
 
   addTab(param: TabParam) {
     const isPage = typeof param === 'function'
-    const id = isPage ? param.displayName : param.id
+    const id = isPage ? param.name : param.id
 
     const index = this.tabs.findIndex((t) => t.id === id)
     if (index > -1) {
@@ -468,5 +477,10 @@ export class Reader {
 
   selectGroup(index: number) {
     this.focusedIndex = index
+  }
+
+  clear() {
+    this.groups = []
+    this.focusedIndex = -1
   }
 }

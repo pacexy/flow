@@ -8,6 +8,7 @@ import {
   useCallback,
   useEffect,
 } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 
 import { db } from '@ink/reader/db'
 
@@ -161,7 +162,7 @@ export async function handleFiles(files: Iterable<File>, open = false) {
 
     if (!book) {
       book = {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         name: file.name,
         createdAt: +new Date(),
         definitions: [],
@@ -180,7 +181,7 @@ export function addFile(id: string, file: File) {
     const data = await file.arrayBuffer()
     const epub = ePub(data)
     const url = await epub.coverUrl()
-    const cover = await toDataUrl(url ?? '')
+    const cover = url && (await toDataUrl(url))
     db?.covers.add({ id, cover })
   })
 }

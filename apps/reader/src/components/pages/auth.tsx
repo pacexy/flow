@@ -76,5 +76,3 @@ export const Provider: React.FC<ButtonProps> = ({ provider, ...props }) => {
     </Button>
   )
 }
-
-Auth.displayName = 'Login'

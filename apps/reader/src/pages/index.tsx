@@ -3,7 +3,8 @@ import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
-import React, { ComponentProps, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import React, { useEffect } from 'react'
 import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
@@ -18,15 +19,18 @@ import { ReaderGridView, reader, Button, Account } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import {
   useLibrary,
+  useMobile,
   useRemoteBooks,
   useRemoteFiles,
   useSubscription,
 } from '../hooks'
+import { lock } from '../styles'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
 export default function Index() {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedTab } = useSnapshot(reader)
+  const router = useRouter()
 
   useEffect(() => {
     if ('launchQueue' in window && 'LaunchParams' in window) {
@@ -41,10 +45,14 @@ export default function Index() {
     }
   }, [])
 
+  useEffect(() => {
+    if (router.pathname === '/') reader.clear()
+  }, [router.pathname])
+
   return (
     <>
       <Head>
-        <title>{focusedBookTab?.book.name ?? 'reReader'}</title>
+        <title>{focusedTab?.title ?? 'reReader'}</title>
       </Head>
       <ReaderGridView />
       <Library />
@@ -83,9 +91,11 @@ export const Library: React.FC = () => {
     >
       <div className="flex justify-between p-4">
         <div className="space-x-4">
-          <Button variant="secondary" onClick={toggleSelect}>
-            {select ? 'Cancel' : 'Select'}
-          </Button>
+          {!!books?.length && (
+            <Button variant="secondary" onClick={toggleSelect}>
+              {select ? 'Cancel' : 'Select'}
+            </Button>
+          )}
           {select &&
             (allSelected ? (
               <Button variant="secondary" onClick={reset}>
@@ -162,9 +172,11 @@ export const Library: React.FC = () => {
       </div>
       <div className="scroll h-full p-4">
         <ul
-          className="grid gap-4"
+          className="grid"
           style={{
-            gridTemplateColumns: `repeat(auto-fill, minmax(224px, 1fr))`,
+            gridTemplateColumns: `repeat(auto-fill, minmax(calc(80px + 3vw), 1fr))`,
+            columnGap: lock(16, 32),
+            rowGap: lock(24, 40),
           }}
         >
           {books?.map((book) => (
@@ -199,6 +211,8 @@ export const Book: React.FC<BookProps> = ({
 }) => {
   const remoteFiles = useRemoteFiles()
   const subscription = useSubscription()
+  const router = useRouter()
+  const mobile = useMobile()
 
   const cover = covers?.find((c) => c.id === book.id)?.cover
   const remoteFile = remoteFiles?.find((f) => f.name === book.id)
@@ -219,11 +233,18 @@ export const Book: React.FC<BookProps> = ({
   const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
 
   return (
-    <Card className="relative">
+    <div className="relative flex flex-col">
       <div
         role="button"
         className="border-inverse-on-surface relative border"
-        onClick={() => (select ? toggle(book.id) : reader.addTab(book))}
+        onClick={async () => {
+          if (select) {
+            toggle(book.id)
+          } else {
+            if (mobile) await router.push('/_')
+            reader.addTab(book)
+          }
+        }}
       >
         {book.percentage !== undefined && (
           <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
@@ -233,7 +254,7 @@ export const Book: React.FC<BookProps> = ({
         <img
           src={cover ?? placeholder}
           alt="Cover"
-          className="mx-auto h-56 object-contain"
+          className="mx-auto aspect-[9/12] object-cover"
           draggable={false}
         />
         {select && (
@@ -250,7 +271,7 @@ export const Book: React.FC<BookProps> = ({
       </div>
 
       <div
-        className="line-clamp-2 text-on-surface-variant typescale-body-medium mt-4 w-full"
+        className="line-clamp-2 text-on-surface-variant typescale-body-small lg:typescale-body-medium mt-2 w-full"
         title={book.name}
       >
         {remoteFile && (
@@ -261,13 +282,6 @@ export const Book: React.FC<BookProps> = ({
         )}
         {book.name}
       </div>
-    </Card>
-  )
-}
-
-interface CardProps extends ComponentProps<'div'> {}
-export function Card({ className, ...props }: CardProps) {
-  return (
-    <div className={clsx('flex h-80 flex-col p-4', className)} {...props} />
+    </div>
   )
 }

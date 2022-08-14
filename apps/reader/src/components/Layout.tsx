@@ -1,6 +1,6 @@
-import { useColorScheme } from '@literal-ui/hooks'
+import { Overlay } from '@literal-ui/core'
 import clsx from 'clsx'
-import { ComponentProps, useEffect } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import {
   MdFormatUnderlined,
@@ -10,19 +10,19 @@ import {
   MdTimeline,
 } from 'react-icons/md'
 import {
-  RiFullscreenFill,
   RiFontSize,
-  RiFullscreenExitFill,
+  RiAccountCircleLine,
+  RiSettingsLine,
+  RiHome6Line,
 } from 'react-icons/ri'
-import { VscAccount, VscColorMode } from 'react-icons/vsc'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useFullScreen, useInitSubscription } from '../hooks'
-import { actionState } from '../state'
+import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
+import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
-import { Account } from './pages'
+import { Account, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -32,59 +32,122 @@ import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
   useInitSubscription()
+  const r = useSnapshot(reader)
+  const readMode = r.focusedTab?.isBook
 
   return (
     <div className="flex h-screen select-none bg-white dark:bg-[#121212]">
       <ActivityBar />
+      <NavigationBar />
       <SideBar />
-      <Reader className="flex-1 overflow-hidden">{children}</Reader>
+      <Reader
+        className={clsx('flex-1 overflow-hidden', readMode || 'mb-12 sm:mb-0')}
+      >
+        {children}
+      </Reader>
     </div>
   )
 }
 
-const actions = [
-  { name: 'TOC', title: 'Table of Content', Icon: MdToc, View: TocView },
+interface IAction {
+  name: string
+  title: string
+  Icon: IconType
+  env: number
+}
+interface IViewAction extends IAction {
+  name: Action
+  View: React.FC<any>
+}
+interface IPageAction extends IAction {
+  Component?: React.FC
+}
+const viewActions: IViewAction[] = [
+  {
+    name: 'TOC',
+    title: 'Table of Content',
+    Icon: MdToc,
+    View: TocView,
+    env: ENV.Desktop | ENV.MOBILE,
+  },
   {
     name: 'Search',
     title: 'Search',
     Icon: MdSearch,
     View: SearchView,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Annotation',
     title: 'Annotation',
     Icon: MdFormatUnderlined,
     View: AnnotationView,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Image',
     title: 'Image',
     Icon: MdOutlineImage,
     View: ImageView,
+    env: ENV.Desktop,
   },
   {
     name: 'Timeline',
     title: 'Timeline',
     Icon: MdTimeline,
     View: TimelineView,
+    env: ENV.Desktop,
   },
   {
     name: 'Typography',
     title: 'Typography',
     Icon: RiFontSize,
     View: TypographyView,
+    env: ENV.Desktop | ENV.MOBILE,
   },
-] as const
+]
+
+const pageActions: IPageAction[] = [
+  {
+    name: 'Home',
+    title: 'Home',
+    Icon: RiHome6Line,
+    env: ENV.MOBILE,
+  },
+  {
+    name: 'Account',
+    title: 'Account',
+    Icon: RiAccountCircleLine,
+    Component: Account,
+    env: ENV.Desktop | ENV.MOBILE,
+  },
+  {
+    name: 'Settings',
+    title: 'Settings',
+    Icon: RiSettingsLine,
+    Component: Settings,
+    env: ENV.Desktop | ENV.MOBILE,
+  },
+]
 
 function ActivityBar() {
-  const { toggle } = useColorScheme()
+  return (
+    <div className="ActivityBar hidden flex-col justify-between sm:flex">
+      <ViewActionBar />
+      <PageActionBar />
+    </div>
+  )
+}
+
+function ViewActionBar({ className }: ComponentProps<'div'>) {
   const [action, setAction] = useRecoilState(actionState)
-  const fullscreen = useFullScreen()
+  const env = useEnv()
 
   return (
-    <div className="hidden flex-col sm:flex">
-      <ActionBar className="flex-1">
-        {actions.map(({ name, title, Icon }) => {
+    <ActionBar className={className}>
+      {viewActions
+        .filter((a) => a.env & env)
+        .map(({ name, title, Icon }) => {
           const active = action === name
           return (
             <Action
@@ -96,31 +159,65 @@ function ActivityBar() {
             />
           )
         })}
-      </ActionBar>
-      <ActionBar>
-        <Action
-          title="Account"
-          Icon={VscAccount}
-          onClick={() => reader.addTab(Account)}
+    </ActionBar>
+  )
+}
+
+function PageActionBar() {
+  const mobile = useMobile()
+  const env = useEnv()
+  const [action, setAction] = useState('Home')
+  return (
+    <ActionBar>
+      {pageActions
+        .filter((a) => a.env & env)
+        .map(({ name, title, Icon, Component }, i) => (
+          <Action
+            title={title}
+            Icon={Icon}
+            active={mobile ? action === name : undefined}
+            onClick={() => {
+              Component ? reader.addTab(Component) : reader.clear()
+              setAction(name)
+            }}
+            key={i}
+          />
+        ))}
+    </ActionBar>
+  )
+}
+
+function NavigationBar() {
+  const r = useSnapshot(reader)
+  const readMode = r.focusedTab?.isBook
+  const [visible, setVisible] = useRecoilState(navbarState)
+  const mobile = useMobile()
+
+  if (!mobile) return null
+  return (
+    <>
+      <div className="NavigationBar bg-surface border-surface-variant absolute inset-x-0 bottom-0 z-20 border-t">
+        {readMode ? (
+          <ViewActionBar className={clsx(visible || 'hidden')} />
+        ) : (
+          <PageActionBar />
+        )}
+      </div>
+      {visible && (
+        <Overlay
+          className="!bg-transparent"
+          onClick={() => setVisible(false)}
         />
-        <Action
-          title="Toggle FullScreen"
-          Icon={fullscreen.active ? RiFullscreenExitFill : RiFullscreenFill}
-          onClick={fullscreen.toggle}
-        />
-        <Action
-          title="Toggle Color Scheme"
-          Icon={VscColorMode}
-          onClick={toggle}
-        />
-      </ActionBar>
-    </div>
+      )}
+    </>
   )
 }
 
 interface ActionBarProps extends ComponentProps<'ul'> {}
 function ActionBar({ className, ...props }: ActionBarProps) {
-  return <ul className={clsx('flex flex-col', className)} {...props} />
+  return (
+    <ul className={clsx('ActionBar flex sm:flex-col', className)} {...props} />
+  )
 }
 
 interface ActionProps extends ComponentProps<'button'> {
@@ -133,17 +230,23 @@ const Action: React.FC<ActionProps> = ({
   active,
   ...props
 }) => {
+  const mobile = useMobile()
   return (
     <button
       className={clsx(
-        'hover:text-on-surface-variant relative flex h-12 w-12 items-center justify-center',
+        'Action hover:text-on-surface-variant relative flex h-12 w-12 flex-1 items-center justify-center sm:flex-initial',
         active ? 'text-on-surface-variant' : 'text-outline/70',
         className,
       )}
       {...props}
     >
       {active && (
-        <div className="absolute inset-y-0 left-0 w-0.5 bg-blue-400" />
+        <div
+          className={clsx(
+            'absolute bg-blue-400',
+            mobile ? 'inset-x-0 bottom-0 h-0.5' : 'inset-y-0 left-0 w-0.5',
+          )}
+        />
       )}
       <Icon size={28} />
     </button>
@@ -151,8 +254,14 @@ const Action: React.FC<ActionProps> = ({
 }
 
 function SideBar() {
-  const action = useRecoilValue(actionState)
+  const [action, setAction] = useRecoilState(actionState)
   const { groups } = useSnapshot(reader)
+  const mobile = useMobile()
+
+  useEffect(() => {
+    if (mobile === true) setAction(undefined)
+    if (mobile === false) setAction('TOC')
+  }, [mobile, setAction])
 
   useEffect(() => {
     groups.forEach(({ bookTabs }) => {
@@ -165,22 +274,25 @@ function SideBar() {
   }, [!!action])
 
   return (
-    <div
-      className={clsx(
-        'bg-outline/5 hidden flex-col sm:flex',
-        !action && '!hidden',
-      )}
-      style={{ width: 240 }}
-    >
-      {actions.map(({ name, title, View }) => (
-        <View
-          key={name}
-          name={name}
-          title={title}
-          className={clsx(name !== action && '!hidden')}
-        />
-      ))}
-    </div>
+    <>
+      <div
+        className={clsx(
+          'bg-surface flex w-60 flex-col',
+          !action && '!hidden',
+          mobile ? 'absolute bottom-12 right-0 top-0 z-20' : '',
+        )}
+      >
+        {viewActions.map(({ name, title, View }) => (
+          <View
+            key={name}
+            name={name}
+            title={title}
+            className={clsx(name !== action && '!hidden')}
+          />
+        ))}
+      </div>
+      {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
+    </>
   )
 }
 

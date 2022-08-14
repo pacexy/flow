@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 input:focus-visible,
+select:focus-visible,
 button:focus-visible,
 a:focus-visible {
   outline: none;

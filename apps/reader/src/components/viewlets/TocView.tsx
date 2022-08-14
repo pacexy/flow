@@ -2,7 +2,7 @@ import { StateLayer } from '@literal-ui/core'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useSnapshot } from 'valtio'
 
-import { useLibrary, useList } from '@ink/reader/hooks'
+import { useLibrary, useList, useMobile } from '@ink/reader/hooks'
 import { dfs, flatTree, INavItem } from '@ink/reader/models'
 
 import { reader } from '../Reader'
@@ -12,9 +12,10 @@ import { Pane } from './Pane'
 import { View, ViewProps } from './View'
 
 export const TocView: React.FC<ViewProps> = (props) => {
+  const mobile = useMobile()
   return (
     <View {...props}>
-      <LibraryPane />
+      {mobile || <LibraryPane />}
       <TocPane />
     </View>
   )
