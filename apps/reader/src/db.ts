@@ -8,7 +8,7 @@ export interface FileRecord {
 
 export interface CoverRecord {
   id: string
-  cover: string
+  cover: string | null
 }
 
 export interface BookRecord {

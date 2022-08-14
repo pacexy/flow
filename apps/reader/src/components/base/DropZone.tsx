@@ -180,7 +180,7 @@ export function addFile(id: string, file: File) {
     const data = await file.arrayBuffer()
     const epub = ePub(data)
     const url = await epub.coverUrl()
-    const cover = await toDataUrl(url ?? '')
+    const cover = url && (await toDataUrl(url))
     db?.covers.add({ id, cover })
   })
 }
