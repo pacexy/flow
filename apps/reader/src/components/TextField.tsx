@@ -3,6 +3,8 @@ import { ElementType, useRef, useEffect, RefObject } from 'react'
 import { IconType } from 'react-icons'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
+import { useMobile } from '../hooks'
+
 type Action = {
   Icon: IconType
   onClick: () => void
@@ -31,10 +33,11 @@ export function TextField<T extends ElementType = 'input'>({
   const Component = as || 'input'
   const innerRef = useRef<HTMLInputElement>(null)
   const ref = outerRef || innerRef
+  const mobile = useMobile()
 
   useEffect(() => {
-    if (autoFocus) ref.current?.focus()
-  }, [autoFocus, ref])
+    if (mobile === false && autoFocus) ref.current?.focus()
+  }, [autoFocus, mobile, ref])
 
   return (
     <div className={clsx('flex flex-col', className)}>
