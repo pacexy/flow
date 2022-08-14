@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { useSubscription } from '@ink/reader/hooks'
 
 import { Button, ButtonProps } from '../Button'
+import { Page } from '../Page'
 import { reader } from '../Reader'
 
 import { Auth } from './auth'
@@ -21,7 +22,7 @@ export const Account: React.FC = () => {
   }
 
   return (
-    <div className="mt-5 px-4">
+    <Page headline="Account">
       <Script
         src="https://cdn.paddle.com/paddle/paddle.js"
         onLoad={() => {
@@ -31,9 +32,6 @@ export const Account: React.FC = () => {
           })
         }}
       />
-      <h1 className="typescale-title-large text-on-surface-variant mb-4">
-        Account
-      </h1>
       <div className="mb-4 flex gap-4">
         <div className="text-on-surface space-y-2">
           <div>{user.email}</div>
@@ -46,7 +44,7 @@ export const Account: React.FC = () => {
         </div>
       </div>
       <Subscription />
-    </div>
+    </Page>
   )
 }
 
@@ -132,5 +130,3 @@ const Subscription: React.FC = () => {
     </div>
   )
 }
-
-Account.displayName = 'Account'

@@ -9,8 +9,12 @@ import {
   MdToc,
   MdTimeline,
 } from 'react-icons/md'
-import { RiFontSize } from 'react-icons/ri'
-import { VscAccount, VscHome } from 'react-icons/vsc'
+import {
+  RiFontSize,
+  RiAccountCircleLine,
+  RiSettingsLine,
+  RiHome6Line,
+} from 'react-icons/ri'
 import { useRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
@@ -18,7 +22,7 @@ import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
 import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
-import { Account } from './pages'
+import { Account, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -56,7 +60,7 @@ interface IViewAction extends IAction {
   View: React.FC<any>
 }
 interface IPageAction extends IAction {
-  onClick: () => void
+  Component?: React.FC
 }
 const viewActions: IViewAction[] = [
   {
@@ -107,15 +111,21 @@ const pageActions: IPageAction[] = [
   {
     name: 'Home',
     title: 'Home',
-    Icon: VscHome,
-    onClick: () => reader.clear(),
+    Icon: RiHome6Line,
     env: ENV.MOBILE,
   },
   {
     name: 'Account',
     title: 'Account',
-    Icon: VscAccount,
-    onClick: () => reader.addTab(Account),
+    Icon: RiAccountCircleLine,
+    Component: Account,
+    env: ENV.Desktop | ENV.MOBILE,
+  },
+  {
+    name: 'Settings',
+    title: 'Settings',
+    Icon: RiSettingsLine,
+    Component: Settings,
     env: ENV.Desktop | ENV.MOBILE,
   },
 ]
@@ -161,13 +171,13 @@ function PageActionBar() {
     <ActionBar>
       {pageActions
         .filter((a) => a.env & env)
-        .map(({ name, title, Icon, onClick }, i) => (
+        .map(({ name, title, Icon, Component }, i) => (
           <Action
             title={title}
             Icon={Icon}
             active={mobile ? action === name : undefined}
             onClick={() => {
-              onClick()
+              Component ? reader.addTab(Component) : reader.clear()
               setAction(name)
             }}
             key={i}
@@ -186,7 +196,7 @@ function NavigationBar() {
   if (!mobile) return null
   return (
     <>
-      <div className="NavigationBar bg-surface absolute inset-x-0 bottom-0 z-20 border-t">
+      <div className="NavigationBar bg-surface border-surface-variant absolute inset-x-0 bottom-0 z-20 border-t">
         {readMode ? (
           <ViewActionBar className={clsx(visible || 'hidden')} />
         ) : (
@@ -249,6 +259,7 @@ function SideBar() {
   const mobile = useMobile()
 
   useEffect(() => {
+    if (mobile === true) setAction(undefined)
     if (mobile === false) setAction('TOC')
   }, [mobile, setAction])
 

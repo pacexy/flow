@@ -370,7 +370,7 @@ export class BookTab extends BaseTab {
 
 class PageTab extends BaseTab {
   constructor(public readonly Component: React.FC<any>) {
-    super(Component.displayName ?? '')
+    super(Component.name ?? '')
   }
 }
 
@@ -397,7 +397,7 @@ export class Group {
 
   addTab(param: TabParam) {
     const isPage = typeof param === 'function'
-    const id = isPage ? param.displayName : param.id
+    const id = isPage ? param.name : param.id
 
     const index = this.tabs.findIndex((t) => t.id === id)
     if (index > -1) {
