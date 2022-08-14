@@ -29,10 +29,28 @@ export class DB extends Dexie {
 
   constructor() {
     super('re_reader')
+
+    this.version(2)
+      .stores({
+        books: 'id, name, createdAt, cfi, percentage, definitions',
+        covers: 'id, cover',
+        files: 'id, file',
+      })
+      .upgrade(async (t) => {
+        const books = await t.table('books').toArray()
+        ;['covers', 'files'].forEach((tableName) => {
+          t.table(tableName)
+            .toCollection()
+            .modify((r) => {
+              const book = books.find((b) => b.name === r.id)
+              if (book) r.id = book.id
+            })
+        })
+      })
     this.version(1).stores({
-      files: 'id, file',
-      covers: 'id, cover',
       books: 'id, name, createdAt, cfi, percentage, definitions', // Primary key and indexed props
+      covers: 'id, cover',
+      files: 'id, file',
     })
   }
 }
