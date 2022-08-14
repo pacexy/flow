@@ -5,6 +5,7 @@ import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
+import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
 import { BookRecord, db } from '../db'
@@ -378,7 +379,7 @@ type Tab = BookTab | PageTab
 type TabParam = ConstructorParameters<typeof BookTab | typeof PageTab>[0]
 
 export class Group {
-  id = crypto.randomUUID()
+  id = uuidv4()
 
   constructor(public tabs: Tab[], public selectedIndex = tabs.length - 1) {}
 
