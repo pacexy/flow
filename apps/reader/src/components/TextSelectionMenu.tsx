@@ -1,10 +1,11 @@
+import { Overlay } from '@literal-ui/core'
 import { useCallback, useEffect, useState } from 'react'
 import { MdSearch } from 'react-icons/md'
 import { VscSymbolInterface } from 'react-icons/vsc'
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useTextSelection } from '../hooks'
+import { useMobile, useTextSelection } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
 
@@ -19,13 +20,14 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 }) => {
   const setAction = useSetRecoilState(actionState)
   const { rendition } = useSnapshot(tab)
+  const mobile = useMobile()
 
   // `manager` is not reactive, so we need to use getter
   const view = useCallback(() => {
     return rendition?.manager?.views._views[0]
   }, [rendition])
 
-  const { rect, textContent } = useTextSelection(view()?.window)
+  const { selection, rect, textContent } = useTextSelection(view()?.window)
 
   const [offsetLeft, setOffsetLeft] = useState(0)
 
@@ -45,27 +47,38 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   if (!rect || !textContent) return null
 
   return (
-    <div
-      className="bg-inverse-surface text-inverse-on-surface absolute flex gap-1 p-0.5"
-      style={{ top: rect.top - rect.height - 6, left: rect.left + offsetLeft }}
-    >
-      <IconButton
-        title="Search in book"
-        Icon={MdSearch}
-        size={20}
-        onClick={() => {
-          setAction('Search')
-          reader.focusedBookTab?.setKeyword(textContent)
+    <>
+      <div
+        className="bg-inverse-surface text-inverse-on-surface absolute z-20 flex gap-1 p-0.5"
+        style={{
+          top: rect.top - rect.height - 6,
+          left: rect.left + offsetLeft,
         }}
-      />
-      <IconButton
-        title="Define"
-        Icon={VscSymbolInterface}
-        size={20}
-        onClick={() => {
-          reader.focusedBookTab?.toggleDefinition(textContent)
-        }}
-      />
-    </div>
+      >
+        <IconButton
+          title="Search in book"
+          Icon={MdSearch}
+          size={20}
+          onClick={() => {
+            setAction('Search')
+            reader.focusedBookTab?.setKeyword(textContent)
+          }}
+        />
+        <IconButton
+          title="Define"
+          Icon={VscSymbolInterface}
+          size={20}
+          onClick={() => {
+            reader.focusedBookTab?.toggleDefinition(textContent)
+          }}
+        />
+      </div>
+      {mobile && (
+        <Overlay
+          className="!bg-transparent"
+          onClick={() => selection?.removeAllRanges()}
+        />
+      )}
+    </>
   )
 }

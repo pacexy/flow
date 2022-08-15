@@ -11,7 +11,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
-import { useLibrary, useMobile } from '../hooks'
+import { hasSelection, useLibrary, useMobile } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -191,7 +191,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     location,
     percentage,
     definitions,
-    rendered,
+    // rendered,
     currentHref,
   } = useSnapshot(tab)
 
@@ -359,20 +359,37 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
   }, [iframe, mobile, setNavbar, tab])
 
   useEffect(() => {
-    if (iframe)
-      iframe.onwheel = (e: WheelEvent) => {
-        if (e.deltaY < 0) {
-          tab.prev()
-        } else {
-          tab.next()
-        }
-        focus()
+    if (!iframe) return
+    iframe.onwheel = (e: WheelEvent) => {
+      if (e.deltaY < 0) {
+        tab.prev()
+      } else {
+        tab.next()
       }
+      focus()
+    }
   }, [focus, iframe, tab])
 
   useEffect(() => {
     if (iframe) iframe.onkeydown = onKeyDown
   }, [iframe, onKeyDown])
+
+  useEffect(() => {
+    if (!iframe) return
+    iframe.ontouchstart = (e) => {
+      const x0 = e.targetTouches[0]?.clientX ?? 0
+      iframe.addEventListener('touchend', function handleTouchEnd(e) {
+        iframe.removeEventListener('touchend', handleTouchEnd)
+        const selection = iframe.getSelection()
+        if (hasSelection(selection)) return
+
+        const x1 = e.changedTouches[0]?.clientX ?? 0
+        const deltaX = x1 - x0
+        if (deltaX > 0) tab.prev()
+        if (deltaX < 0) tab.next()
+      })
+    }
+  }, [iframe, tab])
 
   return (
     <>
@@ -384,7 +401,13 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className={clsx('relative flex-1', rendered || '-z-10')}>
+      <div
+        ref={ref}
+        className={clsx(
+          'relative flex-1',
+          // rendered || '-z-10'
+        )}
+      >
         <TextSelectionMenu tab={tab} />
       </div>
       <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
