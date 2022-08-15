@@ -329,6 +329,9 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
   useEffect(() => {
     if (!iframe) return
     iframe.onclick = (e: MouseEvent) => {
+      // https://developer.chrome.com/blog/tap-to-search
+      e.preventDefault()
+
       for (const el of e.composedPath() as any) {
         // `instanceof` may not work in iframe
         if (el.tagName === 'A' && el.href) {
