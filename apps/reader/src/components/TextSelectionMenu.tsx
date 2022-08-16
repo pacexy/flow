@@ -60,6 +60,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
           Icon={MdSearch}
           size={20}
           onClick={() => {
+            selection?.removeAllRanges()
             setAction('Search')
             reader.focusedBookTab?.setKeyword(textContent)
           }}
@@ -69,6 +70,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
           Icon={VscSymbolInterface}
           size={20}
           onClick={() => {
+            selection?.removeAllRanges()
             reader.focusedBookTab?.toggleDefinition(textContent)
           }}
         />
