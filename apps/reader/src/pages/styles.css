@@ -2,12 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-input:focus-visible,
+.textfield:focus-within,
 select:focus-visible,
 button:focus-visible,
 a:focus-visible {
   outline: none;
   @apply ring-1 ring-inset ring-blue-400;
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+/* https://stackoverflow.com/a/22306944/13151903 */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
 }
 
 .scroll {

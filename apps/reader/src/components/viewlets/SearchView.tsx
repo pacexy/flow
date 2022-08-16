@@ -1,4 +1,5 @@
 import Highlighter from 'react-highlight-words'
+import { MdClose } from 'react-icons/md'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
 import { useSnapshot } from 'valtio'
@@ -44,9 +45,19 @@ export const SearchView: React.FC<ViewProps> = (props) => {
           autoFocus={action === 'Search'}
           hideLabel
           value={keyword ?? ''}
+          placeholder="Search"
           onChange={(e) => {
             reader.focusedBookTab?.setKeyword(e.target.value)
           }}
+          actions={[
+            {
+              title: 'Clear',
+              Icon: MdClose,
+              onClick() {
+                reader.focusedBookTab?.setKeyword('')
+              },
+            },
+          ]}
         />
       </div>
       {keyword && results && (
