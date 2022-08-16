@@ -2,7 +2,13 @@ import { useColorScheme } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { Contents } from 'epubjs'
 import type Section from 'epubjs/types/section'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
@@ -166,11 +172,7 @@ export const PaneContainer: React.FC<PaneContainerProps> = ({
   active,
   children,
 }) => {
-  return (
-    <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
-      {children}
-    </div>
-  )
+  return <div className={clsx('h-full', active || 'hidden')}>{children}</div>
 }
 
 interface BookPaneProps {
@@ -395,7 +397,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
   }, [iframe, tab])
 
   return (
-    <>
+    <div className={clsx('flex h-full flex-col', mobile && 'py-[3vw]')}>
       <PhotoSlider
         images={[{ src, key: 0 }]}
         visible={!!src}
@@ -413,7 +415,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
       >
         <TextSelectionMenu tab={tab} />
       </div>
-      <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
+      <Bar>
         <button
           className={clsx(locationToReturn || 'invisible')}
           onClick={() => {
@@ -435,8 +437,8 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
         ) : (
           <div>{(percentage * 100).toFixed()}%</div>
         )}
-      </div>
-    </>
+      </Bar>
+    </div>
   )
 }
 
@@ -448,7 +450,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const breadcrumbs = tab.getNavPath()
 
   return (
-    <div className="typescale-body-small text-outline flex h-6 items-center justify-between gap-2 px-2">
+    <Bar>
       <div className="scroll-h flex">
         {breadcrumbs.map((item, i) => (
           <button
@@ -465,6 +467,19 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
           {location.start.displayed.page} / {location.start.displayed.total}
         </div>
       )}
-    </div>
+    </Bar>
+  )
+}
+
+interface LineProps extends ComponentProps<'div'> {}
+export const Bar: React.FC<LineProps> = ({ className, ...props }) => {
+  return (
+    <div
+      className={clsx(
+        'typescale-body-small text-outline flex h-6 items-center justify-between gap-2 px-[4vw] sm:px-2',
+        className,
+      )}
+      {...props}
+    ></div>
   )
 }

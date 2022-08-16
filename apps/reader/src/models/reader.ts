@@ -326,6 +326,9 @@ export class BookTab extends BaseTab {
       this.location?.start.cfi ?? this.book.cfi ?? undefined,
     )
     this.rendition.themes.default({
+      html: {
+        padding: '0 !important',
+      },
       'a:any-link': {
         color: '#3b82f6 !important',
         'text-decoration': 'none !important',
