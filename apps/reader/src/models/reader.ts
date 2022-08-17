@@ -84,6 +84,7 @@ class BaseTab {
 
 export class BookTab extends BaseTab {
   epub?: Book
+  iframe?: Window
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
   locationToReturn?: Location
@@ -91,6 +92,10 @@ export class BookTab extends BaseTab {
   results?: Match[]
   activeResultID?: string
   rendered = false
+
+  get container() {
+    return this?.rendition?.manager?.container as HTMLDivElement | undefined
+  }
 
   timeline: TimelineItem[] = []
   get location() {
@@ -104,7 +109,7 @@ export class BookTab extends BaseTab {
   prev() {
     this.rendition?.prev()
     // avoid content flash
-    if (this?.location?.start.displayed.page === 1) {
+    if (this.container?.scrollLeft === 0 && !this.location?.atStart) {
       this.rendered = false
     }
   }
@@ -293,10 +298,7 @@ export class BookTab extends BaseTab {
     this.epub.loaded.navigation.then((nav) => {
       this.nav = nav
     })
-    console.log(
-      '🚀 ~ file: Reader.ts ~ line 69 ~ ReaderTab ~ this.epub.loaded.navigation.then ~ this.epub',
-      this.epub,
-    )
+    console.log(this.epub)
     this.epub.loaded.spine.then((spine: any) => {
       const sections = spine.spineItems as ISection[]
       // https://github.com/futurepress/epub.js/issues/887#issuecomment-700736486
@@ -322,6 +324,7 @@ export class BookTab extends BaseTab {
         allowScriptedContent: true,
       }),
     )
+    console.log(this.rendition)
     this.rendition.display(
       this.location?.start.cfi ?? this.book.cfi ?? undefined,
     )
@@ -342,6 +345,7 @@ export class BookTab extends BaseTab {
 
     this.rendition.on('relocated', (loc: Location) => {
       console.log('relocated', loc)
+      this.rendered = true
       this.timeline.unshift({
         location: loc,
         timestamp: Date.now(),
@@ -357,9 +361,9 @@ export class BookTab extends BaseTab {
     this.rendition.on('displayed', (...args: any[]) => {
       console.log('displayed', args)
     })
-    this.rendition.on('rendered', (...args: any[]) => {
-      console.log('rendered', args)
-      this.rendered = true
+    this.rendition.on('rendered', (section: Section, view: any) => {
+      console.log('rendered', [section, view])
+      this.iframe = ref(view.window as Window)
     })
     this.rendition.on('removed', (...args: any[]) => {
       console.log('removed', args)

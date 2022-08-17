@@ -1,7 +1,6 @@
-import { useColorScheme } from '@literal-ui/hooks'
+import { useColorScheme, useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { Contents } from 'epubjs'
-import type Section from 'epubjs/types/section'
 import React, {
   ComponentProps,
   useCallback,
@@ -187,13 +186,14 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
   const {
+    iframe,
     rendition,
     locationToReturn,
     results,
     location,
     percentage,
     definitions,
-    // rendered,
+    rendered,
     currentHref,
   } = useSnapshot(tab)
 
@@ -292,26 +292,6 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
 
-  const { setDragEvent } = useDndContext()
-
-  const [iframe, setIframe] = useState<Window>()
-
-  useEffect(() => {
-    rendition?.on('rendered', (_: Section, view: any) => {
-      const iframe = view.window as Window
-      setIframe(iframe)
-    })
-  }, [rendition])
-
-  useEffect(() => {
-    if (iframe)
-      // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
-      iframe.ondragover = (e: any) => {
-        console.log('drag enter in iframe')
-        setDragEvent(e)
-      }
-  }, [iframe, setDragEvent])
-
   const [src, setSrc] = useState<string>()
 
   useEffect(() => {
@@ -323,78 +303,72 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     }
   }, [focus, src])
 
-  useEffect(() => {
-    if (!iframe) return
-    iframe.onmousedown = onMouseDown
-  }, [iframe, onMouseDown, tab])
+  const { setDragEvent } = useDndContext()
 
-  useEffect(() => {
-    if (!iframe) return
-    iframe.onclick = (e: MouseEvent) => {
-      // https://developer.chrome.com/blog/tap-to-search
-      e.preventDefault()
+  // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
+  useEventListener(iframe, 'dragover', (e: any) => {
+    console.log('drag enter in iframe')
+    setDragEvent(e)
+  })
 
-      for (const el of e.composedPath() as any) {
-        // `instanceof` may not work in iframe
-        if (el.tagName === 'A' && el.href) {
-          tab.showPrevLocation()
-          return
-        }
-        if (mobile === false && el.tagName === 'IMG') {
-          setSrc(el.src)
-          return
-        }
+  useEventListener(iframe, 'mousedown', onMouseDown)
+
+  useEventListener(iframe, 'click', (e) => {
+    // https://developer.chrome.com/blog/tap-to-search
+    e.preventDefault()
+
+    for (const el of e.composedPath() as any) {
+      // `instanceof` may not work in iframe
+      if (el.tagName === 'A' && el.href) {
+        tab.showPrevLocation()
+        return
       }
-
-      if (window.matchMedia('(max-width: 640px)').matches) {
-        const w = window.innerWidth
-        const x = e.offsetX % w
-        const threshold = 0.3
-        const side = w * threshold
-
-        if (x < side) {
-          tab.prev()
-        } else if (w - x < side) {
-          tab.next()
-        } else {
-          setNavbar((a) => !a)
-        }
+      if (mobile === false && el.tagName === 'IMG') {
+        setSrc(el.src)
+        return
       }
     }
-  }, [iframe, mobile, setNavbar, tab])
 
-  useEffect(() => {
-    if (!iframe) return
-    iframe.onwheel = (e: WheelEvent) => {
-      if (e.deltaY < 0) {
+    if (window.matchMedia('(max-width: 640px)').matches) {
+      const w = window.innerWidth
+      const x = e.offsetX % w
+      const threshold = 0.3
+      const side = w * threshold
+
+      if (x < side) {
         tab.prev()
-      } else {
+      } else if (w - x < side) {
         tab.next()
+      } else {
+        setNavbar((a) => !a)
       }
-      focus()
     }
-  }, [focus, iframe, tab])
+  })
 
-  useEffect(() => {
-    if (iframe) iframe.onkeydown = onKeyDown
-  }, [iframe, onKeyDown])
-
-  useEffect(() => {
-    if (!iframe) return
-    iframe.ontouchstart = (e) => {
-      const x0 = e.targetTouches[0]?.clientX ?? 0
-      iframe.addEventListener('touchend', function handleTouchEnd(e) {
-        iframe.removeEventListener('touchend', handleTouchEnd)
-        const selection = iframe.getSelection()
-        if (hasSelection(selection)) return
-
-        const x1 = e.changedTouches[0]?.clientX ?? 0
-        const deltaX = x1 - x0
-        if (deltaX > 0) tab.prev()
-        if (deltaX < 0) tab.next()
-      })
+  useEventListener(iframe, 'wheel', (e) => {
+    if (e.deltaY < 0) {
+      tab.prev()
+    } else {
+      tab.next()
     }
-  }, [iframe, tab])
+    focus()
+  })
+
+  useEventListener(iframe, 'keydown', onKeyDown)
+
+  useEventListener(iframe, 'touchstart', (e) => {
+    const x0 = e.targetTouches[0]?.clientX ?? 0
+    iframe?.addEventListener('touchend', function handleTouchEnd(e) {
+      iframe.removeEventListener('touchend', handleTouchEnd)
+      const selection = iframe.getSelection()
+      if (hasSelection(selection)) return
+
+      const x1 = e.changedTouches[0]?.clientX ?? 0
+      const deltaX = x1 - x0
+      if (deltaX > 0) tab.prev()
+      if (deltaX < 0) tab.next()
+    })
+  })
 
   return (
     <div className={clsx('flex h-full flex-col', mobile && 'py-[3vw]')}>
@@ -406,13 +380,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div
-        ref={ref}
-        className={clsx(
-          'relative flex-1',
-          // rendered || '-z-10'
-        )}
-      >
+      <div ref={ref} className={clsx('relative flex-1', rendered || '-z-10')}>
         <TextSelectionMenu tab={tab} />
       </div>
       <Bar>
