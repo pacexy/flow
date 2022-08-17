@@ -30,8 +30,32 @@ subscribe(reader, () => {
   console.log(snapshot(reader))
 })
 
+function handleKeyDown(tab?: BookTab) {
+  return (e: KeyboardEvent) => {
+    try {
+      switch (e.code) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          tab?.prev()
+          break
+        case 'ArrowRight':
+        case 'ArrowDown':
+          tab?.next()
+          break
+        case 'Space':
+          e.shiftKey ? tab?.prev() : tab?.next()
+      }
+    } catch (error) {
+      // ignore `rendition is undefined` error
+    }
+  }
+}
+
 export function ReaderGridView() {
   const { groups } = useSnapshot(reader)
+
+  useEventListener('keydown', handleKeyDown(reader.focusedBookTab))
+
   if (!groups.length) return null
   return (
     <SplitView>
@@ -47,50 +71,9 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex, focusedBookTab } = useSnapshot(reader)
+  const { focusedIndex } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
-  const ref = useRef<HTMLDivElement>(null)
-
-  const focus = useCallback(() => {
-    ref.current?.focus()
-  }, [])
-
-  useEffect(() => {
-    focus()
-  }, [focus])
-
-  const prev = useCallback(() => {
-    focusedBookTab?.prev()
-    focus()
-  }, [focus, focusedBookTab])
-
-  const next = useCallback(() => {
-    focusedBookTab?.next()
-    focus()
-  }, [focus, focusedBookTab])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent | KeyboardEvent) => {
-      try {
-        switch (e.code) {
-          case 'ArrowLeft':
-          case 'ArrowUp':
-            prev()
-            break
-          case 'ArrowRight':
-          case 'ArrowDown':
-            next()
-            break
-          case 'Space':
-            e.shiftKey ? prev() : next()
-        }
-      } catch (error) {
-        // ignore `rendition is undefined` error
-      }
-    },
-    [next, prev],
-  )
 
   const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
@@ -98,11 +81,8 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
   return (
     <div
-      ref={ref}
       className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
-      tabIndex={1}
       onMouseDown={handleMouseDown}
-      onKeyDown={handleKeyDown}
     >
       <Tab.List
         className="hidden sm:flex"
@@ -148,12 +128,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         {group.tabs.map((tab, i) => (
           <PaneContainer active={i === selectedIndex} key={tab.id}>
             {tab instanceof BookTab ? (
-              <BookPane
-                tab={tab}
-                focus={focus}
-                onMouseDown={handleMouseDown}
-                onKeyDown={handleKeyDown}
-              />
+              <BookPane tab={tab} focus={focus} onMouseDown={handleMouseDown} />
             ) : (
               <tab.Component />
             )}
@@ -178,10 +153,9 @@ interface BookPaneProps {
   tab: BookTab
   focus: () => void
   onMouseDown: () => void
-  onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
 }
 
-function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
+function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
@@ -354,7 +328,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     focus()
   })
 
-  useEventListener(iframe, 'keydown', onKeyDown)
+  useEventListener(iframe, 'keydown', handleKeyDown(tab))
 
   useEventListener(iframe, 'touchstart', (e) => {
     const x0 = e.targetTouches[0]?.clientX ?? 0
