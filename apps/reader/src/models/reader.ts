@@ -225,7 +225,7 @@ export class BookTab extends BaseTab {
   }
 
   getNavPath(navItem = this.currentNavItem) {
-    const path = []
+    const path: INavItem[] = []
 
     if (this.nav) {
       while (navItem) {
