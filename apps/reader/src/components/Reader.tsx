@@ -128,7 +128,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         {group.tabs.map((tab, i) => (
           <PaneContainer active={i === selectedIndex} key={tab.id}>
             {tab instanceof BookTab ? (
-              <BookPane tab={tab} focus={focus} onMouseDown={handleMouseDown} />
+              <BookPane tab={tab} onMouseDown={handleMouseDown} />
             ) : (
               <tab.Component />
             )}
@@ -151,11 +151,10 @@ export const PaneContainer: React.FC<PaneContainerProps> = ({
 
 interface BookPaneProps {
   tab: BookTab
-  focus: () => void
   onMouseDown: () => void
 }
 
-function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
+function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
@@ -272,10 +271,8 @@ function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
     if (src) {
       if (document.activeElement instanceof HTMLElement)
         document.activeElement?.blur()
-    } else {
-      focus()
     }
-  }, [focus, src])
+  }, [src])
 
   const { setDragEvent } = useDndContext()
 
@@ -325,7 +322,6 @@ function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
     } else {
       tab.next()
     }
-    focus()
   })
 
   useEventListener(iframe, 'keydown', handleKeyDown(tab))
