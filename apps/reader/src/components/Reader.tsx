@@ -339,6 +339,7 @@ function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
 
       const x1 = e.changedTouches[0]?.clientX ?? 0
       const deltaX = x1 - x0
+      if (Math.abs(deltaX) < 10) return
       if (deltaX > 0) tab.prev()
       if (deltaX < 0) tab.next()
     })
