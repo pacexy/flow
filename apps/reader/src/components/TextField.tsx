@@ -3,12 +3,17 @@ import { ElementType, useRef, useEffect, RefObject } from 'react'
 import { IconType } from 'react-icons'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
+import { useMobile } from '../hooks'
+
+import { IconButton } from './Button'
+
 type Action = {
+  title: string
   Icon: IconType
   onClick: () => void
 }
 
-type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
+export type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
   {
     name: string
     hideLabel?: boolean
@@ -25,16 +30,18 @@ export function TextField<T extends ElementType = 'input'>({
   className,
   hideLabel = false,
   autoFocus,
+  actions,
   mRef: outerRef,
   ...props
 }: TextFieldProps<T>) {
   const Component = as || 'input'
   const innerRef = useRef<HTMLInputElement>(null)
   const ref = outerRef || innerRef
+  const mobile = useMobile()
 
   useEffect(() => {
-    if (autoFocus) ref.current?.focus()
-  }, [autoFocus, ref])
+    if (mobile === false && autoFocus) ref.current?.focus()
+  }, [autoFocus, mobile, ref])
 
   return (
     <div className={clsx('flex flex-col', className)}>
@@ -47,13 +54,20 @@ export function TextField<T extends ElementType = 'input'>({
       >
         {name}
       </label>
-      <Component
-        ref={ref}
-        name={name}
-        id={name}
-        className="typescale-body-medium bg-outline/10 text-on-surface-variant px-2 py-1"
-        {...props}
-      />
+      <div className="bg-outline/10 textfield text-on-surface-variant flex items-center px-1">
+        <Component
+          ref={ref}
+          name={name}
+          id={name}
+          className="typescale-body-medium w-0 flex-1 bg-transparent py-1"
+          {...props}
+        />
+        <div className="flex gap-0.5">
+          {actions?.map((a) => (
+            <IconButton key={a.title} {...a} />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

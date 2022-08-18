@@ -1,11 +1,12 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { MdAdd, MdRemove } from 'react-icons/md'
 import { useRecoilState } from 'recoil'
 
 import { settingsState } from '@ink/reader/state'
 
-import { TextField } from '../TextField'
+import { TextField, TextFieldProps } from '../TextField'
 
 import { Pane } from './Pane'
 import { View, ViewProps } from './View'
@@ -18,51 +19,86 @@ export const TypographyView: React.FC<ViewProps> = ({
   return (
     <View className={clsx('space-y-4', className)} {...props}>
       <div className="mx-5 space-y-2">
-        <TextField
-          as="input"
+        <NumberField
           name="font_size"
-          type="number"
           min={14}
           max={28}
           defaultValue={parseInt(settings.fontSize)}
-          onChange={(e) => {
+          onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              fontSize: e.target.value + 'px',
+              fontSize: v + 'px',
             }))
           }}
         />
-        <TextField
-          as="input"
+        <NumberField
           name="font_weight"
-          type="number"
           min={100}
           max={900}
           step={100}
           defaultValue={settings.fontWeight}
-          onChange={(e) => {
+          onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              fontWeight: Number(e.target.value),
+              fontWeight: v,
             }))
           }}
         />
-        <TextField
-          as="input"
+        <NumberField
           name="line_height"
-          type="number"
           step={0.1}
           defaultValue={settings.lineHeight}
-          onChange={(e) => {
+          onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              lineHeight: Number(e.target.value),
+              lineHeight: v,
             }))
           }}
         />
       </div>
       <TypeFacePane />
     </View>
+  )
+}
+
+interface NumberFieldProps extends Omit<TextFieldProps<'input'>, 'onChange'> {
+  onChange: (v: number) => void
+}
+export const NumberField: React.FC<NumberFieldProps> = ({
+  onChange,
+  ...props
+}) => {
+  const ref = useRef<HTMLInputElement>(null)
+  return (
+    <TextField
+      as="input"
+      type="number"
+      actions={[
+        {
+          title: 'Step down',
+          Icon: MdRemove,
+          onClick: () => {
+            if (!ref.current) return
+            ref.current.stepDown()
+            onChange(Number(ref.current.value))
+          },
+        },
+        {
+          title: 'Step up',
+          Icon: MdAdd,
+          onClick: () => {
+            if (!ref.current) return
+            ref.current.stepUp()
+            onChange(Number(ref.current.value))
+          },
+        },
+      ]}
+      mRef={ref}
+      onChange={(e) => {
+        onChange(Number(e.target.value))
+      }}
+      {...props}
+    />
   )
 }
 

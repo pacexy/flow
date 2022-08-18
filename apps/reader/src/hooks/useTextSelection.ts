@@ -1,17 +1,24 @@
 // https://github.com/juliankrispel/use-text-selection
 
 import { useIsomorphicEffect } from '@literal-ui/hooks'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
 
 type TextSelectionState = {
+  selection?: Selection
   rect?: ClientRect
   isCollapsed?: boolean
   textContent?: string
 }
 
 const defaultState: TextSelectionState = {}
+
+export function hasSelection(
+  selection?: Selection | null,
+): selection is Selection {
+  return !(!selection || selection.isCollapsed)
+}
 
 /**
  * useTextSelection(ref)
@@ -21,34 +28,35 @@ const defaultState: TextSelectionState = {}
  *
  */
 export function useTextSelection(win?: Window) {
-  const [{ rect, isCollapsed, textContent }, setState] = useState(defaultState)
-
-  const handler = useCallback(() => {
-    setState(() => {
-      const selection = win?.getSelection()
-      const newState: TextSelectionState = {}
-
-      if (!selection || selection.isCollapsed) {
-        return newState
-      }
-
-      const range = selection.getRangeAt(0)
-
-      const contents = range.cloneContents()
-      if (contents.textContent !== null) {
-        newState.textContent = contents.textContent
-      }
-
-      const [rect] = [...range.getClientRects()].filter((r) => r.width)
-      if (rect) newState.rect = rect
-
-      newState.isCollapsed = range.collapsed
-
-      return newState
-    })
-  }, [win])
+  const [state, setState] = useState(defaultState)
 
   useIsomorphicEffect(() => {
+    function handler() {
+      setState(() => {
+        const selection = win?.getSelection()
+        const newState: TextSelectionState = {}
+
+        if (!hasSelection(selection)) {
+          return newState
+        }
+
+        const range = selection.getRangeAt(0)
+
+        const contents = range.cloneContents()
+        if (contents.textContent !== null) {
+          newState.textContent = contents.textContent
+        }
+
+        const [rect] = [...range.getClientRects()].filter((r) => r.width)
+        if (rect) newState.rect = rect
+
+        newState.selection = selection
+        newState.isCollapsed = range.collapsed
+
+        return newState
+      })
+    }
+
     win?.document.addEventListener('selectionchange', handler)
     win?.document.addEventListener('keydown', handler)
     win?.document.addEventListener('keyup', handler)
@@ -62,9 +70,5 @@ export function useTextSelection(win?: Window) {
     }
   }, [win])
 
-  return {
-    rect,
-    isCollapsed,
-    textContent,
-  }
+  return state
 }

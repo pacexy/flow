@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { ComponentProps } from 'react'
 import { IconType } from 'react-icons'
 
-interface IconButtonProps extends ComponentProps<'div'> {
+interface IconButtonProps extends ComponentProps<'button'> {
   Icon: IconType
   size?: number
 }
@@ -14,10 +14,10 @@ export function IconButton({
   ...props
 }: IconButtonProps) {
   return (
-    <div role="button" className={clsx('relative p-0.5', className)} {...props}>
+    <button className={clsx('relative block p-0.5', className)} {...props}>
       <StateLayer />
       <Icon size={size} />
-    </div>
+    </button>
   )
 }
 

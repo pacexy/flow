@@ -5,7 +5,7 @@ import { MdClose } from 'react-icons/md'
 
 import { IconButton } from './Button'
 
-interface TabProps extends ComponentProps<'button'> {
+interface TabProps extends ComponentProps<'div'> {
   onDelete?: () => void
   selected?: boolean
   focused?: boolean
@@ -23,9 +23,10 @@ export function Tab({
 }: TabProps) {
   if (!children) return null
   return (
-    <button
+    <div
+      role="tab"
       className={clsx(
-        'text-on-surface-variant typescale-body-small relative flex items-center gap-1 p-2',
+        'text-on-surface-variant typescale-body-small relative flex cursor-pointer items-center gap-1 p-2',
         selected
           ? 'bg-white dark:bg-[#121212]'
           : 'hover:bg-white dark:hover:bg-[#121212]',
@@ -44,7 +45,7 @@ export function Tab({
           onDelete?.()
         }}
       />
-    </button>
+    </div>
   )
 }
 

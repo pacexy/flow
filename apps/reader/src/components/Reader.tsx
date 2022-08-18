@@ -1,8 +1,13 @@
-import { useColorScheme } from '@literal-ui/hooks'
+import { useColorScheme, useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { Contents } from 'epubjs'
-import type Section from 'epubjs/types/section'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
@@ -11,7 +16,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
-import { useLibrary, useMobile } from '../hooks'
+import { hasSelection, useLibrary, useMobile } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -25,8 +30,32 @@ subscribe(reader, () => {
   console.log(snapshot(reader))
 })
 
+function handleKeyDown(tab?: BookTab) {
+  return (e: KeyboardEvent) => {
+    try {
+      switch (e.code) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          tab?.prev()
+          break
+        case 'ArrowRight':
+        case 'ArrowDown':
+          tab?.next()
+          break
+        case 'Space':
+          e.shiftKey ? tab?.prev() : tab?.next()
+      }
+    } catch (error) {
+      // ignore `rendition is undefined` error
+    }
+  }
+}
+
 export function ReaderGridView() {
   const { groups } = useSnapshot(reader)
+
+  useEventListener('keydown', handleKeyDown(reader.focusedBookTab))
+
   if (!groups.length) return null
   return (
     <SplitView>
@@ -42,50 +71,9 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex, focusedBookTab } = useSnapshot(reader)
+  const { focusedIndex } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
-  const ref = useRef<HTMLDivElement>(null)
-
-  const focus = useCallback(() => {
-    ref.current?.focus()
-  }, [])
-
-  useEffect(() => {
-    focus()
-  }, [focus])
-
-  const prev = useCallback(() => {
-    focusedBookTab?.prev()
-    focus()
-  }, [focus, focusedBookTab])
-
-  const next = useCallback(() => {
-    focusedBookTab?.next()
-    focus()
-  }, [focus, focusedBookTab])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent | KeyboardEvent) => {
-      try {
-        switch (e.code) {
-          case 'ArrowLeft':
-          case 'ArrowUp':
-            prev()
-            break
-          case 'ArrowRight':
-          case 'ArrowDown':
-            next()
-            break
-          case 'Space':
-            e.shiftKey ? prev() : next()
-        }
-      } catch (error) {
-        // ignore `rendition is undefined` error
-      }
-    },
-    [next, prev],
-  )
 
   const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
@@ -93,11 +81,8 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
   return (
     <div
-      ref={ref}
       className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
-      tabIndex={1}
       onMouseDown={handleMouseDown}
-      onKeyDown={handleKeyDown}
     >
       <Tab.List
         className="hidden sm:flex"
@@ -143,12 +128,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         {group.tabs.map((tab, i) => (
           <PaneContainer active={i === selectedIndex} key={tab.id}>
             {tab instanceof BookTab ? (
-              <BookPane
-                tab={tab}
-                focus={focus}
-                onMouseDown={handleMouseDown}
-                onKeyDown={handleKeyDown}
-              />
+              <BookPane tab={tab} focus={focus} onMouseDown={handleMouseDown} />
             ) : (
               <tab.Component />
             )}
@@ -166,25 +146,21 @@ export const PaneContainer: React.FC<PaneContainerProps> = ({
   active,
   children,
 }) => {
-  return (
-    <div className={clsx('h-full flex-col', active ? 'flex' : 'hidden')}>
-      {children}
-    </div>
-  )
+  return <div className={clsx('h-full', active || 'hidden')}>{children}</div>
 }
 
 interface BookPaneProps {
   tab: BookTab
   focus: () => void
   onMouseDown: () => void
-  onKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => void
 }
 
-function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
+function BookPane({ tab, focus, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
   const { scheme } = useColorScheme()
   const {
+    iframe,
     rendition,
     locationToReturn,
     results,
@@ -290,26 +266,6 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     rendition?.themes.override('background', dark ? '#121212' : 'white')
   }, [rendition, scheme])
 
-  const { setDragEvent } = useDndContext()
-
-  const [iframe, setIframe] = useState<Window>()
-
-  useEffect(() => {
-    rendition?.on('rendered', (_: Section, view: any) => {
-      const iframe = view.window as Window
-      setIframe(iframe)
-    })
-  }, [rendition])
-
-  useEffect(() => {
-    if (iframe)
-      // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
-      iframe.ondragover = (e: any) => {
-        console.log('drag enter in iframe')
-        setDragEvent(e)
-      }
-  }, [iframe, setDragEvent])
-
   const [src, setSrc] = useState<string>()
 
   useEffect(() => {
@@ -321,61 +277,75 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
     }
   }, [focus, src])
 
-  useEffect(() => {
-    if (!iframe) return
-    iframe.onmousedown = onMouseDown
-  }, [iframe, onMouseDown, tab])
+  const { setDragEvent } = useDndContext()
 
-  useEffect(() => {
-    if (!iframe) return
-    iframe.onclick = (e: MouseEvent) => {
-      for (const el of e.composedPath() as any) {
-        // `instanceof` may not work in iframe
-        if (el.tagName === 'A' && el.href) {
-          tab.showPrevLocation()
-          return
-        }
-        if (mobile === false && el.tagName === 'IMG') {
-          setSrc(el.src)
-          return
-        }
+  // `dragenter` not fired in iframe when the count of times is even, so use `dragover`
+  useEventListener(iframe, 'dragover', (e: any) => {
+    console.log('drag enter in iframe')
+    setDragEvent(e)
+  })
+
+  useEventListener(iframe, 'mousedown', onMouseDown)
+
+  useEventListener(iframe, 'click', (e) => {
+    // https://developer.chrome.com/blog/tap-to-search
+    e.preventDefault()
+
+    for (const el of e.composedPath() as any) {
+      // `instanceof` may not work in iframe
+      if (el.tagName === 'A' && el.href) {
+        tab.showPrevLocation()
+        return
       }
-
-      if (window.matchMedia('(max-width: 640px)').matches) {
-        const w = window.innerWidth
-        const x = e.offsetX % w
-        const threshold = 0.3
-        const side = w * threshold
-
-        if (x < side) {
-          tab.prev()
-        } else if (w - x < side) {
-          tab.next()
-        } else {
-          setNavbar((a) => !a)
-        }
+      if (mobile === false && el.tagName === 'IMG') {
+        setSrc(el.src)
+        return
       }
     }
-  }, [iframe, mobile, setNavbar, tab])
 
-  useEffect(() => {
-    if (iframe)
-      iframe.onwheel = (e: WheelEvent) => {
-        if (e.deltaY < 0) {
-          tab.prev()
-        } else {
-          tab.next()
-        }
-        focus()
+    if (window.matchMedia('(max-width: 640px)').matches) {
+      const w = window.innerWidth
+      const x = e.offsetX % w
+      const threshold = 0.3
+      const side = w * threshold
+
+      if (x < side) {
+        tab.prev()
+      } else if (w - x < side) {
+        tab.next()
+      } else {
+        setNavbar((a) => !a)
       }
-  }, [focus, iframe, tab])
+    }
+  })
 
-  useEffect(() => {
-    if (iframe) iframe.onkeydown = onKeyDown
-  }, [iframe, onKeyDown])
+  useEventListener(iframe, 'wheel', (e) => {
+    if (e.deltaY < 0) {
+      tab.prev()
+    } else {
+      tab.next()
+    }
+    focus()
+  })
+
+  useEventListener(iframe, 'keydown', handleKeyDown(tab))
+
+  useEventListener(iframe, 'touchstart', (e) => {
+    const x0 = e.targetTouches[0]?.clientX ?? 0
+    iframe?.addEventListener('touchend', function handleTouchEnd(e) {
+      iframe.removeEventListener('touchend', handleTouchEnd)
+      const selection = iframe.getSelection()
+      if (hasSelection(selection)) return
+
+      const x1 = e.changedTouches[0]?.clientX ?? 0
+      const deltaX = x1 - x0
+      if (deltaX > 0) tab.prev()
+      if (deltaX < 0) tab.next()
+    })
+  })
 
   return (
-    <>
+    <div className={clsx('flex h-full flex-col', mobile && 'py-[3vw]')}>
       <PhotoSlider
         images={[{ src, key: 0 }]}
         visible={!!src}
@@ -387,7 +357,7 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
       <div ref={ref} className={clsx('relative flex-1', rendered || '-z-10')}>
         <TextSelectionMenu tab={tab} />
       </div>
-      <div className="typescale-body-small text-outline flex h-6 items-center justify-between px-2">
+      <Bar>
         <button
           className={clsx(locationToReturn || 'invisible')}
           onClick={() => {
@@ -409,8 +379,8 @@ function BookPane({ tab, focus, onMouseDown, onKeyDown }: BookPaneProps) {
         ) : (
           <div>{(percentage * 100).toFixed()}%</div>
         )}
-      </div>
-    </>
+      </Bar>
+    </div>
   )
 }
 
@@ -419,18 +389,22 @@ interface ReaderPaneHeaderProps {
 }
 export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const { location } = useSnapshot(tab)
-  const breadcrumbs = tab.getNavPath()
+  const navPath = tab.getNavPath()
+
+  useEffect(() => {
+    navPath.forEach((i) => (i.expanded = true))
+  }, [navPath])
 
   return (
-    <div className="typescale-body-small text-outline flex h-6 items-center justify-between gap-2 px-2">
+    <Bar>
       <div className="scroll-h flex">
-        {breadcrumbs.map((item, i) => (
+        {navPath.map((item, i) => (
           <button
             key={i}
             className="hover:text-on-surface flex shrink-0 items-center"
           >
             {item.label}
-            {i !== breadcrumbs.length - 1 && <MdChevronRight size={20} />}
+            {i !== navPath.length - 1 && <MdChevronRight size={20} />}
           </button>
         ))}
       </div>
@@ -439,6 +413,19 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
           {location.start.displayed.page} / {location.start.displayed.total}
         </div>
       )}
-    </div>
+    </Bar>
+  )
+}
+
+interface LineProps extends ComponentProps<'div'> {}
+export const Bar: React.FC<LineProps> = ({ className, ...props }) => {
+  return (
+    <div
+      className={clsx(
+        'typescale-body-small text-outline flex h-6 items-center justify-between gap-2 px-[4vw] sm:px-2',
+        className,
+      )}
+      {...props}
+    ></div>
   )
 }

@@ -196,19 +196,19 @@ function NavigationBar() {
   if (!mobile) return null
   return (
     <>
-      <div className="NavigationBar bg-surface border-surface-variant absolute inset-x-0 bottom-0 z-20 border-t">
-        {readMode ? (
-          <ViewActionBar className={clsx(visible || 'hidden')} />
-        ) : (
-          <PageActionBar />
-        )}
-      </div>
       {visible && (
         <Overlay
           className="!bg-transparent"
           onClick={() => setVisible(false)}
         />
       )}
+      <div className="NavigationBar bg-surface border-surface-variant absolute inset-x-0 bottom-0 z-10 border-t">
+        {readMode ? (
+          <ViewActionBar className={clsx(visible || 'hidden')} />
+        ) : (
+          <PageActionBar />
+        )}
+      </div>
     </>
   )
 }
@@ -275,11 +275,12 @@ function SideBar() {
 
   return (
     <>
+      {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
       <div
         className={clsx(
           'bg-surface flex w-60 flex-col',
           !action && '!hidden',
-          mobile ? 'absolute bottom-12 right-0 top-0 z-20' : '',
+          mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
       >
         {viewActions.map(({ name, title, View }) => (
@@ -291,7 +292,6 @@ function SideBar() {
           />
         ))}
       </div>
-      {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
     </>
   )
 }
