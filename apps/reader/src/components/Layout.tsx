@@ -96,7 +96,7 @@ const viewActions: IViewAction[] = [
     title: 'Timeline',
     Icon: MdTimeline,
     View: TimelineView,
-    env: ENV.Desktop,
+    env: ENV.Desktop | ENV.MOBILE,
   },
   {
     name: 'Typography',

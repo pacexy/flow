@@ -24,6 +24,9 @@ import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext } from './base'
 
+// avoid click penetration
+let clickedAnnotation = false
+
 export const reader = proxy(new Reader())
 
 subscribe(reader, () => {
@@ -170,12 +173,16 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     currentHref,
   } = useSnapshot(tab)
 
+  const setNavbar = useSetRecoilState(navbarState)
+  const setAction = useSetRecoilState(actionState)
+  const mobile = useMobile()
+
   useEffect(() => {
     const result = results?.find((r) => r.id === location?.start.href)
     const matches = result?.subitems
     matches?.forEach((m) => {
       try {
-        rendition?.annotations.highlight(
+        const h = rendition?.annotations.highlight(
           m.cfi!,
           undefined,
           undefined,
@@ -184,7 +191,13 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
             fill: 'rgba(255, 223, 93, 0.3)',
             'fill-opacity': 'unset',
           },
-        )
+        ) as any
+
+        const g = h?.mark.element as SVGGElement
+        g?.addEventListener('click', () => {
+          clickedAnnotation = true
+          setAction('Search')
+        })
       } catch (error) {
         // ignore matched text in `<title>`
       }
@@ -195,11 +208,13 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         rendition?.annotations.remove(m.cfi!, 'highlight')
       })
     }
-  }, [location?.start.href, rendition?.annotations, results, settings])
-
-  const setNavbar = useSetRecoilState(navbarState)
-  const setAction = useSetRecoilState(actionState)
-  const mobile = useMobile()
+  }, [
+    location?.start.href,
+    rendition?.annotations,
+    results,
+    setAction,
+    settings,
+  ])
 
   const underline = useCallback(
     async (def: string, type: 'add' | 'remove') => {
@@ -209,19 +224,23 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
           if (type === 'remove') {
             rendition?.annotations.remove(m.cfi!, 'underline')
           } else {
-            rendition?.annotations.underline(
+            const h = rendition?.annotations.underline(
               m.cfi!,
               undefined,
-              () => {
-                setAction('Search')
-                tab.setKeyword(def)
-              },
+              undefined,
               undefined,
               {
                 stroke: '',
                 'stroke-opacity': 1,
               },
-            )
+            ) as any
+
+            const g = h?.mark.element as SVGGElement
+            g?.addEventListener('click', () => {
+              clickedAnnotation = true
+              setAction('Search')
+              tab.setKeyword(def)
+            })
           }
         } catch (error) {
           console.log(error, def, m)
@@ -300,7 +319,12 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       }
     }
 
-    if (window.matchMedia('(max-width: 640px)').matches) {
+    if (mobile) {
+      if (clickedAnnotation) {
+        clickedAnnotation = false
+        return
+      }
+
       const w = window.innerWidth
       const x = e.offsetX % w
       const threshold = 0.3
