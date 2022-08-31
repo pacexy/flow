@@ -129,7 +129,11 @@ const pageActions: IPageAction[] = [
 ]
 
 const ActivityBar: React.FC = () => {
-  useSplitViewItem(48, 48, 48)
+  useSplitViewItem(ActivityBar, {
+    preferredWidth: 48,
+    minWidth: 48,
+    maxWidth: 48,
+  })
   return (
     <div className="ActivityBar hidden flex-col justify-between sm:flex">
       <ViewActionBar />
@@ -251,10 +255,14 @@ const Action: React.FC<ActionProps> = ({
 }
 
 const SideBar: React.FC = () => {
-  const { width } = useSplitViewItem(240, 160)
-
   const [action, setAction] = useRecoilState(actionState)
   const mobile = useMobile()
+
+  const { width } = useSplitViewItem(SideBar, {
+    preferredWidth: 240,
+    minWidth: 160,
+    visible: !!action,
+  })
 
   useEffect(() => {
     if (mobile === true) setAction(undefined)
@@ -292,7 +300,7 @@ const SideBar: React.FC = () => {
 
 interface ReaderProps extends ComponentProps<'div'> {}
 const Reader: React.FC = ({ className, ...props }: ReaderProps) => {
-  useSplitViewItem(240)
+  useSplitViewItem(Reader)
   const r = useSnapshot(reader)
   const readMode = r.focusedTab?.isBook
 
