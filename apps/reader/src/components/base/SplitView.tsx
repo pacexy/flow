@@ -1,3 +1,4 @@
+import { Overlay } from '@literal-ui/core'
 import clsx from 'clsx'
 import {
   Children,
@@ -12,7 +13,10 @@ import {
 } from 'react'
 import { useList } from 'react-use'
 
+import { useForceRender } from '@ink/reader/hooks'
 import { clamp } from '@ink/reader/utils'
+
+import { reader } from '../Reader'
 
 export type Orientation = 'horizontal' | 'vertical'
 
@@ -44,8 +48,8 @@ export function useWidth(
 ) {
   const [width, setWidth] = useState(preferredWidth)
   const resize = useCallback(
-    (width: number) => {
-      setWidth(clamp(width, minWidth, maxWidth))
+    (delta: number) => {
+      setWidth((width) => clamp(width + delta, minWidth, maxWidth))
     },
     [maxWidth, minWidth],
   )
@@ -57,15 +61,11 @@ export function useSplitViewItem(
   minWidth = 0,
   maxWidth = Number.POSITIVE_INFINITY,
 ) {
-  const [width, resize] = useWidth(preferredWidth, minWidth, maxWidth)
-  useRegisterView(
-    useMemo(
-      () => ({
-        resize: minWidth === maxWidth ? undefined : resize,
-      }),
-      [maxWidth, minWidth, resize],
-    ),
-  )
+  const [width, _resize] = useWidth(preferredWidth, minWidth, maxWidth)
+  const resize = minWidth === maxWidth ? undefined : _resize
+  const view = useMemo(() => ({ resize }), [resize])
+  useRegisterView(view)
+
   return { width }
 }
 
@@ -79,8 +79,13 @@ export const SplitView = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   orientation = 'horizontal',
 }: SplitViewProps) => {
-  const [views, { push }] = useList<ISplitViewItem>()
+  const [views, { push, reset }] = useList<ISplitViewItem>()
+  console.log('🚀 ~ file: SplitView.tsx ~ line 78 ~ views', views)
   const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    return () => reset()
+  }, [reset])
 
   return (
     <div className={clsx('SplitView relative h-full', className)}>
@@ -90,11 +95,13 @@ export const SplitView = ({
             .slice(1)
             .map((_, i) => {
               if (!ref.current) return null
+              if (!views[i] || !views[i + 1]) return null
               const el = ref.current.children.item(i + 1) as HTMLElement
 
               return (
                 <Sash
                   key={i}
+                  views={[views[i]!, views[i + 1]!]}
                   element={el}
                   disabled={!views[i]?.resize}
                   handleChange={() => {}}
@@ -112,14 +119,16 @@ export const SplitView = ({
 
 const SASH_WIDTH = 4
 interface SashProps {
+  views: [ISplitViewItem, ISplitViewItem]
   element: HTMLElement
   disabled: boolean
   handleChange(delta: number): void
 }
-const Sash: React.FC<SashProps> = ({ element, disabled }) => {
+const Sash: React.FC<SashProps> = ({ views, element, disabled }) => {
   const [hover, setHover] = useState(false)
   const [active, setActive] = useState(false)
-  const { left } = element.getBoundingClientRect()
+  const forceRender = useForceRender()
+  const rect = element.getBoundingClientRect()
 
   return (
     <div
@@ -131,7 +140,7 @@ const Sash: React.FC<SashProps> = ({ element, disabled }) => {
       )}
       style={{
         width: SASH_WIDTH,
-        left: left - SASH_WIDTH / 2,
+        left: rect.left - SASH_WIDTH / 2,
       }}
       onMouseEnter={() => {
         setHover(true)
@@ -143,16 +152,22 @@ const Sash: React.FC<SashProps> = ({ element, disabled }) => {
         setActive(true)
 
         function handleMouseMove(e: MouseEvent) {
-          e
+          forceRender()
+          views.forEach((v, i) => {
+            v.resize?.(e.movementX * (-1) ** i)
+          })
         }
 
         window.addEventListener('mousemove', handleMouseMove)
         window.addEventListener('mouseup', function handleMouseUp() {
           setActive(false)
+          reader.resize()
           window.removeEventListener('mousemove', handleMouseMove)
           window.removeEventListener('mouseup', handleMouseUp)
         })
       }}
-    ></div>
+    >
+      {active && <Overlay className="!bg-transparent" />}
+    </div>
   )
 }

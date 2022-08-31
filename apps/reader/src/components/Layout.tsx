@@ -251,10 +251,9 @@ const Action: React.FC<ActionProps> = ({
 }
 
 const SideBar: React.FC = () => {
-  const { width } = useSplitViewItem(240)
+  const { width } = useSplitViewItem(240, 160)
 
   const [action, setAction] = useRecoilState(actionState)
-  const { groups } = useSnapshot(reader)
   const mobile = useMobile()
 
   useEffect(() => {
@@ -263,12 +262,7 @@ const SideBar: React.FC = () => {
   }, [mobile, setAction])
 
   useEffect(() => {
-    groups.forEach(({ bookTabs }) => {
-      bookTabs.forEach(({ rendition }) => {
-        // @ts-ignore
-        rendition?.resize()
-      })
-    })
+    reader.resize()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!action])
 
@@ -277,7 +271,7 @@ const SideBar: React.FC = () => {
       {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
       <div
         className={clsx(
-          'bg-surface flex flex-col',
+          'SideBar bg-surface flex flex-col',
           !action && '!hidden',
           mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
