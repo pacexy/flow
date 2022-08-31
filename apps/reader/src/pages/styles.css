@@ -69,3 +69,17 @@ p {
   width: 100%;
   @apply bg-surface-variant h-px;
 }
+
+.sash:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 100%;
+  @apply border-r-surface-variant pointer-events-none left-1/2 -translate-x-1/2 border-r transition;
+}
+
+.sash.hover:before,
+.sash.active:before {
+  width: 100%;
+  @apply border-none bg-blue-500;
+}
