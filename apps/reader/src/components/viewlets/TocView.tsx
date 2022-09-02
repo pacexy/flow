@@ -7,17 +7,15 @@ import { dfs, flatTree, INavItem } from '@ink/reader/models'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
+import { PaneViewProps, PaneView, Pane } from '../base'
 
-import { Pane } from './Pane'
-import { View, ViewProps } from './View'
-
-export const TocView: React.FC<ViewProps> = (props) => {
+export const TocView: React.FC<PaneViewProps> = (props) => {
   const mobile = useMobile()
   return (
-    <View {...props}>
+    <PaneView {...props}>
       {mobile || <LibraryPane />}
       <TocPane />
-    </View>
+    </PaneView>
   )
 }
 

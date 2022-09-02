@@ -1,7 +1,6 @@
 import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { forwardRef } from 'react'
-import { Children, ComponentProps } from 'react'
+import { Children, ComponentProps, forwardRef } from 'react'
 import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
 import { Action, ActionBar } from '../base'
@@ -59,3 +58,33 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
     </div>
   )
 })
+
+export interface PaneViewProps extends ComponentProps<'div'> {
+  name: string
+  title: string
+  actions?: Action[]
+}
+export function PaneView({
+  className,
+  name,
+  title,
+  actions,
+  ...props
+}: PaneViewProps) {
+  return (
+    <>
+      <div
+        className={clsx(
+          'flex items-center justify-between px-5 py-2.5',
+          className,
+        )}
+      >
+        <h2 title={title} className="text-on-surface text-[11px]">
+          {name?.toUpperCase()}
+        </h2>
+        {actions && <ActionBar actions={actions} className="-mr-1" />}
+      </div>
+      <div className={clsx('scroll-parent', className)} {...props} />
+    </>
+  )
+}

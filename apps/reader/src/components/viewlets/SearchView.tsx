@@ -11,10 +11,9 @@ import { actionState } from '@ink/reader/state'
 import { reader } from '../Reader'
 import { Row } from '../Row'
 import { TextField } from '../TextField'
+import { PaneViewProps, PaneView } from '../base'
 
-import { View, ViewProps } from './View'
-
-export const SearchView: React.FC<ViewProps> = (props) => {
+export const SearchView: React.FC<PaneViewProps> = (props) => {
   const action = useRecoilValue(actionState)
   const { focusedBookTab } = useSnapshot(reader)
 
@@ -23,7 +22,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
   const expanded = results?.some((r) => r.expanded)
 
   return (
-    <View
+    <PaneView
       actions={[
         {
           id: expanded ? 'collapse-all' : 'expand-all',
@@ -63,7 +62,7 @@ export const SearchView: React.FC<ViewProps> = (props) => {
       {keyword && results && (
         <ResultList results={results as Match[]} keyword={keyword} />
       )}
-    </View>
+    </PaneView>
   )
 }
 
