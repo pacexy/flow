@@ -17,6 +17,7 @@ import { clamp } from '@ink/reader/utils'
 import { reader } from '../Reader'
 
 interface ISplitViewItem {
+  key: string
   visible?: boolean
   resize?: (size: number) => void
 }
@@ -39,14 +40,14 @@ export function useRegisterView(key: string, view: ISplitViewItem) {
 }
 
 export function useSize(
-  preferredSize = Number.POSITIVE_INFINITY,
+  preferredSize?: number,
   minSize = 0,
   maxSize = Number.POSITIVE_INFINITY,
 ) {
   const [size, setSize] = useState(preferredSize)
   const resize = useCallback(
     (delta: number) => {
-      setSize((size) => clamp(size + delta, minSize, maxSize))
+      setSize((size) => size && clamp(size + delta, minSize, maxSize))
     },
     [maxSize, minSize],
   )
@@ -56,7 +57,7 @@ export function useSize(
 export function useSplitViewItem(
   key: React.FC | string,
   {
-    preferredSize = Number.POSITIVE_INFINITY,
+    preferredSize,
     minSize = 0,
     maxSize = Number.POSITIVE_INFINITY,
     visible = true,
@@ -69,14 +70,16 @@ export function useSplitViewItem(
 ) {
   const [size, _resize] = useSize(preferredSize, minSize, maxSize)
   const resize = minSize === maxSize ? undefined : _resize
+  const stringKey = typeof key === 'string' ? key : key.name
   const view = useMemo(
     () => ({
+      key: stringKey,
       resize,
       visible,
     }),
-    [resize, visible],
+    [stringKey, resize, visible],
   )
-  useRegisterView(typeof key === 'string' ? key : key.name, view)
+  useRegisterView(stringKey, view)
 
   return { size }
 }
@@ -132,17 +135,18 @@ interface SashProps {
 const Sash: React.FC<SashProps> = ({ vertical, views }) => {
   const [hover, setHover] = useState(false)
   const [active, setActive] = useState(false)
-  const disabled = !(views[0]?.resize && views[1]?.resize)
+
+  const enabled = views.every((v) => v?.visible && v?.resize)
 
   return (
     <div
       className={clsx(
-        'sash relative z-30',
-        disabled
-          ? 'pointer-events-none'
-          : vertical
-          ? 'cursor-ns-resize'
-          : 'cursor-ew-resize',
+        'sash relative z-30 shrink-0',
+        enabled
+          ? vertical
+            ? 'cursor-ns-resize'
+            : 'cursor-ew-resize'
+          : 'pointer-events-none',
       )}
       style={{
         [vertical ? 'height' : 'width']: SASH_SIZE,

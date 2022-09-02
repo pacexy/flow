@@ -1,6 +1,6 @@
 import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { Children, ComponentProps, forwardRef } from 'react'
+import { ComponentProps, forwardRef } from 'react'
 import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
 import { Action, ActionBar } from '../base'
@@ -10,37 +10,23 @@ import { SplitView, useSplitViewItem } from './SplitView'
 interface PaneProps extends ComponentProps<'div'> {
   headline: string
   preferredSize?: number
-  /**
-   * If count of line is greater than threshold and
-   * space is not enough, the container will shrink to
-   * the threshold.
-   */
-  shrinkThreshold?: number
   actions?: Action[]
 }
 export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
-  {
-    className,
-    headline,
-    preferredSize,
-    children,
-    shrinkThreshold = 0,
-    actions,
-    ...props
-  },
+  { className, headline, preferredSize, children, actions, ...props },
   ref,
 ) {
-  const { size } = useSplitViewItem(headline, { preferredSize })
-  const [open, toggle] = useBoolean(true)
-  const Icon = open ? MdExpandMore : MdChevronRight
-  const n = open ? Children.count(children) : 0
-  const minLine = Math.min(n, shrinkThreshold)
+  const [expanded, toggle] = useBoolean(true)
+  const { size } = useSplitViewItem(headline, {
+    preferredSize,
+    visible: expanded,
+  })
+  const Icon = expanded ? MdExpandMore : MdChevronRight
   return (
     <div
-      className="Pane scroll-parent group"
+      className={clsx('Pane scroll-parent group', size && 'shrink-0')}
       style={{
-        height: size,
-        minHeight: (minLine + 1) * 24,
+        height: expanded ? size : 24,
       }}
     >
       <div role="button" className="flex items-center py-0.5" onClick={toggle}>
@@ -61,7 +47,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
         ref={ref}
         className={clsx(
           'scroll typescale-body-small text-on-surface-variant',
-          !open && 'hidden',
+          !expanded && 'hidden',
           className,
         )}
         {...props}

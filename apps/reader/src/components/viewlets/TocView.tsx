@@ -22,7 +22,7 @@ export const TocView: React.FC<PaneViewProps> = (props) => {
 const LibraryPane: React.FC = () => {
   const books = useLibrary()
   return (
-    <Pane headline="library" preferredSize={240} shrinkThreshold={6}>
+    <Pane headline="library" preferredSize={240}>
       {books?.map((book) => (
         <button
           key={book.id}
