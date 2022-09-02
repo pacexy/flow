@@ -78,7 +78,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
 
-  const { width } = useSplitViewItem(`${ReaderGroup.name}.${index}`)
+  const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`)
 
   const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
@@ -88,7 +88,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
     <div
       className="ReaderGroup flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
       onMouseDown={handleMouseDown}
-      style={{ width }}
+      style={{ width: size }}
     >
       <Tab.List
         className="hidden sm:flex"

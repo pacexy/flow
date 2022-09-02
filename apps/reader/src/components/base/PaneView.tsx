@@ -5,8 +5,11 @@ import { MdExpandMore, MdChevronRight } from 'react-icons/md'
 
 import { Action, ActionBar } from '../base'
 
+import { SplitView, useSplitViewItem } from './SplitView'
+
 interface PaneProps extends ComponentProps<'div'> {
   headline: string
+  preferredSize?: number
   /**
    * If count of line is greater than threshold and
    * space is not enough, the container will shrink to
@@ -16,17 +19,27 @@ interface PaneProps extends ComponentProps<'div'> {
   actions?: Action[]
 }
 export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
-  { className, headline, children, shrinkThreshold = 0, actions, ...props },
+  {
+    className,
+    headline,
+    preferredSize,
+    children,
+    shrinkThreshold = 0,
+    actions,
+    ...props
+  },
   ref,
 ) {
+  const { size } = useSplitViewItem(headline, { preferredSize })
   const [open, toggle] = useBoolean(true)
   const Icon = open ? MdExpandMore : MdChevronRight
   const n = open ? Children.count(children) : 0
   const minLine = Math.min(n, shrinkThreshold)
   return (
     <div
-      className="scroll-parent group"
+      className="Pane scroll-parent group"
       style={{
+        height: size,
         minHeight: (minLine + 1) * 24,
       }}
     >
@@ -84,7 +97,11 @@ export function PaneView({
         </h2>
         {actions && <ActionBar actions={actions} className="-mr-1" />}
       </div>
-      <div className={clsx('scroll-parent', className)} {...props} />
+      <SplitView
+        vertical
+        className={clsx('scroll-parent', className)}
+        {...props}
+      />
     </>
   )
 }

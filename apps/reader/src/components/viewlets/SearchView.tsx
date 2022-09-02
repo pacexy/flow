@@ -37,31 +37,33 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
       ]}
       {...props}
     >
-      <div className="px-5 py-px">
-        <TextField
-          as="input"
-          name="keyword"
-          autoFocus={action === 'Search'}
-          hideLabel
-          value={keyword ?? ''}
-          placeholder="Search"
-          onChange={(e) => {
-            reader.focusedBookTab?.setKeyword(e.target.value)
-          }}
-          actions={[
-            {
-              title: 'Clear',
-              Icon: MdClose,
-              onClick() {
-                reader.focusedBookTab?.setKeyword('')
+      <div className="scroll-parent">
+        <div className="px-5 py-px">
+          <TextField
+            as="input"
+            name="keyword"
+            autoFocus={action === 'Search'}
+            hideLabel
+            value={keyword ?? ''}
+            placeholder="Search"
+            onChange={(e) => {
+              reader.focusedBookTab?.setKeyword(e.target.value)
+            }}
+            actions={[
+              {
+                title: 'Clear',
+                Icon: MdClose,
+                onClick() {
+                  reader.focusedBookTab?.setKeyword('')
+                },
               },
-            },
-          ]}
-        />
+            ]}
+          />
+        </div>
+        {keyword && results && (
+          <ResultList results={results as Match[]} keyword={keyword} />
+        )}
       </div>
-      {keyword && results && (
-        <ResultList results={results as Match[]} keyword={keyword} />
-      )}
     </PaneView>
   )
 }

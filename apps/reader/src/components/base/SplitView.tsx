@@ -1,4 +1,5 @@
 import { Overlay } from '@literal-ui/core'
+import { Maybe } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import {
   Children,
@@ -15,10 +16,7 @@ import { clamp } from '@ink/reader/utils'
 
 import { reader } from '../Reader'
 
-export type Orientation = 'horizontal' | 'vertical'
-
 interface ISplitViewItem {
-  preferredWidth: number
   visible?: boolean
   resize?: (size: number) => void
 }
@@ -40,59 +38,57 @@ export function useRegisterView(key: string, view: ISplitViewItem) {
   }, [key, registerView, view])
 }
 
-export function useWidth(
-  preferredWidth = Number.POSITIVE_INFINITY,
-  minWidth = 0,
-  maxWidth = Number.POSITIVE_INFINITY,
+export function useSize(
+  preferredSize = Number.POSITIVE_INFINITY,
+  minSize = 0,
+  maxSize = Number.POSITIVE_INFINITY,
 ) {
-  const [width, setWidth] = useState(preferredWidth)
+  const [size, setSize] = useState(preferredSize)
   const resize = useCallback(
     (delta: number) => {
-      setWidth((width) => clamp(width + delta, minWidth, maxWidth))
+      setSize((size) => clamp(size + delta, minSize, maxSize))
     },
-    [maxWidth, minWidth],
+    [maxSize, minSize],
   )
-  return [width, resize] as const
+  return [size, resize] as const
 }
 
 export function useSplitViewItem(
   key: React.FC | string,
   {
-    preferredWidth = Number.POSITIVE_INFINITY,
-    minWidth = 0,
-    maxWidth = Number.POSITIVE_INFINITY,
+    preferredSize = Number.POSITIVE_INFINITY,
+    minSize = 0,
+    maxSize = Number.POSITIVE_INFINITY,
     visible = true,
   }: {
-    preferredWidth?: number
-    minWidth?: number
-    maxWidth?: number
+    preferredSize?: number
+    minSize?: number
+    maxSize?: number
     visible?: boolean
   } = {},
 ) {
-  const [width, _resize] = useWidth(preferredWidth, minWidth, maxWidth)
-  const resize = minWidth === maxWidth ? undefined : _resize
+  const [size, _resize] = useSize(preferredSize, minSize, maxSize)
+  const resize = minSize === maxSize ? undefined : _resize
   const view = useMemo(
     () => ({
-      preferredWidth,
       resize,
       visible,
     }),
-    [preferredWidth, resize, visible],
+    [resize, visible],
   )
   useRegisterView(typeof key === 'string' ? key : key.name, view)
 
-  return { width }
+  return { size }
 }
 
 interface SplitViewProps extends ComponentProps<'div'> {
-  orientation?: Orientation
+  vertical?: boolean
 }
 
 export const SplitView = ({
   children,
   className,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  orientation = 'horizontal',
+  vertical = false,
 }: SplitViewProps) => {
   const [viewMap, setViewMap] = useState(new Map<string, ISplitViewItem>())
   const views = [...viewMap.values()]
@@ -107,16 +103,17 @@ export const SplitView = ({
   return (
     <div className={clsx('SplitView relative h-full', className)}>
       <SplitViewContext.Provider value={{ registerView }}>
-        <div className="SplitViewContainer flex h-full">
+        <div
+          className={clsx(
+            'SplitViewContainer flex h-full',
+            vertical && 'flex-col',
+          )}
+        >
           {Children.toArray(children).reduce((a, c, i) => {
             return (
               <>
                 {a}
-                <Sash
-                  views={[views[i - 1]!, views[i]!]}
-                  disabled={!views[i - 1]?.resize}
-                  handleChange={() => {}}
-                />
+                <Sash vertical={vertical} views={[views[i - 1], views[i]]} />
                 {c}
               </>
             )
@@ -127,27 +124,29 @@ export const SplitView = ({
   )
 }
 
-const SASH_WIDTH = 4
+const SASH_SIZE = 4
 interface SashProps {
-  views: [ISplitViewItem, ISplitViewItem]
-  disabled: boolean
-  handleChange(delta: number): void
+  vertical: boolean
+  views: Maybe<ISplitViewItem>[]
 }
-const Sash: React.FC<SashProps> = ({ views, disabled }) => {
+const Sash: React.FC<SashProps> = ({ vertical, views }) => {
   const [hover, setHover] = useState(false)
   const [active, setActive] = useState(false)
+  const disabled = !(views[0]?.resize && views[1]?.resize)
 
   return (
     <div
       className={clsx(
         'sash relative z-30',
-        hover && 'hover',
-        active && 'active',
-        disabled ? 'pointer-events-none' : 'cursor-ew-resize',
+        disabled
+          ? 'pointer-events-none'
+          : vertical
+          ? 'cursor-ns-resize'
+          : 'cursor-ew-resize',
       )}
       style={{
-        width: SASH_WIDTH,
-        marginInline: -SASH_WIDTH / 2,
+        [vertical ? 'height' : 'width']: SASH_SIZE,
+        [vertical ? 'marginBlock' : 'marginInline']: -SASH_SIZE / 2,
       }}
       onMouseEnter={() => {
         setHover(true)
@@ -160,7 +159,8 @@ const Sash: React.FC<SashProps> = ({ views, disabled }) => {
 
         function handleMouseMove(e: MouseEvent) {
           views.forEach((v, i) => {
-            v.resize?.(e.movementX * (-1) ** i)
+            const delta = vertical ? e.movementY : e.movementX
+            v?.resize?.(delta * (-1) ** i)
           })
         }
 
@@ -173,6 +173,15 @@ const Sash: React.FC<SashProps> = ({ views, disabled }) => {
         })
       }}
     >
+      <div
+        className={clsx(
+          'border-surface-variant pointer-events-none absolute inset-0 transition',
+          vertical
+            ? 'top-1/2 -translate-y-1/2 border-b'
+            : 'left-1/2 -translate-x-1/2 border-r',
+          (hover || active) && 'h-full w-full border-none bg-blue-500',
+        )}
+      ></div>
       {active && <Overlay className="!bg-transparent" />}
     </div>
   )

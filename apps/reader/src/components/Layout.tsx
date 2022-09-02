@@ -130,9 +130,9 @@ const pageActions: IPageAction[] = [
 
 const ActivityBar: React.FC = () => {
   useSplitViewItem(ActivityBar, {
-    preferredWidth: 48,
-    minWidth: 48,
-    maxWidth: 48,
+    preferredSize: 48,
+    minSize: 48,
+    maxSize: 48,
   })
   return (
     <div className="ActivityBar hidden flex-col justify-between sm:flex">
@@ -258,9 +258,9 @@ const SideBar: React.FC = () => {
   const [action, setAction] = useRecoilState(actionState)
   const mobile = useMobile()
 
-  const { width } = useSplitViewItem(SideBar, {
-    preferredWidth: 240,
-    minWidth: 160,
+  const { size } = useSplitViewItem(SideBar, {
+    preferredSize: 240,
+    minSize: 160,
     visible: !!action,
   })
 
@@ -283,7 +283,7 @@ const SideBar: React.FC = () => {
           !action && '!hidden',
           mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
-        style={{ width }}
+        style={{ width: size }}
       >
         {viewActions.map(({ name, title, View }) => (
           <View

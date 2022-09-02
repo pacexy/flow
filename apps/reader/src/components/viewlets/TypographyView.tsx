@@ -9,14 +9,11 @@ import { settingsState } from '@ink/reader/state'
 import { TextField, TextFieldProps } from '../TextField'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
-export const TypographyView: React.FC<PaneViewProps> = ({
-  className,
-  ...props
-}) => {
+export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const [settings, setSettings] = useRecoilState(settingsState)
   return (
-    <PaneView className={clsx('space-y-4', className)} {...props}>
-      <div className="mx-5 space-y-2">
+    <PaneView {...props}>
+      <div className="mx-5 space-y-2 py-2">
         <NumberField
           name="font_size"
           min={14}
