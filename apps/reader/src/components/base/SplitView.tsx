@@ -8,11 +8,9 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 
-import { useForceRender } from '@ink/reader/hooks'
 import { clamp } from '@ink/reader/utils'
 
 import { reader } from '../Reader'
@@ -20,6 +18,7 @@ import { reader } from '../Reader'
 export type Orientation = 'horizontal' | 'vertical'
 
 interface ISplitViewItem {
+  preferredWidth: number
   visible?: boolean
   resize?: (size: number) => void
 }
@@ -57,11 +56,11 @@ export function useWidth(
 }
 
 export function useSplitViewItem(
-  fn: React.FC,
+  key: React.FC | string,
   {
-    preferredWidth,
-    minWidth,
-    maxWidth,
+    preferredWidth = Number.POSITIVE_INFINITY,
+    minWidth = 0,
+    maxWidth = Number.POSITIVE_INFINITY,
     visible = true,
   }: {
     preferredWidth?: number
@@ -74,12 +73,13 @@ export function useSplitViewItem(
   const resize = minWidth === maxWidth ? undefined : _resize
   const view = useMemo(
     () => ({
+      preferredWidth,
       resize,
       visible,
     }),
-    [resize, visible],
+    [preferredWidth, resize, visible],
   )
-  useRegisterView(fn.name, view)
+  useRegisterView(typeof key === 'string' ? key : key.name, view)
 
   return { width }
 }
@@ -96,7 +96,6 @@ export const SplitView = ({
 }: SplitViewProps) => {
   const [viewMap, setViewMap] = useState(new Map<string, ISplitViewItem>())
   const views = [...viewMap.values()]
-  const ref = useRef<HTMLDivElement>(null)
 
   const registerView = useCallback((key: string, view: ISplitViewItem) => {
     setViewMap((map) => {
@@ -108,27 +107,20 @@ export const SplitView = ({
   return (
     <div className={clsx('SplitView relative h-full', className)}>
       <SplitViewContext.Provider value={{ registerView }}>
-        <div className="SashContainer pointer-events-none absolute inset-0">
-          {Children.toArray(children)
-            .slice(1)
-            .map((_, i) => {
-              if (!ref.current) return null
-              if (!views[i]?.visible || !views[i + 1]?.visible) return null
-              const el = ref.current.children.item(i + 1) as HTMLElement
-
-              return (
+        <div className="SplitViewContainer flex h-full">
+          {Children.toArray(children).reduce((a, c, i) => {
+            return (
+              <>
+                {a}
                 <Sash
-                  key={i}
-                  views={[views[i]!, views[i + 1]!]}
-                  element={el}
-                  disabled={!views[i]?.resize}
+                  views={[views[i - 1]!, views[i]!]}
+                  disabled={!views[i - 1]?.resize}
                   handleChange={() => {}}
                 />
-              )
-            })}
-        </div>
-        <div ref={ref} className="SplitViewContainer flex h-full">
-          {children}
+                {c}
+              </>
+            )
+          })}
         </div>
       </SplitViewContext.Provider>
     </div>
@@ -138,27 +130,24 @@ export const SplitView = ({
 const SASH_WIDTH = 4
 interface SashProps {
   views: [ISplitViewItem, ISplitViewItem]
-  element: HTMLElement
   disabled: boolean
   handleChange(delta: number): void
 }
-const Sash: React.FC<SashProps> = ({ views, element, disabled }) => {
+const Sash: React.FC<SashProps> = ({ views, disabled }) => {
   const [hover, setHover] = useState(false)
   const [active, setActive] = useState(false)
-  const forceRender = useForceRender()
-  const rect = element.getBoundingClientRect()
 
   return (
     <div
       className={clsx(
-        'sash absolute inset-y-0 z-30',
+        'sash relative z-30',
         hover && 'hover',
         active && 'active',
-        disabled || 'pointer-events-auto cursor-ew-resize',
+        disabled ? 'pointer-events-none' : 'cursor-ew-resize',
       )}
       style={{
         width: SASH_WIDTH,
-        left: rect.left - SASH_WIDTH / 2,
+        marginInline: -SASH_WIDTH / 2,
       }}
       onMouseEnter={() => {
         setHover(true)
@@ -170,7 +159,6 @@ const Sash: React.FC<SashProps> = ({ views, element, disabled }) => {
         setActive(true)
 
         function handleMouseMove(e: MouseEvent) {
-          forceRender()
           views.forEach((v, i) => {
             v.resize?.(e.movementX * (-1) ** i)
           })
