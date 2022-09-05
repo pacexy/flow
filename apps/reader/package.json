@@ -20,6 +20,7 @@
     "@mdx-js/react": "2.1.1",
     "@next/bundle-analyzer": "12.1.6",
     "@prisma/client": "^4.1.0",
+    "@sentry/nextjs": "^7.12.1",
     "@supabase/auth-helpers-nextjs": "^0.2.5",
     "@supabase/auth-helpers-react": "^0.2.3",
     "@supabase/storage-js": "^1.7.3",

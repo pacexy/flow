@@ -1,9 +1,10 @@
 import type { PaddleWebhook } from '@invertase/node-paddle-sdk'
+import { withSentry } from '@sentry/nextjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { paddle, prisma } from './utils'
 
-export default async function handler(
+export default withSentry(async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
@@ -64,5 +65,5 @@ export default async function handler(
     }
   }
 
-  return res.end()
-}
+  res.end()
+})
