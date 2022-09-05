@@ -1,6 +1,7 @@
 export * from './remote'
 export * from './useAsync'
 export * from './useEnv'
+export * from './useForceRender'
 export * from './useLibrary'
 export * from './useList'
 export * from './useMobile'

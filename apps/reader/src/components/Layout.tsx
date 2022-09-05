@@ -22,6 +22,7 @@ import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
 import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
+import { SplitView, useSplitViewItem } from './base'
 import { Account, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
@@ -32,19 +33,16 @@ import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
   useInitSubscription()
-  const r = useSnapshot(reader)
-  const readMode = r.focusedTab?.isBook
+  const mobile = useMobile()
 
   return (
-    <div className="flex h-screen select-none bg-white dark:bg-[#121212]">
-      <ActivityBar />
-      <NavigationBar />
-      <SideBar />
-      <Reader
-        className={clsx('flex-1 overflow-hidden', readMode || 'mb-12 sm:mb-0')}
-      >
-        {children}
-      </Reader>
+    <div className="h-screen select-none bg-white dark:bg-[#121212]">
+      <SplitView>
+        <ActivityBar />
+        {mobile && <NavigationBar />}
+        <SideBar />
+        <Reader>{children}</Reader>
+      </SplitView>
     </div>
   )
 }
@@ -130,7 +128,12 @@ const pageActions: IPageAction[] = [
   },
 ]
 
-function ActivityBar() {
+const ActivityBar: React.FC = () => {
+  useSplitViewItem(ActivityBar, {
+    preferredSize: 48,
+    minSize: 48,
+    maxSize: 48,
+  })
   return (
     <div className="ActivityBar hidden flex-col justify-between sm:flex">
       <ViewActionBar />
@@ -191,9 +194,7 @@ function NavigationBar() {
   const r = useSnapshot(reader)
   const readMode = r.focusedTab?.isBook
   const [visible, setVisible] = useRecoilState(navbarState)
-  const mobile = useMobile()
 
-  if (!mobile) return null
   return (
     <>
       {visible && (
@@ -253,10 +254,15 @@ const Action: React.FC<ActionProps> = ({
   )
 }
 
-function SideBar() {
+const SideBar: React.FC = () => {
   const [action, setAction] = useRecoilState(actionState)
-  const { groups } = useSnapshot(reader)
   const mobile = useMobile()
+
+  const { size } = useSplitViewItem(SideBar, {
+    preferredSize: 240,
+    minSize: 160,
+    visible: !!action,
+  })
 
   useEffect(() => {
     if (mobile === true) setAction(undefined)
@@ -264,12 +270,7 @@ function SideBar() {
   }, [mobile, setAction])
 
   useEffect(() => {
-    groups.forEach(({ bookTabs }) => {
-      bookTabs.forEach(({ rendition }) => {
-        // @ts-ignore
-        rendition?.resize()
-      })
-    })
+    reader.resize()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!!action])
 
@@ -278,10 +279,11 @@ function SideBar() {
       {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
       <div
         className={clsx(
-          'bg-surface flex w-60 flex-col',
+          'SideBar bg-surface flex flex-col',
           !action && '!hidden',
           mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
+        style={{ width: size }}
       >
         {viewActions.map(({ name, title, View }) => (
           <View
@@ -297,6 +299,15 @@ function SideBar() {
 }
 
 interface ReaderProps extends ComponentProps<'div'> {}
-function Reader({ className, ...props }: ReaderProps) {
-  return <div className={clsx('', className)} {...props} />
+const Reader: React.FC = ({ className, ...props }: ReaderProps) => {
+  useSplitViewItem(Reader)
+  const r = useSnapshot(reader)
+  const readMode = r.focusedTab?.isBook
+
+  return (
+    <div
+      className={clsx('flex-1 overflow-hidden', readMode || 'mb-12 sm:mb-0')}
+      {...props}
+    />
+  )
 }

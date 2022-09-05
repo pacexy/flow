@@ -490,4 +490,13 @@ export class Reader {
     this.groups = []
     this.focusedIndex = -1
   }
+
+  resize() {
+    this.groups.forEach(({ bookTabs }) => {
+      bookTabs.forEach(({ rendition }) => {
+        // @ts-ignore
+        rendition?.resize()
+      })
+    })
+  }
 }

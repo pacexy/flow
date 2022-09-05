@@ -22,7 +22,7 @@ import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
-import { DropZone, SplitView, useDndContext } from './base'
+import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
 
 // avoid click penetration
 let clickedAnnotation = false
@@ -61,7 +61,7 @@ export function ReaderGridView() {
 
   if (!groups.length) return null
   return (
-    <SplitView>
+    <SplitView className="ReaderGridView">
       {groups.map(({ id }, i) => (
         <ReaderGroup key={id} index={i} />
       ))}
@@ -78,14 +78,17 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
 
+  const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`)
+
   const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
   }, [index])
 
   return (
     <div
-      className="flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
+      className="ReaderGroup flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
       onMouseDown={handleMouseDown}
+      style={{ width: size }}
     >
       <Tab.List
         className="hidden sm:flex"

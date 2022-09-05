@@ -26,7 +26,7 @@ export function Tab({
     <div
       role="tab"
       className={clsx(
-        'text-on-surface-variant typescale-body-small relative flex cursor-pointer items-center gap-1 p-2',
+        'text-on-surface-variant typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
         selected
           ? 'bg-white dark:bg-[#121212]'
           : 'hover:bg-white dark:hover:bg-[#121212]',
@@ -35,7 +35,9 @@ export function Tab({
       title={children}
       {...props}
     >
-      {focused && <div className="absolute inset-x-0 top-0 h-px bg-blue-400" />}
+      {focused && (
+        <div className="absolute inset-x-0 top-0 h-px bg-orange-400" />
+      )}
       <Icon size={16} className="text-outline" />
       <span className="max-w-[200px] truncate">{children}</span>
       <IconButton

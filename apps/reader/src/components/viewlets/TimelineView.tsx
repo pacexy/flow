@@ -6,18 +6,16 @@ import { useList } from '@ink/reader/hooks'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
-
-import { Pane } from './Pane'
-import { View, ViewProps } from './View'
+import { PaneViewProps, PaneView, Pane } from '../base'
 
 dayjs.extend(relativeTime)
-export const TimelineView: React.FC<ViewProps> = (props) => {
+export const TimelineView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useSnapshot(reader)
   const rows = focusedBookTab?.timeline
   const { outerRef, innerRef, items } = useList(rows)
 
   return (
-    <View {...props}>
+    <PaneView {...props}>
       <Pane headline="Timeline" ref={outerRef}>
         {rows && (
           <div ref={innerRef}>
@@ -42,6 +40,6 @@ export const TimelineView: React.FC<ViewProps> = (props) => {
           </div>
         )}
       </Pane>
-    </View>
+    </PaneView>
   )
 }

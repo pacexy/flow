@@ -1,16 +1,15 @@
 import { useSnapshot } from 'valtio'
 
+
 import { reader } from '../Reader'
 import { Row } from '../Row'
+import { PaneViewProps, PaneView, Pane } from '../base'
 
-import { Pane } from './Pane'
-import { View, ViewProps } from './View'
-
-export const AnnotationView: React.FC<ViewProps> = (props) => {
+export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useSnapshot(reader)
 
   return (
-    <View {...props}>
+    <PaneView {...props}>
       <Pane headline="Definitions">
         {focusedBookTab?.definitions.map((d) => {
           return (
@@ -25,6 +24,6 @@ export const AnnotationView: React.FC<ViewProps> = (props) => {
           )
         })}
       </Pane>
-    </View>
+    </PaneView>
   )
 }

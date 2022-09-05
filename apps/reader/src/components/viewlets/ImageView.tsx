@@ -6,23 +6,22 @@ import { ISection } from '@ink/reader/models'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
+import { PaneView, PaneViewProps } from '../base'
 
-import { View, ViewProps } from './View'
-
-export const ImageView: React.FC<ViewProps> = (props) => {
+export const ImageView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useSnapshot(reader)
   const sections = focusedBookTab?.sections?.filter((s) => s.images.length)
 
   if ((sections?.length ?? 0) > 500) return null
 
   return (
-    <View {...props}>
+    <PaneView {...props}>
       <div className="scroll">
         {sections?.map((s) => (
           <Block key={s.href} section={s} />
         ))}
       </div>
-    </View>
+    </PaneView>
   )
 }
 
