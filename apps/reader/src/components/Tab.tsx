@@ -26,10 +26,11 @@ export function Tab({
     <div
       role="tab"
       className={clsx(
-        'text-on-surface-variant typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
+        ' typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
         selected
-          ? 'bg-white dark:bg-[#121212]'
-          : 'hover:bg-white dark:hover:bg-[#121212]',
+          ? 'text-outline bg-white dark:bg-[#121212]'
+          : 'text-outline/60 hover:bg-white dark:hover:bg-[#121212]',
+        focused && '!text-on-surface',
         className,
       )}
       title={children}

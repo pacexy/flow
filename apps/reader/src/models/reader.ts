@@ -387,8 +387,17 @@ type TabParam = ConstructorParameters<typeof BookTab | typeof PageTab>[0]
 
 export class Group {
   id = uuidv4()
+  tabs: Tab[] = []
 
-  constructor(public tabs: Tab[], public selectedIndex = tabs.length - 1) {}
+  constructor(
+    public tabParams: TabParam[] = [],
+    public selectedIndex = tabParams.length - 1,
+  ) {
+    this.tabs = tabParams.map((param) => {
+      const isPage = typeof param === 'function'
+      return isPage ? new PageTab(param) : new BookTab(param)
+    })
+  }
 
   get selectedTab() {
     return this.tabs[this.selectedIndex]
@@ -475,8 +484,8 @@ export class Reader {
     this.focusedIndex = updateIndex(this.groups, index)
   }
 
-  addGroup(tabs: Tab[], index = this.focusedIndex + 1) {
-    const group = proxy(new Group(tabs))
+  addGroup(tabParams: TabParam[], index = this.focusedIndex + 1) {
+    const group = proxy(new Group(tabParams))
     this.groups.splice(index, 0, group)
     this.focusedIndex = index
     return group

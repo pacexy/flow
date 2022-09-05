@@ -65,7 +65,7 @@ const iconMap = {
 interface ButtonProps extends ComponentProps<'button'> {
   provider: 'github' | 'google'
 }
-export const Provider: React.FC<ButtonProps> = ({ provider, ...props }) => {
+const Provider: React.FC<ButtonProps> = ({ provider, ...props }) => {
   return (
     <Button
       className="flex items-center justify-center gap-2"

@@ -14,6 +14,7 @@ import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
+
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
 import { hasSelection, useLibrary, useMobile } from '../hooks'
@@ -23,6 +24,7 @@ import { updateCustomStyle } from '../styles'
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
+import * as pages from './pages'
 
 // avoid click penetration
 let clickedAnnotation = false
@@ -78,7 +80,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const { tabs, selectedIndex } = useSnapshot(group)
   const books = useLibrary()
 
-  const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`)
+  const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`, {
+    // to disable sash resize
+    visible: false,
+  })
 
   const handleMouseDown = useCallback(() => {
     reader.selectGroup(index)
@@ -105,6 +110,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
               onClick={() => group.selectTab(i)}
               onDelete={() => reader.removeTab(i, index)}
               Icon={tab instanceof BookTab ? RiBookLine : MdWebAsset}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData('text/plain', tab.id)
+              }}
             >
               {tab.title}
             </Tab>
@@ -116,18 +125,28 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         className="flex-1"
         split
         onDrop={(e, position) => {
-          const bookId = e.dataTransfer.getData('text/plain')
-          const book = books?.find((b) => b.id === bookId)
-          if (!book) return
-          switch (position) {
-            case 'left':
-              reader.addGroup([new BookTab(book)], index)
-              break
-            case 'right':
-              reader.addGroup([new BookTab(book)], index + 1)
-              break
-            default:
-              group.addTab(book)
+          const id = e.dataTransfer.getData('text/plain')
+          const tabParam =
+            books?.find((b) => b.id === id) ??
+            Object.values(pages).find((p) => p.displayName === id)
+          if (tabParam) {
+            reader.groups.forEach((g, i) => {
+              g.tabs.forEach((t, j) => {
+                if (t.id === id) {
+                  reader.removeTab(j, i)
+                }
+              })
+            })
+            switch (position) {
+              case 'left':
+                reader.addGroup([tabParam], index)
+                break
+              case 'right':
+                reader.addGroup([tabParam], index + 1)
+                break
+              default:
+                group.addTab(tabParam)
+            }
           }
         }}
       >
