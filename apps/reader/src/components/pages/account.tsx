@@ -48,6 +48,8 @@ export const Account: React.FC = () => {
   )
 }
 
+Account.displayName = 'Account'
+
 enum Status {
   NONE = 0,
   ACTIVE = 1 << 0,

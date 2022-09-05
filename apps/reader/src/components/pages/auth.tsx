@@ -52,6 +52,8 @@ export const Auth: React.FC = () => {
   )
 }
 
+Auth.displayName = 'Auth'
+
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }

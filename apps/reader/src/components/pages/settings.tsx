@@ -37,3 +37,5 @@ export const Settings: React.FC = () => {
     </Page>
   )
 }
+
+Settings.displayName = 'Settings'
