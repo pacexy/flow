@@ -162,14 +162,16 @@ const Sash: React.FC<SashProps> = ({ vertical, views }) => {
         setActive(true)
 
         function handleMouseMove(e: MouseEvent) {
+          const delta = vertical ? e.movementY : e.movementX
           views.forEach((v, i) => {
-            const delta = vertical ? e.movementY : e.movementX
             v?.resize?.(delta * (-1) ** i)
           })
         }
 
         window.addEventListener('mousemove', handleMouseMove)
         window.addEventListener('mouseup', function handleMouseUp() {
+          // `mouseleave` not fire when `mousedown`
+          setHover(false)
           setActive(false)
           reader.resize()
           window.removeEventListener('mousemove', handleMouseMove)
