@@ -1,7 +1,7 @@
 {
   "name": "@ink/monorepo",
   "private": true,
-  "packageManager": "pnpm@6.32.6",
+  "packageManager": "pnpm@7.10.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
