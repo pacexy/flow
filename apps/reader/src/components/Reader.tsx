@@ -5,6 +5,7 @@ import React, {
   ComponentProps,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -13,7 +14,6 @@ import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
-
 
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
@@ -188,12 +188,36 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     rendition,
     locationToReturn,
     results,
-    location,
-    percentage,
+    sections,
+    location: _,
+    totalLength,
     definitions,
     rendered,
     currentHref,
   } = useSnapshot(tab)
+  // FIXME: `location` updating not fire re-render
+  const { location } = useSnapshot(tab)
+
+  const percentage = useMemo(() => {
+    if (!sections || !location) return 0
+    const start = location.start
+    const i = sections.findIndex((s) => s.href === start.href)
+    const previousSectionsLength = sections
+      .slice(0, i)
+      .reduce((acc, s) => acc + s.length, 0)
+    const previousSectionsPercentage = previousSectionsLength / totalLength
+    const currentSectionPercentage = sections[i]!.length / totalLength
+    const displayedPercentage = start.displayed.page / start.displayed.total
+
+    const percentage =
+      previousSectionsPercentage +
+      currentSectionPercentage * displayedPercentage
+
+    // effect
+    tab.updateRecord({ cfi: start.cfi, percentage })
+
+    return percentage
+  }, [location, sections, tab, totalLength])
 
   const setNavbar = useSetRecoilState(navbarState)
   const setAction = useSetRecoilState(actionState)

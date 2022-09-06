@@ -1,4 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
+import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import type { Rendition, Location, Book } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
@@ -117,19 +118,25 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
+  async updateRecord(changes: Partial<ReadonlyDeep<BookRecord>>) {
+    console.log(changes)
+    db?.books.update(this.book.id, changes)
+    await supabaseClient.from('Book').update(changes).eq('id', this.book.id)
+  }
+
   definitions = this.book.definitions
   onAddDefinition?: (def: string) => void
   addDefinition(def: string) {
     if (this.definitions.includes(def)) return
     this.onAddDefinition?.(def)
     this.definitions.push(def)
-    db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
+    this.updateRecord({ definitions: snapshot(this.definitions) })
   }
   onRemoveDefinition?: (def: string) => void
   removeDefinition(def: string) {
     this.onRemoveDefinition?.(def)
     this.definitions = this.definitions.filter((d) => d !== def)
-    db?.books.update(this.book.id, { definitions: snapshot(this.definitions) })
+    this.updateRecord({ definitions: snapshot(this.definitions) })
   }
   toggleDefinition(def: string) {
     def = def.trim()
@@ -155,27 +162,6 @@ export class BookTab extends BaseTab {
 
   get totalLength() {
     return this.sections?.reduce((acc, s) => acc + s.length, 0) ?? 0
-  }
-
-  get percentage() {
-    if (!this.sections || !this.location) return 0
-    const start = this.location.start
-    const i = this.sections.findIndex((s) => s.href === start.href)
-    const previousSectionsLength = this.sections
-      .slice(0, i)
-      .reduce((acc, s) => acc + s.length, 0)
-    const previousSectionsPercentage = previousSectionsLength / this.totalLength
-    const currentSectionPercentage = this.sections[i]!.length / this.totalLength
-    const displayedPercentage = start.displayed.page / start.displayed.total
-
-    const percentage =
-      previousSectionsPercentage +
-      currentSectionPercentage * displayedPercentage
-
-    // effect
-    db?.books.update(this.book.id, { cfi: start.cfi, percentage })
-
-    return percentage
   }
 
   toggle(id: string) {
