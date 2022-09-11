@@ -141,7 +141,7 @@ const Sash: React.FC<SashProps> = ({ vertical, views }) => {
   return (
     <div
       className={clsx(
-        'sash relative z-30 shrink-0',
+        'sash relative z-30 hidden shrink-0 sm:block',
         enabled
           ? vertical
             ? 'cursor-ns-resize'

@@ -1,12 +1,29 @@
 import { Link } from '@literal-ui/next'
+import clsx from 'clsx'
+import { ComponentProps } from 'react'
 
 export const Layout: React.FC = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="container flex-1">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
+  )
+}
+
+export const OpenApp: React.FC<ComponentProps<'a'>> = ({ className }) => {
+  return (
+    <a
+      className={clsx(
+        'typescale-title-medium  select-none bg-black px-4 py-3 text-white',
+        className,
+      )}
+      href="/"
+      target="_blank"
+    >
+      Open App
+    </a>
   )
 }
 
@@ -21,20 +38,14 @@ const Header: React.FC = () => {
         <Link href="/pricing">Pricing</Link>
         <Link href="/faq">FAQ</Link>
       </div>
-      <a
-        className="typescale-title-medium ml-auto hidden bg-black px-4 py-3 text-white sm:block"
-        href="/"
-        target="_blank"
-      >
-        Open App
-      </a>
+      <OpenApp className="ml-auto hidden sm:block" />
     </header>
   )
 }
 
 const Footer: React.FC = () => {
   return (
-    <footer className="mt-10 bg-black py-4">
+    <footer className="bg-black py-4">
       <div className="container">
         <div className="text-inverse-on-surface typescale-body-small mb-4 flex gap-6">
           <Link href="/terms">Terms</Link>
