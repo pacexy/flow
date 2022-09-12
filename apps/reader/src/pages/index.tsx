@@ -65,6 +65,8 @@ export const Library: React.FC = () => {
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const remoteBooks = useRemoteBooks()
   const remoteFiles = useRemoteFiles()
+  const usage = remoteFiles?.reduce((a, c) => a + (c.metadata as any).size, 0)
+  const exceeded = !!usage && usage > 10 * 1024 ** 3
 
   const [select, toggleSelect] = useBoolean(false)
   const [selectedBooks, { add, has, toggle, reset }] = useSet<string>()
@@ -114,6 +116,7 @@ export const Library: React.FC = () => {
           {select ? (
             <>
               <Button
+                disabled={exceeded}
                 onClick={() => {
                   toggleSelect()
                   if (subscription?.status !== 'active') {
@@ -127,10 +130,12 @@ export const Library: React.FC = () => {
 
                     const book = books?.find((b) => b.id === id)
                     const owner = subscription?.email
-                    await supabaseClient.from('Book').upsert({ ...book, owner })
                     supabaseClient.storage
                       .from('books')
                       .upload(`${owner}/${id}`, file.file)
+                      .then(() =>
+                        supabaseClient.from('Book').upsert({ ...book, owner }),
+                      )
                   })
                 }}
               >
@@ -170,6 +175,11 @@ export const Library: React.FC = () => {
           )}
         </div>
       </div>
+      {usage && (
+        <div className="typescale-body-medium text-outline px-4 text-right">
+          Usage: {readableFileSize(usage)}
+        </div>
+      )}
       <div className="scroll h-full p-4">
         <ul
           className="grid"
@@ -284,4 +294,14 @@ export const Book: React.FC<BookProps> = ({
       </div>
     </div>
   )
+}
+
+function readableFileSize(size: number) {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  let i = 0
+  while (size >= 1024) {
+    size /= 1024
+    ++i
+  }
+  return size.toFixed(2) + ' ' + units[i]
 }
