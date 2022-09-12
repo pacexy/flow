@@ -12,17 +12,20 @@ export const Layout: React.FC = ({ children }) => {
   )
 }
 
-export const OpenApp: React.FC<ComponentProps<'a'>> = ({ className }) => {
+export const OpenApp: React.FC<ComponentProps<'a'>> = ({
+  className,
+  children,
+}) => {
   return (
     <a
       className={clsx(
-        'typescale-title-medium  select-none bg-black px-4 py-3 text-white',
+        'typescale-title-medium select-none bg-black px-4 py-3 text-center text-white',
         className,
       )}
       href="/"
       target="_blank"
     >
-      Open App
+      {children ?? 'Open App'}
     </a>
   )
 }
@@ -35,8 +38,8 @@ const Header: React.FC = () => {
         <span className="typescale-headline-small">Lota</span>
       </a>
       <div className="text-outline typescale-body-large flex items-center gap-6">
+        <Link href="/home">Home</Link>
         <Link href="/pricing">Pricing</Link>
-        <Link href="/faq">FAQ</Link>
       </div>
       <OpenApp className="ml-auto hidden sm:block" />
     </header>
