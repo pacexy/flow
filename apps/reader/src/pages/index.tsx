@@ -52,7 +52,7 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>{focusedTab?.title ?? 'reReader'}</title>
+        <title>{focusedTab?.title ?? 'Lota'}</title>
       </Head>
       <ReaderGridView />
       <Library />
