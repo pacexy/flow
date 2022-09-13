@@ -1,10 +1,10 @@
-import { useBoolean } from '@literal-ui/hooks'
+import { useBoolean, useEventListener } from '@literal-ui/hooks'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
@@ -15,7 +15,7 @@ import { useSnapshot } from 'valtio'
 
 import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 
-import { ReaderGridView, reader, Button, Account } from '../components'
+import { ReaderGridView, reader, Button } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import {
   useLibrary,
@@ -65,7 +65,11 @@ export const Library: React.FC = () => {
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
   const remoteBooks = useRemoteBooks()
   const remoteFiles = useRemoteFiles()
-  const usage = remoteFiles?.reduce((a, c) => a + (c.metadata as any).size, 0)
+  const usage = remoteFiles.data?.reduce(
+    (a, c) => a + (c.metadata as any).size,
+    0,
+  )
+
   const exceeded = !!usage && usage > 10 * 1024 ** 3
 
   const [select, toggleSelect] = useBoolean(false)
@@ -116,27 +120,11 @@ export const Library: React.FC = () => {
           {select ? (
             <>
               <Button
-                disabled={exceeded}
+                disabled={subscription?.status !== 'active' || exceeded}
                 onClick={() => {
                   toggleSelect()
-                  if (subscription?.status !== 'active') {
-                    return reader.addTab(Account)
-                  }
-                  selectedBooks.forEach(async (id) => {
-                    if (remoteFiles?.find((f) => f.name === id)) return
-
-                    const file = await db?.files.get(id)
-                    if (!file) return
-
-                    const book = books?.find((b) => b.id === id)
-                    const owner = subscription?.email
-                    supabaseClient.storage
-                      .from('books')
-                      .upload(`${owner}/${id}`, file.file)
-                      .then(() =>
-                        supabaseClient.from('Book').upsert({ ...book, owner }),
-                      )
-                  })
+                  const event = new Event('upload')
+                  window.dispatchEvent(event)
                 }}
               >
                 Upload
@@ -175,11 +163,9 @@ export const Library: React.FC = () => {
           )}
         </div>
       </div>
-      {usage && (
-        <div className="typescale-body-medium text-outline px-4 text-right">
-          Usage: {readableFileSize(usage)}
-        </div>
-      )}
+      <div className="typescale-body-medium text-outline px-4 text-right">
+        Usage: {readableFileSize(usage ?? 0)}
+      </div>
       <div className="scroll h-full p-4">
         <ul
           className="grid"
@@ -223,22 +209,45 @@ export const Book: React.FC<BookProps> = ({
   const subscription = useSubscription()
   const router = useRouter()
   const mobile = useMobile()
+  const [loading, setLoading] = useState(false)
 
   const cover = covers?.find((c) => c.id === book.id)?.cover
-  const remoteFile = remoteFiles?.find((f) => f.name === book.id)
+  const remoteFile = remoteFiles.data?.find((f) => f.name === book.id)
 
   useEffect(() => {
     if (!remoteFile) return
     db?.files.get(book.id).then((file) => {
       if (file) return
+      setLoading(true)
       supabaseClient.storage
         .from('books')
         .download(`${subscription?.email}/${book.id}`)
         .then(({ data }) => {
           if (data) addFile(book.id, new File([data], book.name))
+          setLoading(false)
         })
     })
   }, [book, remoteFile, subscription])
+
+  useEventListener<any>('upload', async () => {
+    if (loading) return
+    if (!selected) return
+    if (remoteFiles.data?.find((f) => f.name === book.id)) return
+
+    const file = await db?.files.get(book.id)
+    if (!file) return
+
+    setLoading(true)
+    const owner = subscription?.email
+    supabaseClient.storage
+      .from('books')
+      .upload(`${owner}/${book.id}`, file.file)
+      .then(() => supabaseClient.from('Book').upsert({ ...book, owner }))
+      .then(() => {
+        remoteFiles.mutate()
+        setLoading(false)
+      })
+  })
 
   const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
 
@@ -256,6 +265,12 @@ export const Book: React.FC<BookProps> = ({
           }
         }}
       >
+        <div
+          className={clsx(
+            'absolute bottom-0 h-1 bg-blue-500',
+            loading && 'progress-bit w-[5%]',
+          )}
+        />
         {book.percentage !== undefined && (
           <div className="typescale-body-large absolute right-0 bg-gray-500/60 px-2 text-gray-100">
             {(book.percentage * 100).toFixed()}%
@@ -284,12 +299,13 @@ export const Book: React.FC<BookProps> = ({
         className="line-clamp-2 text-on-surface-variant typescale-body-small lg:typescale-body-medium mt-2 w-full"
         title={book.name}
       >
-        {remoteFile && (
-          <MdCheckCircle
-            className="text-outline/60 mr-1 mb-0.5 inline"
-            size={16}
-          />
-        )}
+        <MdCheckCircle
+          className={clsx(
+            'mr-1 mb-0.5 inline',
+            remoteFile ? 'text-tertiary' : 'text-surface-variant',
+          )}
+          size={16}
+        />
         {book.name}
       </div>
     </div>

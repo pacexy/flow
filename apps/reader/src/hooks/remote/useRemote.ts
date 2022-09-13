@@ -4,8 +4,7 @@ import { useStorage } from './useStorage'
 import { useSupabase } from './useSupabase'
 
 export function useRemoteFiles() {
-  const { data } = useStorage('books')
-  return data
+  return useStorage('books')
 }
 
 export function useRemoteBooks() {
