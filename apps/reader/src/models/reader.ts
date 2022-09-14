@@ -107,6 +107,10 @@ export class BookTab extends BaseTab {
     this.rendition?.display(target)
     if (returnable) this.showPrevLocation()
   }
+  displayFromSelector(selector: string, section: ISection) {
+    const el = section.document.querySelector(selector)
+    if (el) this.display(section.cfiFromElement(el))
+  }
   prev() {
     this.rendition?.prev()
     // avoid content flash
@@ -119,7 +123,6 @@ export class BookTab extends BaseTab {
   }
 
   async updateRecord(changes: Partial<ReadonlyDeep<BookRecord>>) {
-    console.log(changes)
     db?.books.update(this.book.id, changes)
     await supabaseClient.from('Book').update(changes).eq('id', this.book.id)
   }

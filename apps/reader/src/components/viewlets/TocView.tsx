@@ -99,7 +99,17 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
       active={href === navItem?.href}
       expanded={expanded}
       subitems={subitems}
-      onClick={() => tab?.display(href, false)}
+      onClick={() => {
+        const [target, id] = href.split('#')
+        const section = tab?.sections?.find((s) => s.href.endsWith(target!))
+
+        if (!section) return
+
+        if (!id || section !== tab?.currentSection)
+          tab?.display(section.href, false)
+
+        if (id) tab?.displayFromSelector(`#${id}`, section)
+      }}
       toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
     />
