@@ -5,6 +5,8 @@ const { withSentryConfig } = require('@sentry/nextjs')
 const withPWA = require('next-pwa')
 const withTM = require('next-transpile-modules')(['@ink/internal'])
 
+const IS_DEV = process.env.NODE_ENV === 'development'
+
 /**
  * @type {import('rehype-pretty-code').Options}
  **/
@@ -28,6 +30,9 @@ const opts = {
   },
 }
 
+/**
+ * @type {import('@sentry/nextjs').SentryWebpackPluginOptions}
+ **/
 const sentryWebpackPluginOptions = {
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
   // the following options are set automatically, and overriding them is not
@@ -43,39 +48,44 @@ const sentryWebpackPluginOptions = {
 /**
  * @type {import('next').NextConfig}
  **/
-module.exports = withSentryConfig(
-  withPWA(
-    withTM(
-      withBundleAnalyzer({
-        reactStrictMode: false,
-        pageExtensions: ['ts', 'tsx', 'mdx'],
-        pwa: {
-          dest: 'public',
-        },
-        webpack: (config, options) => {
-          config.module.rules.push({
-            test: /.mdx?$/, // load both .md and .mdx files
-            use: [
-              options.defaultLoaders.babel,
-              {
-                loader: '@mdx-js/loader',
-                options: {
-                  remarkPlugins: [],
-                  rehypePlugins: [[require('rehype-pretty-code'), opts]],
-                  // If you use `MDXProvider`, uncomment the following line.
-                  providerImportSource: '@mdx-js/react',
-                },
+const base = withPWA(
+  withTM(
+    withBundleAnalyzer({
+      reactStrictMode: false,
+      pageExtensions: ['ts', 'tsx', 'mdx'],
+      pwa: {
+        dest: 'public',
+      },
+      webpack: (config, options) => {
+        config.module.rules.push({
+          test: /.mdx?$/, // load both .md and .mdx files
+          use: [
+            options.defaultLoaders.babel,
+            {
+              loader: '@mdx-js/loader',
+              options: {
+                remarkPlugins: [],
+                rehypePlugins: [[require('rehype-pretty-code'), opts]],
+                // If you use `MDXProvider`, uncomment the following line.
+                providerImportSource: '@mdx-js/react',
               },
-              './plugins/mdx',
-            ],
-          })
+            },
+            './plugins/mdx',
+          ],
+        })
 
-          return config
-        },
-      }),
-    ),
+        return config
+      },
+    }),
   ),
+)
+
+const dev = base
+const prod = withSentryConfig(
+  base,
   // Make sure adding Sentry options is the last code to run before exporting, to
   // ensure that your source maps include changes from all other Webpack plugins
   sentryWebpackPluginOptions,
 )
+
+module.exports = IS_DEV ? dev : prod
