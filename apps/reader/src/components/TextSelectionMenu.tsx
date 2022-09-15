@@ -1,4 +1,5 @@
 import { Overlay } from '@literal-ui/core'
+import { useEventListener } from '@literal-ui/hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { MdSearch } from 'react-icons/md'
 import { VscSymbolInterface } from 'react-icons/vsc'
@@ -20,6 +21,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 }) => {
   const setAction = useSetRecoilState(actionState)
   const { rendition } = useSnapshot(tab)
+  const [display, setDisplay] = useState(false)
   const mobile = useMobile()
 
   // `manager` is not reactive, so we need to use getter
@@ -27,7 +29,9 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     return rendition?.manager?.views._views[0]
   }, [rendition])
 
-  const { selection, rect, textContent } = useTextSelection(view()?.window)
+  const win = view()?.window
+
+  const { selection, rect, textContent } = useTextSelection(win)
 
   const [offsetLeft, setOffsetLeft] = useState(0)
 
@@ -44,15 +48,21 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     rendition?.on('relocated', handler)
   }, [handler, rendition])
 
-  if (!rect || !textContent) return null
+  useEffect(() => {
+    setDisplay(false)
+  }, [selection])
+
+  useEventListener(win, 'mouseup', () => setDisplay(true))
+
+  if (!display || !rect || !textContent) return null
 
   return (
     <>
       <div
-        className="bg-inverse-surface text-inverse-on-surface absolute z-20 flex gap-1 p-0.5"
+        className="bg-inverse-surface text-inverse-on-surface absolute z-20 flex -translate-x-1/2 gap-1 p-0.5"
         style={{
-          top: rect.top - rect.height - 6,
-          left: rect.left + offsetLeft,
+          top: rect.bottom,
+          left: rect.right + offsetLeft,
         }}
       >
         <IconButton
