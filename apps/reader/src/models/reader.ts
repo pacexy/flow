@@ -107,9 +107,9 @@ export class BookTab extends BaseTab {
     this.rendition?.display(target)
     if (returnable) this.showPrevLocation()
   }
-  displayFromSelector(selector: string, section: ISection) {
+  displayFromSelector(selector: string, section: ISection, returnable = true) {
     const el = section.document.querySelector(selector)
-    if (el) this.display(section.cfiFromElement(el))
+    if (el) this.display(section.cfiFromElement(el), returnable)
   }
   prev() {
     this.rendition?.prev()

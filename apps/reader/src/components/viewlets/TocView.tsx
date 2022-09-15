@@ -105,10 +105,11 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
 
         if (!section) return
 
-        if (!id || section !== tab?.currentSection)
+        if (id) {
+          tab?.displayFromSelector(`#${id}`, section, false)
+        } else {
           tab?.display(section.href, false)
-
-        if (id) tab?.displayFromSelector(`#${id}`, section)
+        }
       }}
       toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
