@@ -38,17 +38,14 @@ export const navbarState = atom<boolean>({
 })
 
 export type Settings = {
-  fontSize: string
-  fontWeight: number
+  fontSize?: string
+  fontWeight?: number
   fontFamily?: string
-  lineHeight: number
+  lineHeight?: number
 }
 
-const defaultSettings = {
+const defaultSettings: Settings = {
   //typography
-  fontSize: '18px',
-  fontWeight: 400,
-  lineHeight: 1.5,
 }
 
 export const settingsState = atom<Settings>({

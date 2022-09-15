@@ -10,7 +10,8 @@ import { TextField, TextFieldProps } from '../TextField'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [settings, setSettings] = useRecoilState(settingsState)
+  const [{ fontSize, fontWeight, lineHeight }, setSettings] =
+    useRecoilState(settingsState)
   return (
     <PaneView {...props}>
       <div className="mx-5 space-y-2 py-2">
@@ -18,11 +19,11 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           name="font_size"
           min={14}
           max={28}
-          defaultValue={parseInt(settings.fontSize)}
+          defaultValue={fontSize && parseInt(fontSize)}
           onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              fontSize: v + 'px',
+              fontSize: v ? v + 'px' : undefined,
             }))
           }}
         />
@@ -31,22 +32,23 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           min={100}
           max={900}
           step={100}
-          defaultValue={settings.fontWeight}
+          defaultValue={fontWeight}
           onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              fontWeight: v,
+              fontWeight: v || undefined,
             }))
           }}
         />
         <NumberField
           name="line_height"
+          min={1}
           step={0.1}
-          defaultValue={settings.lineHeight}
+          defaultValue={lineHeight}
           onChange={(v) => {
             setSettings((prev) => ({
               ...prev,
-              lineHeight: v,
+              lineHeight: v || undefined,
             }))
           }}
         />
@@ -57,7 +59,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
 }
 
 interface NumberFieldProps extends Omit<TextFieldProps<'input'>, 'onChange'> {
-  onChange: (v: number) => void
+  onChange: (v?: number) => void
 }
 export const NumberField: React.FC<NumberFieldProps> = ({
   onChange,
@@ -68,6 +70,7 @@ export const NumberField: React.FC<NumberFieldProps> = ({
     <TextField
       as="input"
       type="number"
+      placeholder="default"
       actions={[
         {
           title: 'Step down',
@@ -89,8 +92,13 @@ export const NumberField: React.FC<NumberFieldProps> = ({
         },
       ]}
       mRef={ref}
-      onChange={(e) => {
+      // lazy render
+      onBlur={(e) => {
         onChange(Number(e.target.value))
+      }}
+      onClear={() => {
+        if (ref.current) ref.current.value = ''
+        onChange(undefined)
       }}
       {...props}
     />
@@ -112,7 +120,7 @@ const TypeFacePane: React.FC = () => {
         onChange={(e) => setSentence(e.target.value)}
         className="mt-2 mb-4"
       />
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4">
         {typefaces.map((t) => (
           <Typeface key={t} fontFamily={t} sentence={sentence} />
         ))}

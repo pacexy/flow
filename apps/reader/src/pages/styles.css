@@ -10,7 +10,8 @@ a:focus-visible {
   @apply ring-1 ring-inset ring-blue-400;
 }
 
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
   outline: none;
 }
 
