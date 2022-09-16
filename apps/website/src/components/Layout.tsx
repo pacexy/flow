@@ -17,16 +17,15 @@ export const OpenApp: React.FC<ComponentProps<'a'>> = ({
   children,
 }) => {
   return (
-    <a
+    <Link
+      href={process.env.NEXT_PUBLIC_APP_URL!}
       className={clsx(
         'typescale-title-medium select-none bg-black px-4 py-3 text-center text-white',
         className,
       )}
-      href="/"
-      target="_blank"
     >
       {children ?? 'Open App'}
-    </a>
+    </Link>
   )
 }
 
@@ -46,7 +45,7 @@ export const QA: React.FC<QAProps> = ({ q, a }) => {
 const Header: React.FC = () => {
   return (
     <header className="typescale-body-large text-on-surface container flex h-12">
-      <a className="mr-8 flex items-center gap-3" href="/home">
+      <a className="mr-8 flex items-center gap-3" href="/">
         <img src="icons/512.png" alt="Logo" className="w-7" />
         <span className="typescale-title-large">Lota</span>
       </a>
@@ -69,7 +68,7 @@ const Footer: React.FC = () => {
         <div className="text-inverse-on-surface typescale-body-small mb-4 flex gap-6">
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
-          <a href="mailto:pacexy@gmail.com">Contact</a>
+          <a href="mailto:service@lotareader.com">Contact</a>
           <Link href="https://github.com/pacexy/lota/issues/new/choose">
             Feedback
           </Link>

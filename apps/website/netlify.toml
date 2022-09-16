@@ -1,0 +1,11 @@
+[build.environment]
+NODE_VERSION = "16"
+# https://github.com/netlify/build/issues/1633#issuecomment-907246600
+NPM_FLAGS = "--version" # prevent Netlify npm install
+
+[build]
+# Set `base` to repo directory in Netlify UI
+# base = 'website'
+publish = ".next"
+# https://answers.netlify.com/t/using-pnpm-and-pnpm-workspaces/2759
+command = "npx pnpm i --store=node_modules/.pnpm-store && npx pnpm -F website... build"

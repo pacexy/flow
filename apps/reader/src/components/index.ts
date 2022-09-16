@@ -1,7 +1,6 @@
 export * from './base'
 export * from './Button'
 export * from './Layout'
-export * from './MDX'
 export * from './Page'
 export * from './pages'
 export * from './Reader'
