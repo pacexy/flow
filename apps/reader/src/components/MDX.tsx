@@ -35,8 +35,8 @@ export function withLayout({ title }: Meta) {
   return function Layout({ children }) {
     return (
       <>
-        <NextSeo title={`${title}`} />
-        <article>{children}</article>
+        <NextSeo title={`${title} - Lota`} />
+        <article className="container py-16">{children}</article>
       </>
     )
   } as React.FC
