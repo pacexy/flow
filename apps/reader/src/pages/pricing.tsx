@@ -1,13 +1,13 @@
 import { useBoolean } from '@literal-ui/hooks'
 import { NextSeo } from 'next-seo'
 
-import { OpenApp } from '../layout'
+import { OpenApp, QA } from '../layout'
 
 export default function Pricing() {
   const [annual, toggle] = useBoolean(false)
   return (
     <>
-      <NextSeo title="Pricing" />
+      <NextSeo title="Pricing - Lota" />
       <div className="">
         <div className="flex flex-col items-center py-16">
           <h2 className="typescale-headline-medium">Pricing Plans</h2>
@@ -59,7 +59,7 @@ export default function Pricing() {
             />
             <QA
               q="Will the data saved in the cloud be deleted after I cancel my subscription?"
-              a="No, but you will not be able to use the data synchronization feature."
+              a="No, but you will not be able to synchronize data."
             />
           </div>
         </div>
@@ -104,19 +104,6 @@ const Plan: React.FC<PlanProps> = ({
           ))}
         </ul>
       </div>
-    </div>
-  )
-}
-
-interface QAProps {
-  q: string
-  a: string
-}
-const QA: React.FC<QAProps> = ({ q, a }) => {
-  return (
-    <div className="typescale-body-large">
-      <h2 className="typescale-title-large mb-2">{q}</h2>
-      <p className="text-outline">{a}</p>
     </div>
   )
 }

@@ -30,16 +30,32 @@ export const OpenApp: React.FC<ComponentProps<'a'>> = ({
   )
 }
 
+interface QAProps {
+  q: string
+  a: React.ReactNode
+}
+export const QA: React.FC<QAProps> = ({ q, a }) => {
+  return (
+    <div className="typescale-body-large">
+      <h2 className="typescale-title-large mb-2">{q}</h2>
+      <p className="text-outline">{a}</p>
+    </div>
+  )
+}
+
 const Header: React.FC = () => {
   return (
     <header className="typescale-body-large text-on-surface container flex h-12">
-      <a className="mr-8 flex items-center gap-4" href="/home">
-        <img src="icons/512.png" alt="Logo" className="w-8" />
-        <span className="typescale-headline-small">Lota</span>
+      <a className="mr-8 flex items-center gap-3" href="/home">
+        <img src="icons/512.png" alt="Logo" className="w-7" />
+        <span className="typescale-title-large">Lota</span>
       </a>
-      <div className="text-outline typescale-body-large flex items-center gap-6">
-        <Link href="/home">Home</Link>
+      <div className="text-outline typescale-body-large flex items-center gap-4">
         <Link href="/pricing">Pricing</Link>
+        <Link href="/faq">FAQ</Link>
+        <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
+          Roadmap
+        </Link>
       </div>
       <OpenApp className="ml-auto hidden sm:block" />
     </header>
@@ -54,8 +70,8 @@ const Footer: React.FC = () => {
           <Link href="/terms">Terms</Link>
           <Link href="/privacy">Privacy</Link>
           <a href="mailto:pacexy@gmail.com">Contact</a>
-          <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
-            Roadmap
+          <Link href="https://github.com/pacexy/lota/issues/new/choose">
+            Feedback
           </Link>
         </div>
 
