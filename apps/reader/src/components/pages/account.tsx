@@ -118,8 +118,7 @@ const Subscription: React.FC = () => {
       </div>
 
       <Link
-        href="/pricing"
-        target="_blank"
+        href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/pricing`}
         className="typescale-body-small text-on-surface"
       >
         Detail
