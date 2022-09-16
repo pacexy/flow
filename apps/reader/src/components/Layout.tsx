@@ -203,7 +203,7 @@ function NavigationBar() {
           onClick={() => setVisible(false)}
         />
       )}
-      <div className="NavigationBar bg-surface border-surface-variant absolute inset-x-0 bottom-0 z-10 border-t">
+      <div className="NavigationBar bg-surface border-surface-variant fixed inset-x-0 bottom-0 z-10 border-t">
         {readMode ? (
           <ViewActionBar className={clsx(visible || 'hidden')} />
         ) : (
