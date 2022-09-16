@@ -13,7 +13,12 @@ import {
 import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
-import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
+import {
+  addBook,
+  addFile,
+  DropZone,
+  handleFiles,
+} from '@ink/reader/components/base'
 
 import { ReaderGridView, reader, Button } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
@@ -80,10 +85,8 @@ export const Library: React.FC = () => {
   const subscription = useSubscription()
 
   useEffect(() => {
-    remoteBooks?.forEach((b) => {
-      db?.books.put(b)
-    })
-  }, [remoteBooks, subscription])
+    if (remoteBooks) db?.books.bulkPut(remoteBooks)
+  }, [remoteBooks])
 
   if (groups.length) return null
   return (
@@ -97,11 +100,25 @@ export const Library: React.FC = () => {
     >
       <div className="flex justify-between p-4">
         <div className="space-x-4">
-          {!!books?.length && (
-            <Button variant="secondary" onClick={toggleSelect}>
-              {select ? 'Cancel' : 'Select'}
-            </Button>
-          )}
+          {books &&
+            (books.length ? (
+              <Button variant="secondary" onClick={toggleSelect}>
+                {select ? 'Cancel' : 'Select'}
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  const FILENAME =
+                    'Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub'
+                  fetch(`https://epubtest.org/books/${FILENAME}`)
+                    .then((res) => res.blob())
+                    .then((blob) => addBook(new File([blob], FILENAME)))
+                }}
+              >
+                Download sample book
+              </Button>
+            ))}
           {select &&
             (allSelected ? (
               <Button variant="secondary" onClick={reset}>
