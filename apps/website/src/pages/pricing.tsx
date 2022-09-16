@@ -1,7 +1,7 @@
 import { useBoolean } from '@literal-ui/hooks'
 import { NextSeo } from 'next-seo'
 
-import { OpenApp, QA } from '../layout'
+import { OpenApp, QA } from '../components'
 
 export default function Pricing() {
   const [annual, toggle] = useBoolean(false)

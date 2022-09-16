@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo'
 
-import { OpenApp } from '../layout'
+import { OpenApp } from '../components'
 
 export default function Home() {
   return (

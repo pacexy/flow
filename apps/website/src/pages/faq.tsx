@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo'
 
-import { QA } from '../layout'
+import { QA } from '../components'
 
 export default function Pricing() {
   return (
