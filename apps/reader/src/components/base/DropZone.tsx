@@ -161,18 +161,23 @@ export async function handleFiles(files: Iterable<File>, open = false) {
     let book = books?.find((b) => b.name === file.name)
 
     if (!book) {
-      book = {
-        id: uuidv4(),
-        name: file.name,
-        createdAt: +new Date(),
-        definitions: [],
-      }
-      db?.books.add(book)
-      addFile(book.id, file)
+      book = addBook(file)
     }
 
     if (open) reader.addTab(book)
   }
+}
+
+export function addBook(file: File) {
+  const book = {
+    id: uuidv4(),
+    name: file.name,
+    createdAt: +new Date(),
+    definitions: [],
+  }
+  db?.books.add(book)
+  addFile(book.id, file)
+  return book
 }
 
 export function addFile(id: string, file: File) {

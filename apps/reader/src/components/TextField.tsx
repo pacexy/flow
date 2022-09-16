@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { ElementType, useRef, useEffect, RefObject } from 'react'
 import { IconType } from 'react-icons'
+import { MdClose } from 'react-icons/md'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
 import { useMobile } from '../hooks'
@@ -19,6 +20,7 @@ export type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
     hideLabel?: boolean
     autoFocus?: boolean
     actions?: Action[]
+    onClear?: () => void
     // https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/forward_and_create_ref/#generic-forwardrefs
     mRef?: RefObject<HTMLInputElement> | null
   },
@@ -30,7 +32,8 @@ export function TextField<T extends ElementType = 'input'>({
   className,
   hideLabel = false,
   autoFocus,
-  actions,
+  actions = [],
+  onClear,
   mRef: outerRef,
   ...props
 }: TextFieldProps<T>) {
@@ -38,6 +41,17 @@ export function TextField<T extends ElementType = 'input'>({
   const innerRef = useRef<HTMLInputElement>(null)
   const ref = outerRef || innerRef
   const mobile = useMobile()
+
+  if (onClear) {
+    actions = [
+      ...actions,
+      {
+        title: 'Clear',
+        Icon: MdClose,
+        onClick: onClear,
+      },
+    ]
+  }
 
   useEffect(() => {
     if (mobile === false && autoFocus) ref.current?.focus()
@@ -63,8 +77,8 @@ export function TextField<T extends ElementType = 'input'>({
           {...props}
         />
         <div className="flex gap-0.5">
-          {actions?.map((a) => (
-            <IconButton key={a.title} {...a} />
+          {actions.map((a) => (
+            <IconButton className="text-outline !p-px" key={a.title} {...a} />
           ))}
         </div>
       </div>

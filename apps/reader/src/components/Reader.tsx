@@ -5,7 +5,6 @@ import React, {
   ComponentProps,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -17,7 +16,8 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
-import { hasSelection, useLibrary, useMobile } from '../hooks'
+import { db } from '../db'
+import { hasSelection, useMobile, useSync } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -78,7 +78,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
   const { focusedIndex } = useSnapshot(reader)
   const { tabs, selectedIndex } = useSnapshot(group)
-  const books = useLibrary()
 
   const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`, {
     // to disable sash resize
@@ -124,10 +123,10 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       <DropZone
         className="flex-1"
         split
-        onDrop={(e, position) => {
+        onDrop={async (e, position) => {
           const id = e.dataTransfer.getData('text/plain')
           const tabParam =
-            books?.find((b) => b.id === id) ??
+            (await db?.books.get(id)) ??
             Object.values(pages).find((p) => p.displayName === id)
           if (tabParam) {
             reader.groups.forEach((g, i) => {
@@ -188,36 +187,14 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     rendition,
     locationToReturn,
     results,
-    sections,
-    location: _,
-    totalLength,
+    location,
     definitions,
     rendered,
     currentHref,
+    book,
   } = useSnapshot(tab)
-  // FIXME: `location` updating not fire re-render
-  const { location } = useSnapshot(tab)
 
-  const percentage = useMemo(() => {
-    if (!sections || !location) return 0
-    const start = location.start
-    const i = sections.findIndex((s) => s.href === start.href)
-    const previousSectionsLength = sections
-      .slice(0, i)
-      .reduce((acc, s) => acc + s.length, 0)
-    const previousSectionsPercentage = previousSectionsLength / totalLength
-    const currentSectionPercentage = sections[i]!.length / totalLength
-    const displayedPercentage = start.displayed.page / start.displayed.total
-
-    const percentage =
-      previousSectionsPercentage +
-      currentSectionPercentage * displayedPercentage
-
-    // effect
-    tab.updateRecord({ cfi: start.cfi, percentage })
-
-    return percentage
-  }, [location, sections, tab, totalLength])
+  useSync(tab)
 
   const setNavbar = useSetRecoilState(navbarState)
   const setAction = useSetRecoilState(actionState)
@@ -444,7 +421,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
             Stay
           </button>
         ) : (
-          <div>{(percentage * 100).toFixed()}%</div>
+          <div>{((book.percentage ?? 0) * 100).toFixed()}%</div>
         )}
       </Bar>
     </div>

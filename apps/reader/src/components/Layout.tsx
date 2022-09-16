@@ -244,7 +244,7 @@ const Action: React.FC<ActionProps> = ({
       {active && (
         <div
           className={clsx(
-            'absolute bg-blue-400',
+            'absolute bg-orange-400',
             mobile ? 'inset-x-0 bottom-0 h-0.5' : 'inset-y-0 left-0 w-0.5',
           )}
         />

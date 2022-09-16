@@ -1,5 +1,4 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import type { Rendition, Location, Book } from 'epubjs'
 import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
@@ -107,6 +106,10 @@ export class BookTab extends BaseTab {
     this.rendition?.display(target)
     if (returnable) this.showPrevLocation()
   }
+  displayFromSelector(selector: string, section: ISection, returnable = true) {
+    const el = section.document.querySelector(selector)
+    if (el) this.display(section.cfiFromElement(el), returnable)
+  }
   prev() {
     this.rendition?.prev()
     // avoid content flash
@@ -118,10 +121,8 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
-  async updateRecord(changes: Partial<ReadonlyDeep<BookRecord>>) {
-    console.log(changes)
+  updateBook(changes: Partial<ReadonlyDeep<BookRecord>>) {
     db?.books.update(this.book.id, changes)
-    await supabaseClient.from('Book').update(changes).eq('id', this.book.id)
   }
 
   definitions = this.book.definitions
@@ -130,13 +131,13 @@ export class BookTab extends BaseTab {
     if (this.definitions.includes(def)) return
     this.onAddDefinition?.(def)
     this.definitions.push(def)
-    this.updateRecord({ definitions: snapshot(this.definitions) })
+    this.updateBook({ definitions: snapshot(this.definitions) })
   }
   onRemoveDefinition?: (def: string) => void
   removeDefinition(def: string) {
     this.onRemoveDefinition?.(def)
     this.definitions = this.definitions.filter((d) => d !== def)
-    this.updateRecord({ definitions: snapshot(this.definitions) })
+    this.updateBook({ definitions: snapshot(this.definitions) })
   }
   toggleDefinition(def: string) {
     def = def.trim()
@@ -336,6 +337,27 @@ export class BookTab extends BaseTab {
         location: loc,
         timestamp: Date.now(),
       })
+
+      // calculate percentage
+      if (this.sections) {
+        const start = loc.start
+        const i = this.sections.findIndex((s) => s.href === start.href)
+        const previousSectionsLength = this.sections
+          .slice(0, i)
+          .reduce((acc, s) => acc + s.length, 0)
+        const previousSectionsPercentage =
+          previousSectionsLength / this.totalLength
+        const currentSectionPercentage =
+          this.sections[i]!.length / this.totalLength
+        const displayedPercentage = start.displayed.page / start.displayed.total
+
+        const percentage =
+          previousSectionsPercentage +
+          currentSectionPercentage * displayedPercentage
+
+        this.book.percentage = percentage
+        this.updateBook({ cfi: start.cfi, percentage })
+      }
     })
 
     this.rendition.on('attached', (...args: any[]) => {

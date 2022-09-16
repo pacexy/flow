@@ -3,6 +3,8 @@
 import { useIsomorphicEffect } from '@literal-ui/hooks'
 import { useState } from 'react'
 
+import { last } from '../utils'
+
 type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
 
 type TextSelectionState = {
@@ -44,10 +46,10 @@ export function useTextSelection(win?: Window) {
 
         const contents = range.cloneContents()
         if (contents.textContent !== null) {
-          newState.textContent = contents.textContent
+          newState.textContent = contents.textContent.trim()
         }
 
-        const [rect] = [...range.getClientRects()].filter((r) => r.width)
+        const rect = last([...range.getClientRects()].filter((r) => r.width))
         if (rect) newState.rect = rect
 
         newState.selection = selection

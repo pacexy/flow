@@ -1,5 +1,4 @@
 import { useBoolean } from '@literal-ui/hooks'
-import { ReadonlyDeep } from 'type-fest'
 import { useSnapshot } from 'valtio'
 
 import { ISection } from '@ink/reader/models'
@@ -10,7 +9,9 @@ import { PaneView, PaneViewProps } from '../base'
 
 export const ImageView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useSnapshot(reader)
-  const sections = focusedBookTab?.sections?.filter((s) => s.images.length)
+  const sections = focusedBookTab?.sections?.filter((s) => s.images.length) as
+    | ISection[]
+    | undefined
 
   if ((sections?.length ?? 0) > 500) return null
 
@@ -26,7 +27,7 @@ export const ImageView: React.FC<PaneViewProps> = (props) => {
 }
 
 interface BlockProps {
-  section: ReadonlyDeep<ISection>
+  section: ISection
 }
 const Block: React.FC<BlockProps> = ({ section }) => {
   const { focusedBookTab } = useSnapshot(reader)
@@ -61,13 +62,10 @@ const Block: React.FC<BlockProps> = ({ section }) => {
                 src={blob}
                 alt={asset.href}
                 onClick={() => {
-                  const img = section?.document.querySelector(
+                  reader.focusedBookTab?.displayFromSelector(
                     `img[src*="${asset.href}"]`,
+                    section,
                   )
-
-                  if (img) {
-                    reader.focusedBookTab?.display(section?.cfiFromElement(img))
-                  }
                 }}
               />
             )

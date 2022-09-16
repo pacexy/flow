@@ -26,7 +26,7 @@ const LibraryPane: React.FC = () => {
       {books?.map((book) => (
         <button
           key={book.id}
-          className="relative w-full truncate px-5 py-1 text-left"
+          className="relative w-full truncate py-1 pl-5 pr-3 text-left"
           title={book.name}
           draggable
           onClick={() => reader.addTab(book)}
@@ -99,7 +99,18 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
       active={href === navItem?.href}
       expanded={expanded}
       subitems={subitems}
-      onClick={() => tab?.display(href, false)}
+      onClick={() => {
+        const [target, id] = href.split('#')
+        const section = tab?.sections?.find((s) => s.href.endsWith(target!))
+
+        if (!section) return
+
+        if (id) {
+          tab?.displayFromSelector(`#${id}`, section, false)
+        } else {
+          tab?.display(section.href, false)
+        }
+      }}
       toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
     />

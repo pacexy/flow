@@ -1,31 +1,84 @@
 import { Link } from '@literal-ui/next'
+import clsx from 'clsx'
+import { ComponentProps } from 'react'
 
 export const Layout: React.FC = ({ children }) => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="container flex-1">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
+    </div>
+  )
+}
+
+export const OpenApp: React.FC<ComponentProps<'a'>> = ({
+  className,
+  children,
+}) => {
+  return (
+    <a
+      className={clsx(
+        'typescale-title-medium select-none bg-black px-4 py-3 text-center text-white',
+        className,
+      )}
+      href="/"
+      target="_blank"
+    >
+      {children ?? 'Open App'}
+    </a>
+  )
+}
+
+interface QAProps {
+  q: string
+  a: React.ReactNode
+}
+export const QA: React.FC<QAProps> = ({ q, a }) => {
+  return (
+    <div className="typescale-body-large">
+      <h2 className="typescale-title-large mb-2">{q}</h2>
+      <p className="text-outline">{a}</p>
     </div>
   )
 }
 
 const Header: React.FC = () => {
   return (
-    <header className="typescale-body-large text-on-surface flex justify-center gap-8 py-2">
-      <Link href="/">Home</Link>
-      <Link href="/pricing">Pricing</Link>
+    <header className="typescale-body-large text-on-surface container flex h-12">
+      <a className="mr-8 flex items-center gap-3" href="/home">
+        <img src="icons/512.png" alt="Logo" className="w-7" />
+        <span className="typescale-title-large">Lota</span>
+      </a>
+      <div className="text-outline typescale-body-large flex items-center gap-4">
+        <Link href="/pricing">Pricing</Link>
+        <Link href="/faq">FAQ</Link>
+        <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
+          Roadmap
+        </Link>
+      </div>
+      <OpenApp className="ml-auto hidden sm:block" />
     </header>
   )
 }
 
 const Footer: React.FC = () => {
   return (
-    <footer className="typescale-body-medium text-outline mt-10 flex items-center justify-center gap-8 p-2 text-center">
-      <a href="mailto:pacexy@gmail.com">Contact</a>
-      <Link href="/terms">Terms of Use</Link>
-      <Link href="/privacy">Privacy Policy</Link>
-      <Link href="/refund">Refund Policy</Link>
+    <footer className="bg-black py-4">
+      <div className="container">
+        <div className="text-inverse-on-surface typescale-body-small mb-4 flex gap-6">
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <a href="mailto:pacexy@gmail.com">Contact</a>
+          <Link href="https://github.com/pacexy/lota/issues/new/choose">
+            Feedback
+          </Link>
+        </div>
+
+        <div className="typescale-body-small text-white">
+          © {new Date().getFullYear()} Lota
+        </div>
+      </div>
     </footer>
   )
 }

@@ -10,7 +10,8 @@ a:focus-visible {
   @apply ring-1 ring-inset ring-blue-400;
 }
 
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
   outline: none;
 }
 
@@ -68,4 +69,24 @@ p {
   flex-grow: 1;
   width: 100%;
   @apply bg-surface-variant h-px;
+}
+
+.progress-bit {
+  animation-name: progress;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  transform: translate3d(0px, 0px, 0px);
+  animation-timing-function: linear;
+}
+
+@keyframes progress {
+  from {
+    transform: translateX(0%) scaleX(1);
+  }
+  50% {
+    transform: translateX(1000%) scaleX(3);
+  }
+  to {
+    transform: translateX(2000%) scaleX(1);
+  }
 }
