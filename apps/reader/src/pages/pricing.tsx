@@ -30,8 +30,8 @@ export default function Pricing() {
                 'Tabs',
                 'Search',
                 'Image Preview',
-                'Annotation',
-                'Custom Typography',
+                'Typography',
+                'Annotation (soon)',
               ]}
               description="Free includes"
               price={0}
