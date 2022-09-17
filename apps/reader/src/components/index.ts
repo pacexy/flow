@@ -1,5 +1,6 @@
 export * from './base'
 export * from './Button'
+export * from './ErrorBoundary'
 export * from './Layout'
 export * from './Page'
 export * from './pages'
