@@ -18,7 +18,13 @@ import {
 import { useRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { ENV, useEnv, useInitSubscription, useMobile } from '../hooks'
+import {
+  ENV,
+  useColorScheme,
+  useEnv,
+  useInitSubscription,
+  useMobile,
+} from '../hooks'
 import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
@@ -32,11 +38,12 @@ import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
+  useColorScheme()
   useInitSubscription()
   const mobile = useMobile()
 
   return (
-    <div className="h-screen select-none">
+    <div id="layout" className="select-none">
       <SplitView>
         <ActivityBar />
         {mobile && <NavigationBar />}
@@ -241,14 +248,12 @@ const Action: React.FC<ActionProps> = ({
       )}
       {...props}
     >
-      {active && (
-        <div
-          className={clsx(
-            'absolute bg-orange-400',
-            mobile ? 'inset-x-0 bottom-0 h-0.5' : 'inset-y-0 left-0 w-0.5',
-          )}
-        />
-      )}
+      {active &&
+        (mobile || (
+          <div
+            className={clsx('absolute bg-orange-400', 'inset-y-0 left-0 w-0.5')}
+          />
+        ))}
       <Icon size={28} />
     </button>
   )
