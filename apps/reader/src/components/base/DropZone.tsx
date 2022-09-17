@@ -180,15 +180,14 @@ export function addBook(file: File) {
   return book
 }
 
-export function addFile(id: string, file: File) {
+export async function addFile(id: string, file: File) {
   db?.files.add({ id, file })
-  window.requestIdleCallback(async () => {
-    const data = await file.arrayBuffer()
-    const epub = ePub(data)
-    const url = await epub.coverUrl()
-    const cover = url && (await toDataUrl(url))
-    db?.covers.add({ id, cover })
-  })
+
+  const data = await file.arrayBuffer()
+  const epub = ePub(data)
+  const url = await epub.coverUrl()
+  const cover = url && (await toDataUrl(url))
+  db?.covers.add({ id, cover })
 }
 
 async function toDataUrl(url: string) {
