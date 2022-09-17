@@ -15,7 +15,6 @@ export function useSync(tab: BookTab) {
 
   const sync = useCallback(
     async (changes: Partial<BookRecord>) => {
-      console.log(changes)
       if (remoteBooks?.find((b) => b.id === id)) {
         await supabaseClient.from('Book').update(changes).eq('id', id)
       }

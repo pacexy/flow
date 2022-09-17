@@ -1,4 +1,4 @@
-import { useColorScheme, useEventListener } from '@literal-ui/hooks'
+import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { Contents } from 'epubjs'
 import React, {
@@ -17,7 +17,7 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'
-import { hasSelection, useMobile, useSync } from '../hooks'
+import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
 import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -181,7 +181,7 @@ interface BookPaneProps {
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const settings = useRecoilValue(settingsState)
-  const { scheme } = useColorScheme()
+  const { dark } = useColorScheme()
   const {
     iframe,
     rendition,
@@ -301,11 +301,10 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   }, [rendition, settings])
 
   useEffect(() => {
-    if (!scheme) return
-    const dark = scheme === 'dark'
+    if (dark === undefined) return
     rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a')
     rendition?.themes.override('background', dark ? '#121212' : 'white')
-  }, [rendition, scheme])
+  }, [rendition, dark])
 
   const [src, setSrc] = useState<string>()
 

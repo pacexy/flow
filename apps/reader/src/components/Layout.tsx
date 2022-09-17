@@ -36,7 +36,7 @@ export const Layout: React.FC = ({ children }) => {
   const mobile = useMobile()
 
   return (
-    <div className="h-screen select-none bg-white dark:bg-[#121212]">
+    <div className="h-screen select-none">
       <SplitView>
         <ActivityBar />
         {mobile && <NavigationBar />}
