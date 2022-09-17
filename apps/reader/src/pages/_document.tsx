@@ -1,5 +1,6 @@
-import { PreventFlash } from '@literal-ui/core'
 import { Html, Head, Main, NextScript } from 'next/document'
+
+import { PreventFlash } from '../components'
 
 export default function Document() {
   return (
@@ -8,12 +9,12 @@ export default function Document() {
         <GoogleTagManager />
         <link rel="icon" href="/icons/192.png"></link>
         <PWA />
+        <PreventFlash />
       </Head>
       <body>
         <GoogleTagManagerNoScript />
         <Main />
         <NextScript />
-        <PreventFlash />
       </body>
     </Html>
   )

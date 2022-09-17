@@ -68,12 +68,12 @@ export function TextField<T extends ElementType = 'input'>({
       >
         {name}
       </label>
-      <div className="bg-outline/10 textfield text-on-surface-variant flex items-center px-1">
+      <div className="bg-outline/5 textfield flex items-center px-1">
         <Component
           ref={ref}
           name={name}
           id={name}
-          className="typescale-body-medium w-0 flex-1 bg-transparent py-1"
+          className="typescale-body-medium text-on-surface-variant placeholder:text-outline/60 w-0 flex-1 bg-transparent py-1 !text-[13px]"
           {...props}
         />
         <div className="flex gap-0.5">

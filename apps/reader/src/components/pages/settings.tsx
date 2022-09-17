@@ -1,12 +1,11 @@
-import { useColorScheme } from '@literal-ui/hooks'
-
 import { db } from '@ink/reader/db'
+import { ColorScheme, useColorScheme } from '@ink/reader/hooks'
 
 import { Button } from '../Button'
 import { Page } from '../Page'
 
 export const Settings: React.FC = () => {
-  const { scheme, toggle } = useColorScheme()
+  const { scheme, setScheme } = useColorScheme()
   return (
     <Page headline="Settings">
       <div className="space-y-4">
@@ -16,8 +15,11 @@ export const Settings: React.FC = () => {
             <select
               className="typescale-body-medium text-on-surface-variant ml-3 p-0.5"
               value={scheme}
-              onChange={toggle}
+              onChange={(e) => {
+                setScheme(e.target.value as ColorScheme)
+              }}
             >
+              <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
@@ -26,6 +28,7 @@ export const Settings: React.FC = () => {
         <Button
           variant="secondary"
           onClick={() => {
+            window.localStorage.clear()
             db?.books.clear()
             db?.covers.clear()
             db?.files.clear()
