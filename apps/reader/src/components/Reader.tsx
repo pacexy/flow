@@ -348,7 +348,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       }
 
       const w = window.innerWidth
-      const x = e.offsetX % w
+      const x = e.clientX % w
       const threshold = 0.3
       const side = w * threshold
 
@@ -374,14 +374,33 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 
   useEventListener(iframe, 'touchstart', (e) => {
     const x0 = e.targetTouches[0]?.clientX ?? 0
+    const y0 = e.targetTouches[0]?.clientY ?? 0
+    const t0 = Date.now()
+
     iframe?.addEventListener('touchend', function handleTouchEnd(e) {
       iframe.removeEventListener('touchend', handleTouchEnd)
       const selection = iframe.getSelection()
       if (hasSelection(selection)) return
 
       const x1 = e.changedTouches[0]?.clientX ?? 0
+      const y1 = e.changedTouches[0]?.clientY ?? 0
+      const t1 = Date.now()
+
       const deltaX = x1 - x0
-      if (Math.abs(deltaX) < 10) return
+      const deltaY = y1 - y0
+      const deltaT = t1 - t0
+
+      const absX = Math.abs(deltaX)
+      const absY = Math.abs(deltaY)
+
+      if (absX < 10) return
+
+      if (absY / absX > 2) {
+        if (deltaT > 100 || absX < 30) {
+          return
+        }
+      }
+
       if (deltaX > 0) tab.prev()
       if (deltaX < 0) tab.next()
     })
