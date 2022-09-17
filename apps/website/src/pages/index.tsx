@@ -1,3 +1,4 @@
+import { Link } from '@literal-ui/next'
 import { NextSeo } from 'next-seo'
 
 import { OpenApp } from '../components'
@@ -14,6 +15,17 @@ export default function Home() {
               <br />
               <span className="text-outline">EPUB reader</span>
             </h1>
+            <Link
+              className="mt-8 mb-4"
+              href="https://www.producthunt.com/posts/lota?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-lota"
+            >
+              <img
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=359912&theme=light"
+                alt="Lota - Redefine&#0032;EPUB&#0032;reader | Product Hunt"
+                width="250"
+                height="54"
+              />
+            </Link>
             <div className="mt-8 mb-10 text-center">
               <div className="text-outline typescale-body-large mb-4">
                 Progressive web app, which means
@@ -24,6 +36,7 @@ export default function Home() {
                 <li>Integrate with browser extensions</li>
               </ul>
             </div>
+
             <OpenApp />
           </div>
           <img
