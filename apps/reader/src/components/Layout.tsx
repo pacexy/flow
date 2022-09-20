@@ -1,6 +1,8 @@
 import { Overlay } from '@literal-ui/core'
+import { useUser } from '@supabase/auth-helpers-react'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { IconType } from 'react-icons'
 import {
   MdFormatUnderlined,
@@ -29,7 +31,7 @@ import { Action, actionState, navbarState } from '../state'
 
 import { reader } from './Reader'
 import { SplitView, useSplitViewItem } from './base'
-import { Account, Settings } from './pages'
+import { Account, Auth, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -64,9 +66,7 @@ interface IViewAction extends IAction {
   name: Action
   View: React.FC<any>
 }
-interface IPageAction extends IAction {
-  Component?: React.FC
-}
+
 const viewActions: IViewAction[] = [
   {
     name: 'TOC',
@@ -112,29 +112,6 @@ const viewActions: IViewAction[] = [
   },
 ]
 
-const pageActions: IPageAction[] = [
-  {
-    name: 'Home',
-    title: 'Home',
-    Icon: RiHome6Line,
-    env: ENV.MOBILE,
-  },
-  {
-    name: 'Account',
-    title: 'Account',
-    Icon: RiAccountCircleLine,
-    Component: Account,
-    env: ENV.Desktop | ENV.MOBILE,
-  },
-  {
-    name: 'Settings',
-    title: 'Settings',
-    Icon: RiSettingsLine,
-    Component: Settings,
-    env: ENV.Desktop | ENV.MOBILE,
-  },
-]
-
 const ActivityBar: React.FC = () => {
   useSplitViewItem(ActivityBar, {
     preferredSize: 48,
@@ -176,16 +153,51 @@ function ViewActionBar({ className }: ComponentProps<'div'>) {
 function PageActionBar() {
   const mobile = useMobile()
   const env = useEnv()
+  const { user, isLoading } = useUser()
   const [action, setAction] = useState('Home')
+
+  interface IPageAction extends IAction {
+    Component?: React.FC
+    disabled?: boolean
+  }
+
+  const pageActions: IPageAction[] = useMemo(
+    () => [
+      {
+        name: 'Home',
+        title: 'Home',
+        Icon: RiHome6Line,
+        env: ENV.MOBILE,
+      },
+      {
+        name: 'Account',
+        title: 'Account',
+        Icon: RiAccountCircleLine,
+        Component: user ? Account : Auth,
+        env: ENV.Desktop | ENV.MOBILE,
+        disabled: isLoading,
+      },
+      {
+        name: 'Settings',
+        title: 'Settings',
+        Icon: RiSettingsLine,
+        Component: Settings,
+        env: ENV.Desktop | ENV.MOBILE,
+      },
+    ],
+    [isLoading, user],
+  )
+
   return (
     <ActionBar>
       {pageActions
         .filter((a) => a.env & env)
-        .map(({ name, title, Icon, Component }, i) => (
+        .map(({ name, title, Icon, Component, disabled }, i) => (
           <Action
             title={title}
             Icon={Icon}
             active={mobile ? action === name : undefined}
+            disabled={disabled}
             onClick={() => {
               Component ? reader.addTab(Component) : reader.clear()
               setAction(name)
@@ -242,8 +254,9 @@ const Action: React.FC<ActionProps> = ({
   return (
     <button
       className={clsx(
-        'Action hover:text-on-surface-variant relative flex h-12 w-12 flex-1 items-center justify-center sm:flex-initial',
+        'Action relative flex h-12 w-12 flex-1 items-center justify-center sm:flex-initial',
         active ? 'text-on-surface-variant' : 'text-outline/70',
+        props.disabled ? 'text-on-disabled' : 'hover:text-on-surface-variant ',
         className,
       )}
       {...props}

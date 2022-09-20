@@ -7,19 +7,13 @@ import { useSubscription } from '@ink/reader/hooks'
 
 import { Button, ButtonProps } from '../Button'
 import { Page } from '../Page'
-import { reader } from '../Reader'
-
-import { Auth } from './auth'
 
 const __IS_DEV__ = process.env.NODE_ENV === 'development'
 
 export const Account: React.FC = () => {
   const { user } = useUser()
 
-  if (!user) {
-    reader.replaceTab(Auth)
-    return null
-  }
+  if (!user) return null
 
   return (
     <Page headline="Account">

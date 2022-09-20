@@ -27,5 +27,5 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 }
 
 const Fallback: React.FC = () => {
-  return <div>Lota is not available in your browser.</div>
+  return <div>Something went wrong.</div>
 }
