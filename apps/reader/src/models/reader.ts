@@ -16,6 +16,16 @@ function updateIndex(array: any[], deletedItemIndex: number) {
   return deletedItemIndex > last ? last : deletedItemIndex
 }
 
+export function compareHref(
+  sectionHref: string | undefined,
+  navitemHref: string | undefined,
+) {
+  if (sectionHref && navitemHref) {
+    const [target] = navitemHref.split('#')
+    return sectionHref.endsWith(target!)
+  }
+}
+
 interface Node {
   id: string
   depth?: number
@@ -183,11 +193,11 @@ export class BookTab extends BaseTab {
     this.locationToReturn = undefined
   }
 
-  mapSectionToNavItem(href: string) {
+  mapSectionToNavItem(sectionHref: string) {
     let navItem: NavItem | undefined
     this.nav?.toc.forEach((item) =>
       dfs(item as NavItem, (i) => {
-        if (i.href.startsWith(href)) navItem ??= i
+        if (compareHref(sectionHref, i.href)) navItem ??= i
       }),
     )
     return navItem

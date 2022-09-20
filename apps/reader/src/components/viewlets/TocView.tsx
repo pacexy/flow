@@ -3,7 +3,7 @@ import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useSnapshot } from 'valtio'
 
 import { useLibrary, useList, useMobile } from '@ink/reader/hooks'
-import { dfs, flatTree, INavItem } from '@ink/reader/models'
+import { compareHref, dfs, flatTree, INavItem } from '@ink/reader/models'
 
 import { reader } from '../Reader'
 import { Row } from '../Row'
@@ -100,8 +100,8 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
       expanded={expanded}
       subitems={subitems}
       onClick={() => {
-        const [target, id] = href.split('#')
-        const section = tab?.sections?.find((s) => s.href.endsWith(target!))
+        const [, id] = href.split('#')
+        const section = tab?.sections?.find((s) => compareHref(s.href, href))
 
         if (!section) return
 

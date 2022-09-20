@@ -420,15 +420,19 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         <TextSelectionMenu tab={tab} />
       </div>
       <Bar>
-        <button
-          className={clsx(locationToReturn || 'invisible')}
-          onClick={() => {
-            tab.hidePrevLocation()
-            tab.display(locationToReturn?.end.cfi, false)
-          }}
-        >
-          Return to {locationToReturn?.end.cfi}
-        </button>
+        {locationToReturn ? (
+          <button
+            className={clsx(locationToReturn || 'invisible')}
+            onClick={() => {
+              tab.hidePrevLocation()
+              tab.display(locationToReturn?.end.cfi, false)
+            }}
+          >
+            Return to {locationToReturn?.end.cfi}
+          </button>
+        ) : (
+          <div>{location?.start.href}</div>
+        )}
 
         {locationToReturn ? (
           <button
