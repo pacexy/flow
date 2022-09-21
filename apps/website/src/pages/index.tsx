@@ -1,16 +1,15 @@
-import { NextSeo } from 'next-seo'
 import useTranslation from 'next-translate/useTranslation'
 
 import { range } from '@ink/internal'
 
-import { OpenApp } from '../components'
+import { OpenApp, Seo } from '../components'
 
 export default function Home() {
   const { t } = useTranslation()
 
   return (
     <>
-      <NextSeo title="Lota - Redefine EPUB reader" />
+      <Seo scope="home" />
       <div>
         <div className="container py-16">
           <div className="flex flex-col items-center">

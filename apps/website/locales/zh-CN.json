@@ -1,4 +1,17 @@
 {
+  "desc": "Lota 是一款免费在线 EPUB 阅读器，支持所有平台（Web, Windows, Linux, MacOS, Android, iOS）。同时阅读多本书籍。在不同设备间无缝阅读。",
+  "page": {
+    "home": {
+      "title": "Lota - 在线 EPUB 阅读器"
+    },
+    "pricing": {
+      "title": "价格"
+    },
+    "faq": {
+      "title": "常见问题"
+    }
+  },
+
   "open_app": "打开 App",
   "terms": "使用条款",
   "privacy": "隐私政策",

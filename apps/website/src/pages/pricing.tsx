@@ -1,16 +1,15 @@
 import { useBoolean } from '@literal-ui/hooks'
-import { NextSeo } from 'next-seo'
 import useTranslation from 'next-translate/useTranslation'
 import { range } from 'packages/internal/src'
 
-import { OpenApp, QA } from '../components'
+import { OpenApp, QA, Seo } from '../components'
 
 export default function Pricing() {
   const [annual, toggle] = useBoolean(false)
   const { t } = useTranslation()
   return (
     <>
-      <NextSeo title="Pricing - Lota" />
+      <Seo scope="pricing" />
       <div className="">
         <div className="flex flex-col items-center py-16">
           <h2 className="typescale-headline-medium">{t('pricing_plans')}</h2>

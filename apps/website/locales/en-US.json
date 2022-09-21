@@ -1,4 +1,17 @@
 {
+  "desc": "Lota is a free online EPUB reader, support all platforms (Web, Windows, Linux, MacOS, Android, iOS). Read multiple books at the same time. Read seamlessly between different devices.",
+  "page": {
+    "home": {
+      "title": "Lota - Online EPUB reader"
+    },
+    "pricing": {
+      "title": "Pricing"
+    },
+    "faq": {
+      "title": "Frequently asked questions"
+    }
+  },
+
   "open_app": "Open App",
   "terms": "Terms",
   "privacy": "Privacy",
@@ -66,7 +79,7 @@
       "a": "No, but you will not be able to synchronize data."
     }
   },
-  "frequently_asked_questions": "Frequently Asked Questions",
+  "frequently_asked_questions": "Frequently asked questions",
 
   "qa2": {
     "0": {

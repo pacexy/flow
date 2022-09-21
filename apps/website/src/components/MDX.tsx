@@ -1,6 +1,7 @@
 import clsx from 'clsx'
-import { NextSeo } from 'next-seo'
 import React, { ComponentProps } from 'react'
+
+import { Seo } from './Seo'
 
 interface HeadingProps extends ComponentProps<'h1'> {
   as?: 'h1' | 'h2' | 'h3'
@@ -35,7 +36,7 @@ export function withLayout({ title }: Meta) {
   return function Layout({ children }) {
     return (
       <>
-        <NextSeo title={`${title} - Lota`} />
+        <Seo title={title} />
         <article className="container py-16">{children}</article>
       </>
     )

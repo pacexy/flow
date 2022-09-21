@@ -1,15 +1,14 @@
-import { NextSeo } from 'next-seo'
 import useTranslation from 'next-translate/useTranslation'
 
 import { range } from '@ink/internal'
 
-import { QA } from '../components'
+import { QA, Seo } from '../components'
 
 export default function Pricing() {
   const { t } = useTranslation()
   return (
     <>
-      <NextSeo title="Frequently Asked Questions - Lota" />
+      <Seo scope="faq" />
 
       <div className="container py-16">
         <h2 className="typescale-headline-medium mb-8 text-center">
