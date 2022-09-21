@@ -25,10 +25,10 @@
   "reader": "reader",
   "next_generation": "Next-generation",
   "pwa": "Progressive web app",
-  "which_means": "which means",
+  "supports": "supports",
   "f0": "Cross-platform",
   "f1": "Installable",
-  "f2": "Integrate with browser extensions",
+  "f2": "Use browser extensions",
   "feature": {
     "0": {
       "title": "Free",
@@ -49,6 +49,8 @@
   "year": "year",
   "yearly": "Yearly",
   "currency": "$",
+  "free_includes": "Free includes",
+  "everything_in_free_plus": "Everything in Free, plus",
   "free": {
     "title": "Free",
     "price": "0",

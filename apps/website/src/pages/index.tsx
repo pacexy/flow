@@ -20,7 +20,7 @@ export default function Home() {
             </h1>
             <div className="mt-8 mb-10 text-center">
               <div className="text-outline typescale-body-large mb-4">
-                {t('pwa')}, {t('which_means')}
+                {t('pwa')}, {t('supports')}
               </div>
               <ul className="typescale-title-large space-y-2">
                 {range(3).map((i) => (

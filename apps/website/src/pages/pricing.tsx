@@ -28,14 +28,14 @@ export default function Pricing() {
             <Plan
               name={t('free.title')}
               privileges={range(5).map((i) => t(`free.${i}`))}
-              description="Free includes"
+              description={t('free_includes')}
               price={t('free.price')}
               annual={annual}
             />
             <Plan
               name={t('premium.title')}
               privileges={range(2).map((i) => t(`premium.${i}`))}
-              description="Everything in Free, plus"
+              description={t('everything_in_free_plus')}
               price={t('premium.price')}
               annual={annual}
             />
@@ -86,9 +86,9 @@ const Plan: React.FC<PlanProps> = ({
 
       <OpenApp>{t('get_started')}</OpenApp>
 
-      <div className="typescale-body-large">
-        <div className="text-outline">{description}</div>
-        <ul className="text-on-surface mt-3 space-y-1">
+      <div>
+        <div className="text-outline typescale-body-medium">{description}</div>
+        <ul className="text-on-surface typescale-body-large mt-3 space-y-1">
           {privileges.map((p, i) => (
             <li key={i} className="flex items-center">
               <span>{p}</span>

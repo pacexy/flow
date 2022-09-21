@@ -25,10 +25,10 @@
   "reader": "阅读器",
   "next_generation": "下一代",
   "pwa": "渐进式网页应用",
-  "which_means": "这意味着",
+  "supports": "支持",
   "f0": "跨平台",
   "f1": "可安装",
-  "f2": "与浏览器插件集成",
+  "f2": "使用浏览器插件",
   "feature": {
     "0": {
       "title": "免费",
@@ -49,6 +49,8 @@
   "year": "年",
   "yearly": "按年",
   "currency": "$",
+  "free_includes": "免费计划包括",
+  "everything_in_free_plus": "免费计划中的所有，以及",
   "free": {
     "title": "免费",
     "price": "0",
