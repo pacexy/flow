@@ -1,0 +1,81 @@
+{
+  "open_app": "Open App",
+  "terms": "Terms",
+  "privacy": "Privacy",
+  "contact": "Contact",
+  "feedback": "Feedback",
+  "pricing": "Pricing",
+  "faq": "FAQ",
+  "roadmap": "Roadmap",
+
+  "redefine": "Redefine",
+  "reader": "reader",
+  "next_generation": "Next-generation",
+  "pwa": "Progressive web app",
+  "which_means": "which means",
+  "f0": "Cross-platform",
+  "f1": "Installable",
+  "f2": "Integrate with browser extensions",
+  "feature": {
+    "0": {
+      "title": "Free",
+      "desc": "All of Lota's features are free except for cloud storage."
+    },
+    "1": {
+      "title": "Grid layout",
+      "desc": "Lota supports (horizontal) grid layout, which allows you to read multiple books at the same time."
+    },
+    "2": {
+      "title": "Cloud storage",
+      "desc": "Store your books, notes, reading progress and even other data in the cloud. Lota will sync them between your devices."
+    }
+  },
+
+  "pricing_plans": "Pricing Plans",
+  "month": "month",
+  "year": "year",
+  "yearly": "Yearly",
+  "currency": "$",
+  "free": {
+    "title": "Free",
+    "price": "0",
+    "0": "Grid layout",
+    "1": "In-book search",
+    "2": "Image preview",
+    "3": "Custom typography",
+    "4": "Annotation (soon)"
+  },
+  "premium": {
+    "title": "Premium",
+    "price": "2",
+    "0": "10GB cloud storage",
+    "1": "Data synchronization"
+  },
+  "get_started": "Get Started",
+  "qa": {
+    "0": {
+      "q": "Can I get refund?",
+      "a": "Sorry, we do not support refunds."
+    },
+    "1": {
+      "q": "Can I cancel my subscription?",
+      "a": "Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription manually."
+    },
+    "2": {
+      "q": "Will the data saved in the cloud be deleted after I cancel my subscription?",
+      "a": "No, but you will not be able to synchronize data."
+    }
+  },
+  "frequently_asked_questions": "Frequently Asked Questions",
+
+  "qa2": {
+    "0": {
+      "q": "Where are my data stored?",
+      "a": "Your data is stored locally in your browser. If you upload a book, there will be a remote copy in the cloud."
+    },
+    "1": {
+      "q": "How to clear my data?",
+      "a": "For local data, clear the browser cache. For remote data, select and delete the book you want to clear (this will also clear the local one)."
+    }
+  }
+}

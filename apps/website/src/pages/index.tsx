@@ -1,8 +1,13 @@
 import { NextSeo } from 'next-seo'
+import useTranslation from 'next-translate/useTranslation'
+
+import { range } from '@ink/internal'
 
 import { OpenApp } from '../components'
 
 export default function Home() {
+  const { t } = useTranslation()
+
   return (
     <>
       <NextSeo title="Lota - Redefine EPUB reader" />
@@ -10,24 +15,24 @@ export default function Home() {
         <div className="container py-16">
           <div className="flex flex-col items-center">
             <h1 className="typescale-display-large text-center">
-              Redefine
+              {t('redefine')}
               <br />
-              <span className="text-outline">EPUB reader</span>
+              <span className="text-outline">EPUB {t('reader')}</span>
             </h1>
             <div className="mt-8 mb-10 text-center">
               <div className="text-outline typescale-body-large mb-4">
-                Progressive web app, which means
+                {t('pwa')}, {t('which_means')}
               </div>
               <ul className="typescale-title-large space-y-2">
-                <li>Cross-platform</li>
-                <li>Installable</li>
-                <li>Integrate with browser extensions</li>
+                {range(3).map((i) => (
+                  <li key={i}>{t(`f${i}`)}</li>
+                ))}
               </ul>
             </div>
             <OpenApp />
           </div>
           <img
-            src="screenshot.png"
+            src="/screenshot.png"
             alt="Screenshot"
             className="shadow-1 mt-16"
           />
@@ -35,24 +40,19 @@ export default function Home() {
 
         <div className="bg-gray-100 py-16">
           <div className="container">
-            <Feature
-              title="Free"
-              description="All of Lota's features are free except for cloud storage."
-            />
-            <Feature
-              title="Grid layout"
-              description="Lota supports (horizontal) grid layout, which allows you to read multiple books at the same time."
-            />
-            <Feature
-              title="Cloud storage"
-              description="Store your books, notes, reading progress and even other data in the cloud. Lota will sync them between your devices."
-            />
+            {range(3).map((i) => (
+              <Feature
+                key={i}
+                title={t(`feature.${i}.title`)}
+                description={t(`feature.${i}.desc`)}
+              />
+            ))}
           </div>
         </div>
 
         <div className="container flex flex-col items-center gap-8 py-16">
           <div className="typescale-display-small text-center">
-            Next-generation EPUB reader
+            {t('next_generation')} EPUB {t('reader')}
           </div>
           <OpenApp />
         </div>

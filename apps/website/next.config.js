@@ -1,6 +1,7 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
+const nextTranslate = require('next-translate')
 const withTM = require('next-transpile-modules')(['@ink/internal'])
 
 /**
@@ -26,32 +27,35 @@ const opts = {
   },
 }
 
-module.exports = withTM(
-  withBundleAnalyzer({
-    reactStrictMode: false,
-    pageExtensions: ['ts', 'tsx', 'mdx'],
-    pwa: {
-      dest: 'public',
-    },
-    webpack: (config, options) => {
-      config.module.rules.push({
-        test: /.mdx?$/, // load both .md and .mdx files
-        use: [
-          options.defaultLoaders.babel,
-          {
-            loader: '@mdx-js/loader',
-            options: {
-              remarkPlugins: [],
-              rehypePlugins: [[require('rehype-pretty-code'), opts]],
-              // If you use `MDXProvider`, uncomment the following line.
-              providerImportSource: '@mdx-js/react',
-            },
+/**
+ * @type {import('next').NextConfig}
+ **/
+const config = {
+  reactStrictMode: false,
+  pageExtensions: ['ts', 'tsx', 'mdx'],
+  pwa: {
+    dest: 'public',
+  },
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /.mdx?$/, // load both .md and .mdx files
+      use: [
+        options.defaultLoaders.babel,
+        {
+          loader: '@mdx-js/loader',
+          options: {
+            remarkPlugins: [],
+            rehypePlugins: [[require('rehype-pretty-code'), opts]],
+            // If you use `MDXProvider`, uncomment the following line.
+            providerImportSource: '@mdx-js/react',
           },
-          './plugins/mdx',
-        ],
-      })
+        },
+        './plugins/mdx',
+      ],
+    })
 
-      return config
-    },
-  }),
-)
+    return config
+  },
+}
+
+module.exports = nextTranslate(withTM(withBundleAnalyzer(config)))

@@ -1,6 +1,9 @@
 import { Link } from '@literal-ui/next'
 import clsx from 'clsx'
+import useTranslation from 'next-translate/useTranslation'
+import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
+import { MdLanguage } from 'react-icons/md'
 
 export const Layout: React.FC = ({ children }) => {
   return (
@@ -16,6 +19,7 @@ export const OpenApp: React.FC<ComponentProps<'a'>> = ({
   className,
   children,
 }) => {
+  const { t } = useTranslation()
   return (
     <Link
       href={process.env.NEXT_PUBLIC_APP_URL!}
@@ -24,7 +28,7 @@ export const OpenApp: React.FC<ComponentProps<'a'>> = ({
         className,
       )}
     >
-      {children ?? 'Open App'}
+      {children ?? t('open_app')}
     </Link>
   )
 }
@@ -43,34 +47,49 @@ export const QA: React.FC<QAProps> = ({ q, a }) => {
 }
 
 const Header: React.FC = () => {
+  const { locale, defaultLocale, asPath } = useRouter()
+  const { t } = useTranslation()
+
   return (
-    <header className="typescale-body-large text-on-surface container flex h-12">
-      <a className="mr-8 flex items-center gap-3" href="/">
-        <img src="icons/512.png" alt="Logo" className="w-7" />
+    <header className="typescale-body-large text-on-surface container flex py-3">
+      <Link className="mr-8 flex items-center gap-3" href="/">
+        <img src="/icons/512.png" alt="Logo" className="w-7" />
         <span className="typescale-title-large">Lota</span>
-      </a>
+      </Link>
       <div className="text-outline typescale-body-large flex items-center gap-4">
-        <Link href="/pricing">Pricing</Link>
-        <Link href="/faq">FAQ</Link>
+        <Link href="/pricing">{t('pricing')}</Link>
+        <Link href="/faq">{t('faq')}</Link>
         <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
-          Roadmap
+          {t('roadmap')}
         </Link>
       </div>
-      <OpenApp className="ml-auto hidden sm:block" />
+
+      <div className="ml-auto hidden gap-8 sm:flex">
+        <Link
+          href={asPath}
+          locale={locale === defaultLocale ? 'zh-CN' : 'en-US'}
+          className="flex items-center gap-2"
+        >
+          <MdLanguage size={22} className="text-outline" />
+          <span>{locale === defaultLocale ? '简体中文' : 'English'}</span>
+        </Link>
+      </div>
     </header>
   )
 }
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
     <footer className="bg-black py-4">
       <div className="container">
         <div className="text-inverse-on-surface typescale-body-small mb-4 flex gap-6">
-          <Link href="/terms">Terms</Link>
-          <Link href="/privacy">Privacy</Link>
-          <a href="mailto:service@lotareader.com">Contact</a>
+          <Link href="/terms">{t('terms')}</Link>
+          <Link href="/privacy">{t('privacy')}</Link>
+          <a href="mailto:service@lotareader.com">{t('contact')}</a>
           <Link href="https://github.com/pacexy/lota/issues/new/choose">
-            Feedback
+            {t('feedback')}
           </Link>
         </div>
 

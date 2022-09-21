@@ -1,16 +1,19 @@
 import { useBoolean } from '@literal-ui/hooks'
 import { NextSeo } from 'next-seo'
+import useTranslation from 'next-translate/useTranslation'
+import { range } from 'packages/internal/src'
 
 import { OpenApp, QA } from '../components'
 
 export default function Pricing() {
   const [annual, toggle] = useBoolean(false)
+  const { t } = useTranslation()
   return (
     <>
       <NextSeo title="Pricing - Lota" />
       <div className="">
         <div className="flex flex-col items-center py-16">
-          <h2 className="typescale-headline-medium">Pricing Plans</h2>
+          <h2 className="typescale-headline-medium">{t('pricing_plans')}</h2>
           <div>
             <label className="text-on-surface-variant typescale-title-medium my-8 flex select-none items-center gap-2">
               <input
@@ -19,29 +22,22 @@ export default function Pricing() {
                 onChange={toggle}
                 className="h-[18px] w-[18px]"
               />
-              Yearly
+              {t('yearly')}
             </label>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
             <Plan
-              name="Free"
-              privileges={[
-                'PWA',
-                'Tabs',
-                'Search',
-                'Image Preview',
-                'Typography',
-                'Annotation (soon)',
-              ]}
+              name={t('free.title')}
+              privileges={range(5).map((i) => t(`free.${i}`))}
               description="Free includes"
-              price={0}
+              price={t('free.price')}
               annual={annual}
             />
             <Plan
-              name="Premium"
-              privileges={['10GB Cloud Storage', 'Data Synchronization']}
+              name={t('premium.title')}
+              privileges={range(2).map((i) => t(`premium.${i}`))}
               description="Everything in Free, plus"
-              price={2}
+              price={t('premium.price')}
               annual={annual}
             />
           </div>
@@ -49,18 +45,12 @@ export default function Pricing() {
 
         <div className="container py-16">
           <h2 className="typescale-headline-medium mb-8 text-center">
-            Frequently Asked Questions
+            {t('frequently_asked_questions')}
           </h2>
           <div className="space-y-8">
-            <QA q="Can I get refund?" a="Sorry, we do not support refunds." />
-            <QA
-              q="Can I cancel my subscription?"
-              a="Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription."
-            />
-            <QA
-              q="Will the data saved in the cloud be deleted after I cancel my subscription?"
-              a="No, but you will not be able to synchronize data."
-            />
+            {range(3).map((i) => (
+              <QA key={i} q={t(`qa.${i}.q`)} a={t(`qa.${i}.a`)} />
+            ))}
           </div>
         </div>
       </div>
@@ -82,23 +72,26 @@ const Plan: React.FC<PlanProps> = ({
   price,
   annual = false,
 }) => {
+  const { t } = useTranslation()
+
   return (
     <div className="bg-outline/5 flex w-64 flex-col gap-8 p-8">
       <h2 className="typescale-title-large text-center">{name}</h2>
       <div className="text-center">
         <span className="typescale-display-large mr-1">
-          ${annual ? price * 10 : price}
+          {t('currency')}
+          {annual ? price * 10 : price}
         </span>
-        <span className="text-outline">/{annual ? 'year' : 'month'}</span>
+        <span className="text-outline">/{t(annual ? 'year' : 'month')}</span>
       </div>
 
-      <OpenApp>Get Started</OpenApp>
+      <OpenApp>{t('get_started')}</OpenApp>
 
       <div className="typescale-body-large">
         <div className="text-outline">{description}</div>
         <ul className="text-on-surface mt-3 space-y-1">
-          {privileges.map((p) => (
-            <li key={p} className="flex items-center">
+          {privileges.map((p, i) => (
+            <li key={i} className="flex items-center">
               <span>{p}</span>
             </li>
           ))}
