@@ -3,15 +3,14 @@
 import { useIsomorphicEffect } from '@literal-ui/hooks'
 import { useState } from 'react'
 
-import { last } from '../utils'
-
 type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
 
 type TextSelectionState = {
   selection?: Selection
-  rect?: ClientRect
+  rects?: ClientRect[]
   isCollapsed?: boolean
   textContent?: string
+  forward?: boolean
 }
 
 const defaultState: TextSelectionState = {}
@@ -20,6 +19,17 @@ export function hasSelection(
   selection?: Selection | null,
 ): selection is Selection {
   return !(!selection || selection.isCollapsed)
+}
+
+// https://htmldom.dev/get-the-direction-of-the-text-selection/
+function isForwardSelection(selection: Selection) {
+  if (selection.anchorNode && selection.focusNode) {
+    const range = document.createRange()
+    range.setStart(selection.anchorNode, selection.anchorOffset)
+    range.setEnd(selection.focusNode, selection.focusOffset)
+
+    return !range.collapsed
+  }
 }
 
 /**
@@ -49,9 +59,12 @@ export function useTextSelection(win?: Window) {
           newState.textContent = contents.textContent.trim()
         }
 
-        const rect = last([...range.getClientRects()].filter((r) => r.width))
-        if (rect) newState.rect = rect
+        const forward = isForwardSelection(selection)
 
+        const rects = [...range.getClientRects()].filter((r) => r.width)
+
+        newState.rects = rects
+        newState.forward = forward
         newState.selection = selection
         newState.isCollapsed = range.collapsed
 

@@ -1,5 +1,6 @@
 import { Overlay } from '@literal-ui/core'
 import { useEventListener } from '@literal-ui/hooks'
+import clsx from 'clsx'
 import { useCallback, useEffect, useState } from 'react'
 import { MdSearch } from 'react-icons/md'
 import { VscSymbolInterface } from 'react-icons/vsc'
@@ -9,6 +10,7 @@ import { useSnapshot } from 'valtio'
 import { useMobile, useTextSelection } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
+import { last } from '../utils'
 
 import { IconButton } from './Button'
 import { reader } from './Reader'
@@ -31,7 +33,8 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 
   const win = view()?.window
 
-  const { selection, rect, textContent } = useTextSelection(win)
+  const { selection, rects, forward, textContent } = useTextSelection(win)
+  const rect = rects && (forward ? last(rects) : rects[0])
 
   const [offsetLeft, setOffsetLeft] = useState(0)
 
@@ -59,11 +62,21 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   return (
     <>
       <div
-        className="bg-inverse-surface text-inverse-on-surface absolute z-20 flex -translate-x-1/2 gap-1 p-0.5"
-        style={{
-          top: rect.bottom,
-          left: rect.right + offsetLeft,
-        }}
+        className={clsx(
+          'bg-inverse-surface text-inverse-on-surface absolute z-20 flex -translate-x-1/2 gap-1 p-0.5',
+          !forward && '-translate-y-full',
+        )}
+        style={
+          forward
+            ? {
+                top: rect.bottom,
+                left: rect.right + offsetLeft,
+              }
+            : {
+                top: rect.top,
+                left: rect.left + offsetLeft,
+              }
+        }
       >
         <IconButton
           title="Search in book"
