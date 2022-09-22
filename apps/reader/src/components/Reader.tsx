@@ -18,7 +18,7 @@ import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
-import { Reader, BookTab } from '../models'
+import { Reader, BookTab, compareHref } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
@@ -201,7 +201,8 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const mobile = useMobile()
 
   useEffect(() => {
-    const result = results?.find((r) => r.id === location?.start.href)
+    const result = results?.find((r) => compareHref(location?.start.href, r.id))
+
     const matches = result?.subitems
     matches?.forEach((m) => {
       try {
