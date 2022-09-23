@@ -46,34 +46,49 @@ export const QA: React.FC<QAProps> = ({ q, a }) => {
   )
 }
 
+interface NavbarProps extends ComponentProps<'div'> {}
+export const Navbar: React.FC<NavbarProps> = ({ className }) => {
+  const { t } = useTranslation()
+  return (
+    <div
+      className={clsx(
+        'text-outline typescale-body-large items-center gap-4',
+        className,
+      )}
+    >
+      <Link href="/pricing">{t('pricing')}</Link>
+      <Link href="/faq">{t('faq')}</Link>
+      <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
+        {t('roadmap')}
+      </Link>
+    </div>
+  )
+}
+
 const Header: React.FC = () => {
   const { locale, defaultLocale, asPath } = useRouter()
-  const { t } = useTranslation()
 
   return (
-    <header className="typescale-body-large text-on-surface container flex py-3">
-      <Link className="mr-8 flex items-center gap-3" href="/">
-        <img src="/icons/512.png" alt="Logo" className="w-7" />
-        <span className="typescale-title-large">Lota</span>
-      </Link>
-      <div className="text-outline typescale-body-large flex items-center gap-4">
-        <Link href="/pricing">{t('pricing')}</Link>
-        <Link href="/faq">{t('faq')}</Link>
-        <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
-          {t('roadmap')}
+    <header className="typescale-body-large text-on-surface container py-3">
+      <div className="flex items-center">
+        <Link className="mr-8 flex items-center gap-3" href="/">
+          <img src="/icons/512.png" alt="Logo" className="w-7" />
+          <span className="typescale-title-large">Lota</span>
         </Link>
-      </div>
+        <Navbar className="hidden sm:flex" />
 
-      <div className="ml-auto hidden gap-8 sm:flex">
-        <Link
-          href={asPath}
-          locale={locale === defaultLocale ? 'zh-CN' : 'en-US'}
-          className="flex items-center gap-2"
-        >
-          <MdLanguage size={22} className="text-outline" />
-          <span>{locale === defaultLocale ? '简体中文' : 'English'}</span>
-        </Link>
+        <div className="ml-auto gap-8">
+          <Link
+            href={asPath}
+            locale={locale === defaultLocale ? 'zh-CN' : 'en-US'}
+            className="flex items-center gap-2"
+          >
+            <MdLanguage size={22} className="text-outline" />
+            <span>{locale === defaultLocale ? '简体中文' : 'English'}</span>
+          </Link>
+        </div>
       </div>
+      <Navbar className="mt-3 flex justify-end sm:hidden" />
     </header>
   )
 }
