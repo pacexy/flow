@@ -48,7 +48,7 @@
   "month": "月",
   "year": "年",
   "yearly": "按年",
-  "currency": "$",
+  "currency": "￥",
   "free_includes": "免费计划包括",
   "everything_in_free_plus": "免费计划中的所有，以及",
   "free": {
@@ -63,7 +63,7 @@
   },
   "premium": {
     "title": "会员",
-    "price": "2",
+    "price": "5",
     "0": "10GB 云端存储",
     "1": "数据同步"
   },
@@ -79,7 +79,7 @@
     },
     "2": {
       "q": "取消订阅后，保存在云端的数据会被删除吗？",
-      "a": "不，但您将无法同步数据。"
+      "a": "不会，但您将无法同步数据。"
     }
   },
   "frequently_asked_questions": "常见问题",
