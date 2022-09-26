@@ -117,7 +117,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
               Icon={tab instanceof BookTab ? RiBookLine : MdWebAsset}
               draggable
               onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', tab.id)
+                e.dataTransfer.setData('text/plain', `${index},${i}`)
               }}
             >
               {tab.title}
@@ -131,13 +131,29 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         split
         onDrop={async (e, position) => {
           // read `e.dataTransfer` first to avoid get empty value after `await`
-          const id = e.dataTransfer.getData('text/plain')
           const files = e.dataTransfer.files
+          let tabs = []
 
-          const tabParam =
-            Object.values(pages).find((p) => p.displayName === id) ??
-            (await db?.books.get(id))
-          const tabs = tabParam ? [tabParam] : await handleFiles(files)
+          if (files.length) {
+            tabs = await handleFiles(files)
+          } else {
+            const text = e.dataTransfer.getData('text/plain')
+            const fromTab = text.includes(',')
+
+            if (fromTab) {
+              const indexes = text.split(',')
+              const groupIdx = Number(indexes[0])
+              const tabIdx = Number(indexes[1])
+              const tab = reader.removeTab(tabIdx, groupIdx)
+              if (tab) tabs.push(tab)
+            } else {
+              const id = text
+              const tabParam =
+                Object.values(pages).find((p) => p.displayName === id) ??
+                (await db?.books.get(id))
+              if (tabParam) tabs.push(tabParam)
+            }
+          }
 
           if (tabs.length) {
             switch (position) {
@@ -148,7 +164,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
                 reader.addGroup(tabs, index + 1)
                 break
               default:
-                tabs.forEach((t) => group.addTab(t))
+                tabs.forEach((t) => reader.addTab(t, index))
             }
           }
         }}

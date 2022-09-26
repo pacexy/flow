@@ -408,12 +408,13 @@ export class Group {
   tabs: Tab[] = []
 
   constructor(
-    public tabParams: TabParam[] = [],
-    public selectedIndex = tabParams.length - 1,
+    tabs: Array<Tab | TabParam> = [],
+    public selectedIndex = tabs.length - 1,
   ) {
-    this.tabs = tabParams.map((param) => {
-      const isPage = typeof param === 'function'
-      return isPage ? new PageTab(param) : new BookTab(param)
+    this.tabs = tabs.map((t) => {
+      if (t instanceof BookTab || t instanceof PageTab) return t
+      const isPage = typeof t === 'function'
+      return isPage ? new PageTab(t) : new BookTab(t)
     })
   }
 
@@ -426,13 +427,16 @@ export class Group {
   }
 
   removeTab(index: number) {
-    this.tabs.splice(index, 1)
+    const tab = this.tabs.splice(index, 1)
     this.selectedIndex = updateIndex(this.tabs, index)
+    return tab[0]
   }
 
-  addTab(param: TabParam) {
+  addTab(param: TabParam | Tab) {
+    const isTab = param instanceof BookTab || param instanceof PageTab
     const isPage = typeof param === 'function'
-    const id = isPage ? param.name : param.id
+
+    const id = isTab ? param.id : isPage ? param.displayName : param.id
 
     const index = this.tabs.findIndex((t) => t.id === id)
     if (index > -1) {
@@ -440,7 +444,8 @@ export class Group {
       return this.tabs[index]
     }
 
-    const tab = isPage ? new PageTab(param) : new BookTab(param)
+    const tab = isTab ? param : isPage ? new PageTab(param) : new BookTab(param)
+
     this.tabs.splice(++this.selectedIndex, 0, tab)
     return tab
   }
@@ -471,9 +476,11 @@ export class Reader {
     return this.focusedTab instanceof BookTab ? this.focusedTab : undefined
   }
 
-  addTab(param: TabParam, groupIdx = this.focusedIndex) {
+  addTab(param: TabParam | Tab, groupIdx = this.focusedIndex) {
     let group = this.groups[groupIdx]
-    if (!group) {
+    if (group) {
+      this.focusedIndex = groupIdx
+    } else {
       group = this.addGroup([])
     }
     return group.addTab(param)
@@ -483,9 +490,9 @@ export class Reader {
     const group = this.groups[groupIdx]
     if (group?.tabs.length === 1) {
       this.removeGroup(groupIdx)
-      return
+      return group.tabs[0]
     }
-    group?.removeTab(index)
+    return group?.removeTab(index)
   }
 
   replaceTab(
@@ -502,8 +509,8 @@ export class Reader {
     this.focusedIndex = updateIndex(this.groups, index)
   }
 
-  addGroup(tabParams: TabParam[], index = this.focusedIndex + 1) {
-    const group = proxy(new Group(tabParams))
+  addGroup(tabs: Array<Tab | TabParam>, index = this.focusedIndex + 1) {
+    const group = proxy(new Group(tabs))
     this.groups.splice(index, 0, group)
     this.focusedIndex = index
     return group
