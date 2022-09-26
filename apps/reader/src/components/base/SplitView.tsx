@@ -14,8 +14,6 @@ import {
 
 import { clamp } from '@ink/reader/utils'
 
-import { reader } from '../Reader'
-
 interface ISplitViewItem {
   key: string
   visible?: boolean
@@ -173,7 +171,6 @@ const Sash: React.FC<SashProps> = ({ vertical, views }) => {
           // `mouseleave` not fire when `mousedown`
           setHover(false)
           setActive(false)
-          reader.resize()
           window.removeEventListener('mousemove', handleMouseMove)
           window.removeEventListener('mouseup', handleMouseUp)
         })

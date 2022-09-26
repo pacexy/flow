@@ -200,6 +200,7 @@ interface BookPaneProps {
 
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const prevSize = useRef(0)
   const settings = useRecoilValue(settingsState)
   const { dark } = useColorScheme()
   const {
@@ -213,6 +214,26 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     currentHref,
     book,
   } = useSnapshot(tab)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new ResizeObserver(([e]) => {
+      const size = e?.contentRect.width ?? 0
+      // `display: hidden` will lead `rect` to 0
+      if (size !== 0 && prevSize.current !== 0) {
+        reader.resize()
+      }
+      prevSize.current = size
+    })
+
+    observer.observe(el)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   useSync(tab)
 

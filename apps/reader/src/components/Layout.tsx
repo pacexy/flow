@@ -287,11 +287,6 @@ const SideBar: React.FC = () => {
     if (mobile === false) setAction('TOC')
   }, [mobile, setAction])
 
-  useEffect(() => {
-    reader.resize()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [!!action])
-
   return (
     <>
       {action && mobile && <Overlay onClick={() => setAction(undefined)} />}
