@@ -16,7 +16,7 @@ export default function Pricing() {
         </h2>
         <div className="space-y-8">
           {range(2).map((i) => (
-            <QA key={i} q={t(`qa2.${i}.q`)} a={t(`qa.${i}.a`)} />
+            <QA key={i} q={t(`qa2.${i}.q`)} a={t(`qa2.${i}.a`)} />
           ))}
         </div>
       </div>
