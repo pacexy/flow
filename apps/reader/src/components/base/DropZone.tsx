@@ -12,8 +12,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { db } from '@ink/reader/db'
 
-import { reader } from '../Reader'
-
 interface DropZoneProps {
   className?: string
   onDrop?: (e: DragEvent<HTMLDivElement>, position?: Position) => void
@@ -121,7 +119,6 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
             e.stopPropagation()
             e.preventDefault()
             onDrop?.(e, position)
-            handleFiles(e.dataTransfer.files)
           }}
         ></div>
       )}
@@ -151,8 +148,9 @@ export function useDndContext() {
   return useContext(DndContext)
 }
 
-export async function handleFiles(files: Iterable<File>, open = false) {
+export async function handleFiles(files: Iterable<File>) {
   const books = await db?.books.toArray()
+  const newBooks = []
 
   for (const file of files) {
     console.log(file)
@@ -164,8 +162,10 @@ export async function handleFiles(files: Iterable<File>, open = false) {
       book = addBook(file)
     }
 
-    if (open) reader.addTab(book)
+    newBooks.push(book)
   }
+
+  return newBooks
 }
 
 export function addBook(file: File) {

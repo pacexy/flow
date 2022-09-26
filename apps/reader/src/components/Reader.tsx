@@ -23,7 +23,13 @@ import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
-import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
+import {
+  DropZone,
+  handleFiles,
+  SplitView,
+  useDndContext,
+  useSplitViewItem,
+} from './base'
 import * as pages from './pages'
 
 // avoid click penetration
@@ -124,27 +130,25 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         className="flex-1"
         split
         onDrop={async (e, position) => {
+          // read `e.dataTransfer` first to avoid get empty value after `await`
           const id = e.dataTransfer.getData('text/plain')
+          const files = e.dataTransfer.files
+
           const tabParam =
-            (await db?.books.get(id)) ??
-            Object.values(pages).find((p) => p.displayName === id)
-          if (tabParam) {
-            reader.groups.forEach((g, i) => {
-              g.tabs.forEach((t, j) => {
-                if (t.id === id) {
-                  reader.removeTab(j, i)
-                }
-              })
-            })
+            Object.values(pages).find((p) => p.displayName === id) ??
+            (await db?.books.get(id))
+          const tabs = tabParam ? [tabParam] : await handleFiles(files)
+
+          if (tabs.length) {
             switch (position) {
               case 'left':
-                reader.addGroup([tabParam], index)
+                reader.addGroup(tabs, index)
                 break
               case 'right':
-                reader.addGroup([tabParam], index + 1)
+                reader.addGroup(tabs, index + 1)
                 break
               default:
-                group.addTab(tabParam)
+                tabs.forEach((t) => group.addTab(t))
             }
           }
         }}

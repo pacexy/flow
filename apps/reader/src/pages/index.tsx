@@ -42,9 +42,9 @@ export default function Index() {
       window.launchQueue.setConsumer((params) => {
         console.log('launchQueue', params)
         if (params.files.length) {
-          Promise.all(params.files.map((f) => f.getFile())).then((files) =>
-            handleFiles(files, true),
-          )
+          Promise.all(params.files.map((f) => f.getFile()))
+            .then((files) => handleFiles(files))
+            .then((books) => books.forEach((b) => reader.addTab(b)))
         }
       })
     }
@@ -96,6 +96,8 @@ export const Library: React.FC = () => {
         const bookId = e.dataTransfer.getData('text/plain')
         const book = books?.find((b) => b.id === bookId)
         if (book) reader.addTab(book)
+
+        handleFiles(e.dataTransfer.files)
       }}
     >
       <div className="flex justify-between p-4">
