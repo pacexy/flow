@@ -25,17 +25,22 @@ const sentryWebpackPluginOptions = {
 /**
  * @type {import('next').NextConfig}
  **/
-const base = withPWA(
-  withTM(
-    withBundleAnalyzer({
-      reactStrictMode: false,
-      pageExtensions: ['ts', 'tsx'],
-      pwa: {
-        dest: 'public',
-      },
-    }),
-  ),
-)
+const config = {
+  reactStrictMode: false,
+  pageExtensions: ['ts', 'tsx'],
+  webpack(config) {
+    config.experiments = {
+      topLevelAwait: true,
+      layers: true,
+    }
+    return config
+  },
+  pwa: {
+    dest: 'public',
+  },
+}
+
+const base = withPWA(withTM(withBundleAnalyzer(config)))
 
 const dev = base
 const prod = withSentryConfig(

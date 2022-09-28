@@ -1,4 +1,5 @@
-import { db } from '@ink/reader/db'
+import Dexie from 'dexie'
+
 import { ColorScheme, useColorScheme } from '@ink/reader/hooks'
 
 import { Button } from '../Button'
@@ -29,9 +30,9 @@ export const Settings: React.FC = () => {
           variant="secondary"
           onClick={() => {
             window.localStorage.clear()
-            db?.books.clear()
-            db?.covers.clear()
-            db?.files.clear()
+            Dexie.getDatabaseNames().then((names) => {
+              names.forEach((n) => Dexie.delete(n))
+            })
           }}
         >
           Clear cache
