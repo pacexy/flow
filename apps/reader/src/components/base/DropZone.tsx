@@ -154,7 +154,11 @@ export async function handleFiles(files: Iterable<File>) {
 
   for (const file of files) {
     console.log(file)
-    if (file.type !== 'application/epub+zip') continue
+
+    if (!['application/epub+zip', 'application/epub'].includes(file.type)) {
+      console.error(`Unsupported file type: ${file.type}`)
+      continue
+    }
 
     let book = books?.find((b) => b.name === file.name)
 

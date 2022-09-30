@@ -35,7 +35,10 @@
   "file_handlers": [
     {
       "action": "/",
-      "accept": { "application/epub+zip": ".epub" },
+      "accept": {
+        "application/epub+zip": ".epub",
+        "application/epub": ".epub"
+      },
       "launch_type": "single-client"
     }
   ]
