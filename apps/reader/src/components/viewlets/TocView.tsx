@@ -47,6 +47,7 @@ const TocPane: React.FC = () => {
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)
+  const currentNavItem = focusedBookTab?.currentNavItem
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
 
@@ -72,6 +73,7 @@ const TocPane: React.FC = () => {
           {items.map(({ index }) => (
             <TocRow
               key={index}
+              currentNavItem={currentNavItem as INavItem}
               item={rows[index]}
               onActivate={() => scrollToItem(index)}
             />
@@ -83,20 +85,24 @@ const TocPane: React.FC = () => {
 }
 
 interface TocRowProps {
+  currentNavItem?: INavItem
   item?: INavItem
   onActivate: () => void
 }
-const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
+const TocRow: React.FC<TocRowProps> = ({
+  currentNavItem,
+  item,
+  onActivate,
+}) => {
   if (!item) return null
   const { label, subitems, depth, expanded, id, href } = item
   const tab = reader.focusedBookTab
-  const navItem = tab?.currentNavItem
 
   return (
     <Row
       title={label.trim()}
       depth={depth}
-      active={href === navItem?.href}
+      active={href === currentNavItem?.href}
       expanded={expanded}
       subitems={subitems}
       onClick={() => {
@@ -111,6 +117,7 @@ const TocRow: React.FC<TocRowProps> = ({ item, onActivate }) => {
           tab?.display(section.href, false)
         }
       }}
+      // `tab` can not be proxy here
       toggle={() => tab?.toggle(id)}
       onActivate={onActivate}
     />
