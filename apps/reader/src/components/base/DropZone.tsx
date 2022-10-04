@@ -1,5 +1,4 @@
 import clsx from 'clsx'
-import { Book } from 'epubjs'
 import {
   useContext,
   useState,
@@ -8,10 +7,6 @@ import {
   useCallback,
   useEffect,
 } from 'react'
-import { v4 as uuidv4 } from 'uuid'
-
-import { db } from '@ink/reader/db'
-import { fileToEpub } from '@ink/reader/file'
 
 interface DropZoneProps {
   className?: string
@@ -97,12 +92,12 @@ const DropZoneInner: React.FC<DropZoneProps> = ({
       {dragover && (
         <div
           className={clsx(
-            'bg-outline/20 absolute top-0 z-10',
-            position === 'left' && 'h-full w-1/2',
-            position === 'right' && 'h-full w-1/2 translate-x-full',
-            position === 'top' && 'h-1/2 w-full',
-            position === 'bottom' && 'h-1/2  w-full translate-y-full',
-            position === 'universe' && 'h-full w-full',
+            'bg-outline/20 absolute z-10 transition',
+            position === 'left' && 'inset-y-0 right-1/2 left-0',
+            position === 'right' && 'inset-y-0 right-0 left-1/2',
+            position === 'top' && 'inset-x-0 top-0 bottom-1/2',
+            position === 'bottom' && 'inset-x-0 top-1/2 bottom-0',
+            position === 'universe' && 'inset-0',
           )}
         ></div>
       )}
@@ -147,69 +142,4 @@ const DndProvider: React.FC = ({ children }) => {
 
 export function useDndContext() {
   return useContext(DndContext)
-}
-
-export async function handleFiles(files: Iterable<File>) {
-  const books = await db?.books.toArray()
-  const newBooks = []
-
-  for (const file of files) {
-    console.log(file)
-
-    if (!['application/epub+zip', 'application/epub'].includes(file.type)) {
-      console.error(`Unsupported file type: ${file.type}`)
-      continue
-    }
-
-    let book = books?.find((b) => b.name === file.name)
-
-    if (!book) {
-      book = await addBook(file)
-    }
-
-    newBooks.push(book)
-  }
-
-  return newBooks
-}
-
-export async function addBook(file: File) {
-  const epub = await fileToEpub(file)
-
-  const book = {
-    id: uuidv4(),
-    name: file.name,
-    size: file.size,
-    metadata: await epub.loaded.metadata,
-    createdAt: Date.now(),
-    definitions: [],
-  }
-  db?.books.add(book)
-  addFile(book.id, file, epub)
-  return book
-}
-
-export async function addFile(id: string, file: File, epub?: Book) {
-  db?.files.add({ id, file })
-
-  if (!epub) {
-    epub = await fileToEpub(file)
-  }
-
-  const url = await epub.coverUrl()
-  const cover = url && (await toDataUrl(url))
-  db?.covers.add({ id, cover })
-}
-
-async function toDataUrl(url: string) {
-  const res = await fetch(url)
-  const buffer = await res.blob()
-
-  return new Promise<string>((resolve) => {
-    const reader = new FileReader()
-    reader.addEventListener('load', () => {
-      resolve(reader.result as string)
-    })
-    reader.readAsDataURL(buffer)
-  })
 }

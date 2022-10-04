@@ -11,7 +11,7 @@ import { IconButton } from './Button'
 type Action = {
   title: string
   Icon: IconType
-  onClick: () => void
+  onClick: (el: HTMLInputElement | null) => void
 }
 
 export type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
@@ -68,7 +68,7 @@ export function TextField<T extends ElementType = 'input'>({
       >
         {name}
       </label>
-      <div className="bg-outline/5 textfield flex items-center px-1">
+      <div className="bg-outline/5 textfield flex grow items-center gap-1 px-1">
         <Component
           ref={ref}
           name={name}
@@ -77,8 +77,15 @@ export function TextField<T extends ElementType = 'input'>({
           {...props}
         />
         <div className="flex gap-0.5">
-          {actions.map((a) => (
-            <IconButton className="text-outline !p-px" key={a.title} {...a} />
+          {actions.map(({ onClick, ...a }) => (
+            <IconButton
+              className="text-outline !p-px"
+              key={a.title}
+              onClick={() => {
+                onClick(ref.current)
+              }}
+              {...a}
+            />
           ))}
         </div>
       </div>

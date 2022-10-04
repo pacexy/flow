@@ -9,19 +9,21 @@ import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
   MdCheckCircle,
+  MdOutlineFileDownload,
+  MdOutlineShare,
 } from 'react-icons/md'
 import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
 import {
-  addBook,
-  addFile,
+  ReaderGridView,
+  reader,
+  Button,
+  TextField,
   DropZone,
-  handleFiles,
-} from '@ink/reader/components/base'
-
-import { ReaderGridView, reader, Button } from '../components'
+} from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
+import { fetchBook, addFile, handleFiles } from '../file'
 import {
   useLibrary,
   useMobile,
@@ -33,9 +35,27 @@ import { lock } from '../styles'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
+const SOURCE = 'src'
+
 export default function Index() {
   const { focusedTab } = useSnapshot(reader)
   const router = useRouter()
+  const src = new URL(window.location.href).searchParams.get(SOURCE)
+  const [loading, setLoading] = useState(!!src)
+
+  useEffect(() => {
+    let src = router.query[SOURCE]
+    if (!src) return
+    if (!Array.isArray(src)) src = [src]
+
+    Promise.all(
+      src.map((s) =>
+        fetchBook(s).then((b) => {
+          reader.addTab(b)
+        }),
+      ),
+    ).finally(() => setLoading(false))
+  }, [router.query])
 
   useEffect(() => {
     if ('launchQueue' in window && 'LaunchParams' in window) {
@@ -60,7 +80,7 @@ export default function Index() {
         <title>{focusedTab?.title ?? 'Lota'}</title>
       </Head>
       <ReaderGridView />
-      <Library />
+      {loading || <Library />}
     </>
   )
 }
@@ -88,10 +108,14 @@ export const Library: React.FC = () => {
     if (remoteBooks) db?.books.bulkPut(remoteBooks)
   }, [remoteBooks])
 
+  useEffect(() => {
+    if (!select) reset()
+  }, [reset, select])
+
   if (groups.length) return null
   return (
     <DropZone
-      className="scroll-parent h-full"
+      className="scroll-parent h-full p-4"
       onDrop={(e) => {
         const bookId = e.dataTransfer.getData('text/plain')
         const book = books?.find((b) => b.id === bookId)
@@ -100,92 +124,119 @@ export const Library: React.FC = () => {
         handleFiles(e.dataTransfer.files)
       }}
     >
-      <div className="flex justify-between p-4">
-        <div className="space-x-4">
-          {books &&
-            (books.length ? (
+      <div className="mb-4 space-y-2.5">
+        <div>
+          <TextField
+            name={SOURCE}
+            placeholder="https://link.to/remote.epub"
+            type="url"
+            hideLabel
+            actions={[
+              {
+                title: 'Share',
+                Icon: MdOutlineShare,
+                onClick(el) {
+                  if (el?.reportValidity()) {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/?${SOURCE}=${el.value}`,
+                    )
+                  }
+                },
+              },
+              {
+                title: 'Download',
+                Icon: MdOutlineFileDownload,
+                onClick(el) {
+                  if (el?.reportValidity()) fetchBook(el.value)
+                },
+              },
+            ]}
+          />
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-x-2">
+            {books?.length ? (
               <Button variant="secondary" onClick={toggleSelect}>
                 {select ? 'Cancel' : 'Select'}
               </Button>
             ) : (
               <Button
                 variant="secondary"
+                disabled={!books}
                 onClick={() => {
-                  const FILENAME =
-                    'Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub'
-                  fetch(`https://epubtest.org/books/${FILENAME}`)
-                    .then((res) => res.blob())
-                    .then((blob) => addBook(new File([blob], FILENAME)))
+                  fetchBook(
+                    'https://epubtest.org/books/Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub',
+                  )
                 }}
               >
                 Download sample book
               </Button>
-            ))}
-          {select &&
-            (allSelected ? (
-              <Button variant="secondary" onClick={reset}>
-                Deselect all
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                onClick={() => books?.forEach((b) => add(b.id))}
-              >
-                Select all
-              </Button>
-            ))}
-        </div>
-        <div className="space-x-4">
-          {select ? (
-            <>
-              <Button
-                disabled={subscription?.status !== 'active' || exceeded}
-                onClick={() => {
-                  toggleSelect()
-                  const event = new Event('upload')
-                  window.dispatchEvent(event)
-                }}
-              >
-                Upload
-              </Button>
-              <Button
-                onClick={() => {
-                  toggleSelect()
-                  selectedBooks.forEach(async (id) => {
-                    db?.files.delete(id)
-                    db?.covers.delete(id)
-                    db?.books.delete(id)
+            )}
+            {select &&
+              (allSelected ? (
+                <Button variant="secondary" onClick={reset}>
+                  Deselect all
+                </Button>
+              ) : (
+                <Button
+                  variant="secondary"
+                  onClick={() => books?.forEach((b) => add(b.id))}
+                >
+                  Select all
+                </Button>
+              ))}
+          </div>
 
-                    await supabaseClient.from('Book').delete().eq('id', id)
-                    supabaseClient.storage
-                      .from('books')
-                      .remove([`${subscription?.email}/${id}`])
-                  })
-                }}
-              >
-                Delete
+          <div className="space-x-2">
+            {select ? (
+              <>
+                <Button
+                  disabled={subscription?.status !== 'active' || exceeded}
+                  onClick={() => {
+                    toggleSelect()
+                    const event = new Event('upload')
+                    window.dispatchEvent(event)
+                  }}
+                >
+                  Upload
+                </Button>
+                <Button
+                  onClick={() => {
+                    toggleSelect()
+                    selectedBooks.forEach(async (id) => {
+                      db?.files.delete(id)
+                      db?.covers.delete(id)
+                      db?.books.delete(id)
+
+                      await supabaseClient.from('Book').delete().eq('id', id)
+                      supabaseClient.storage
+                        .from('books')
+                        .remove([`${subscription?.email}/${id}`])
+                    })
+                  }}
+                >
+                  Delete
+                </Button>
+              </>
+            ) : (
+              <Button className="relative">
+                <input
+                  type="file"
+                  accept="application/epub+zip,application/epub"
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                  onChange={(e) => {
+                    const files = e.target.files
+                    if (files) handleFiles(files)
+                  }}
+                />
+                Import
               </Button>
-            </>
-          ) : (
-            <Button className="relative">
-              <input
-                type="file"
-                accept="application/epub+zip,application/epub"
-                className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={(e) => {
-                  const files = e.target.files
-                  if (files) handleFiles(files)
-                }}
-              />
-              Import
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </div>
-      <div className="typescale-body-medium text-outline px-4 text-right">
-        Usage: {readableFileSize(usage ?? 0)}
-      </div>
-      <div className="scroll h-full p-4">
+
+      <div className="scroll h-full">
         <ul
           className="grid"
           style={{
@@ -329,14 +380,4 @@ export const Book: React.FC<BookProps> = ({
       </div>
     </div>
   )
-}
-
-function readableFileSize(size: number) {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-  let i = 0
-  while (size >= 1024) {
-    size /= 1024
-    ++i
-  }
-  return size.toFixed(2) + ' ' + units[i]
 }
