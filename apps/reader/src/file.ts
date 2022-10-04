@@ -77,5 +77,7 @@ async function toDataUrl(url: string) {
 export function fetchBook(url: string) {
   return fetch(url)
     .then((res) => res.blob())
-    .then((blob) => addBook(new File([blob], '')))
+    .then((blob) =>
+      addBook(new File([blob], /\/([^/]*\.epub)$/i.exec(url)?.[1] ?? '')),
+    )
 }

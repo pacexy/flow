@@ -11,7 +11,7 @@ import { IconButton } from './Button'
 type Action = {
   title: string
   Icon: IconType
-  onClick: (value?: string) => void
+  onClick: (el: HTMLInputElement | null) => void
 }
 
 export type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
@@ -82,7 +82,7 @@ export function TextField<T extends ElementType = 'input'>({
               className="text-outline !p-px"
               key={a.title}
               onClick={() => {
-                onClick(ref.current?.value)
+                onClick(ref.current)
               }}
               {...a}
             />
