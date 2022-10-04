@@ -9,19 +9,16 @@ import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
   MdCheckCircle,
+  MdOutlineFileDownload,
 } from 'react-icons/md'
 import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
-import {
-  addBook,
-  addFile,
-  DropZone,
-  handleFiles,
-} from '@ink/reader/components/base'
+import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
 
-import { ReaderGridView, reader, Button } from '../components'
+import { ReaderGridView, reader, Button, TextField } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
+import { fetchBook } from '../file'
 import {
   useLibrary,
   useMobile,
@@ -100,7 +97,7 @@ export const Library: React.FC = () => {
         handleFiles(e.dataTransfer.files)
       }}
     >
-      <div className="flex justify-between p-4">
+      <div className="flex items-center justify-between gap-4 p-4">
         <div className="space-x-4">
           {books &&
             (books.length ? (
@@ -111,11 +108,9 @@ export const Library: React.FC = () => {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  const FILENAME =
-                    'Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub'
-                  fetch(`https://epubtest.org/books/${FILENAME}`)
-                    .then((res) => res.blob())
-                    .then((blob) => addBook(new File([blob], FILENAME)))
+                  fetchBook(
+                    'https://epubtest.org/books/Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub',
+                  )
                 }}
               >
                 Download sample book
@@ -135,6 +130,21 @@ export const Library: React.FC = () => {
               </Button>
             ))}
         </div>
+        <TextField
+          name="src"
+          className="h-full max-w-xs grow"
+          placeholder="link.to/remote.epub"
+          hideLabel
+          actions={[
+            {
+              title: 'Download',
+              Icon: MdOutlineFileDownload,
+              onClick(url) {
+                if (url) fetchBook(url)
+              },
+            },
+          ]}
+        />
         <div className="space-x-4">
           {select ? (
             <>

@@ -175,12 +175,13 @@ export async function handleFiles(files: Iterable<File>) {
 
 export async function addBook(file: File) {
   const epub = await fileToEpub(file)
+  const metadata = await epub.loaded.metadata
 
   const book = {
     id: uuidv4(),
-    name: file.name,
+    name: file.name || `${metadata.title}.epub`,
     size: file.size,
-    metadata: await epub.loaded.metadata,
+    metadata,
     createdAt: Date.now(),
     definitions: [],
   }
