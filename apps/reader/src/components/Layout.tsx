@@ -17,7 +17,7 @@ import {
   RiSettingsLine,
   RiHome6Line,
 } from 'react-icons/ri'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import {
@@ -42,15 +42,24 @@ import { TypographyView } from './viewlets/TypographyView'
 export const Layout: React.FC = ({ children }) => {
   useColorScheme()
   useInitSubscription()
+
+  const [ready, setReady] = useState(false)
+  const setAction = useSetRecoilState(actionState)
   const mobile = useMobile()
+
+  useEffect(() => {
+    if (mobile === undefined) return
+    setAction(mobile ? undefined : 'TOC')
+    setReady(true)
+  }, [mobile, setAction])
 
   return (
     <div id="layout" className="select-none">
       <SplitView>
         <ActivityBar />
         {mobile && <NavigationBar />}
-        <SideBar />
-        <Reader>{children}</Reader>
+        {ready && <SideBar />}
+        {ready && <Reader>{children}</Reader>}
       </SplitView>
     </div>
   )
@@ -281,11 +290,6 @@ const SideBar: React.FC = () => {
     minSize: 160,
     visible: !!action,
   })
-
-  useEffect(() => {
-    if (mobile === true) setAction(undefined)
-    if (mobile === false) setAction('TOC')
-  }, [mobile, setAction])
 
   return (
     <>

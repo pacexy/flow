@@ -103,23 +103,23 @@ export const Library: React.FC = () => {
     >
       <div className="flex items-center justify-between gap-4 p-4">
         <div className="space-x-4">
-          {books &&
-            (books.length ? (
-              <Button variant="secondary" onClick={toggleSelect}>
-                {select ? 'Cancel' : 'Select'}
-              </Button>
-            ) : (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  fetchBook(
-                    'https://epubtest.org/books/Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub',
-                  )
-                }}
-              >
-                Download sample book
-              </Button>
-            ))}
+          {books?.length ? (
+            <Button variant="secondary" onClick={toggleSelect}>
+              {select ? 'Cancel' : 'Select'}
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              disabled={!books}
+              onClick={() => {
+                fetchBook(
+                  'https://epubtest.org/books/Fundamental-Accessibility-Tests-Basic-Functionality-v1.0.0.epub',
+                )
+              }}
+            >
+              Get sample
+            </Button>
+          )}
           {select &&
             (allSelected ? (
               <Button variant="secondary" onClick={reset}>
