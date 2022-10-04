@@ -14,11 +14,15 @@ import {
 import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
 
-import { addFile, DropZone, handleFiles } from '@ink/reader/components/base'
-
-import { ReaderGridView, reader, Button, TextField } from '../components'
+import {
+  ReaderGridView,
+  reader,
+  Button,
+  TextField,
+  DropZone,
+} from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
-import { fetchBook } from '../file'
+import { fetchBook, addFile, handleFiles } from '../file'
 import {
   useLibrary,
   useMobile,

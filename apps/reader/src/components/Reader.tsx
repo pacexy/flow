@@ -17,19 +17,14 @@ import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 import { actionState, navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'
+import { handleFiles } from '../file'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
 import { Reader, BookTab, compareHref } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
-import {
-  DropZone,
-  handleFiles,
-  SplitView,
-  useDndContext,
-  useSplitViewItem,
-} from './base'
+import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
 import * as pages from './pages'
 
 // avoid click penetration
