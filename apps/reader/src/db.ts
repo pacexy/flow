@@ -1,5 +1,8 @@
 import { IS_SERVER } from '@literal-ui/hooks'
 import Dexie, { Table } from 'dexie'
+import { PackagingMetadataObject } from 'epubjs/types/packaging'
+
+import { fileToEpub } from './file'
 
 export interface FileRecord {
   id: string
@@ -12,9 +15,13 @@ export interface CoverRecord {
 }
 
 export interface BookRecord {
+  // TODO: use file hash as id
   id: string
   name: string
+  size: number
+  metadata: PackagingMetadataObject
   createdAt: number
+  updatedAt?: number
   cfi?: string
   percentage?: number
   definitions: string[]
@@ -30,6 +37,36 @@ export class DB extends Dexie {
   constructor(name: string) {
     super(name)
 
+    this.version(3)
+      .stores({
+        books:
+          'id, name, size, metadata, createdAt, updatedAt, cfi, percentage, definitions',
+      })
+      .upgrade(async (t) => {
+        const files = await t.table('files').toArray()
+
+        const metadatas = await Dexie.waitFor(
+          Promise.all(
+            files.map(async ({ file }) => {
+              const epub = await fileToEpub(file)
+              return epub.loaded.metadata
+            }),
+          ),
+        )
+
+        return t
+          .table('books')
+          .toCollection()
+          .modify(async (r) => {
+            const i = files.findIndex((f) => f.id === r.id)
+            r.metadata = metadatas[i]
+            r.size = files[i].file.size
+          })
+          .catch((e) => {
+            console.log(e)
+            throw e
+          })
+      })
     this.version(2)
       .stores({
         books: 'id, name, createdAt, cfi, percentage, definitions',

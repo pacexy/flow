@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import ePub from 'epubjs'
+import { Book } from 'epubjs'
 import {
   useContext,
   useState,
@@ -11,6 +11,7 @@ import {
 import { v4 as uuidv4 } from 'uuid'
 
 import { db } from '@ink/reader/db'
+import { fileToEpub } from '@ink/reader/file'
 
 interface DropZoneProps {
   className?: string
@@ -163,7 +164,7 @@ export async function handleFiles(files: Iterable<File>) {
     let book = books?.find((b) => b.name === file.name)
 
     if (!book) {
-      book = addBook(file)
+      book = await addBook(file)
     }
 
     newBooks.push(book)
@@ -172,23 +173,29 @@ export async function handleFiles(files: Iterable<File>) {
   return newBooks
 }
 
-export function addBook(file: File) {
+export async function addBook(file: File) {
+  const epub = await fileToEpub(file)
+
   const book = {
     id: uuidv4(),
     name: file.name,
-    createdAt: +new Date(),
+    size: file.size,
+    metadata: await epub.loaded.metadata,
+    createdAt: Date.now(),
     definitions: [],
   }
   db?.books.add(book)
-  addFile(book.id, file)
+  addFile(book.id, file, epub)
   return book
 }
 
-export async function addFile(id: string, file: File) {
+export async function addFile(id: string, file: File, epub?: Book) {
   db?.files.add({ id, file })
 
-  const data = await file.arrayBuffer()
-  const epub = ePub(data)
+  if (!epub) {
+    epub = await fileToEpub(file)
+  }
+
   const url = await epub.coverUrl()
   const cover = url && (await toDataUrl(url))
   db?.covers.add({ id, cover })

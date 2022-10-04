@@ -1,6 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
 import type { Rendition, Location, Book } from 'epubjs'
-import ePub from 'epubjs'
 import Navigation, { NavItem } from 'epubjs/types/navigation'
 import Section from 'epubjs/types/section'
 import React from 'react'
@@ -9,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
 import { BookRecord, db } from '../db'
+import { fileToEpub } from '../file'
 import { updateCustomStyle } from '../styles'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
@@ -132,7 +132,7 @@ export class BookTab extends BaseTab {
   }
 
   updateBook(changes: Partial<ReadonlyDeep<BookRecord>>) {
-    db?.books.update(this.book.id, changes)
+    db?.books.update(this.book.id, { ...changes, updatedAt: Date.now() })
   }
 
   definitions = this.book.definitions
@@ -289,8 +289,7 @@ export class BookTab extends BaseTab {
     const file = await db?.files.get(this.book.id)
     if (!file) return
 
-    const data = await file.file.arrayBuffer()
-    this.epub = ref(ePub(data))
+    this.epub = ref(await fileToEpub(file.file))
 
     this.epub.loaded.navigation.then((nav) => {
       this.nav = nav
