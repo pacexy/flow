@@ -10,6 +10,7 @@ import {
   MdCheckBoxOutlineBlank,
   MdCheckCircle,
   MdOutlineFileDownload,
+  MdOutlineShare,
 } from 'react-icons/md'
 import { useSet } from 'react-use'
 import { useSnapshot } from 'valtio'
@@ -34,9 +35,27 @@ import { lock } from '../styles'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
+const SOURCE = 'src'
+
 export default function Index() {
   const { focusedTab } = useSnapshot(reader)
   const router = useRouter()
+  const src = new URL(window.location.href).searchParams.get(SOURCE)
+  const [loading, setLoading] = useState(!!src)
+
+  useEffect(() => {
+    let src = router.query[SOURCE]
+    if (!src) return
+    if (!Array.isArray(src)) src = [src]
+
+    Promise.all(
+      src.map((s) =>
+        fetchBook(s).then((b) => {
+          reader.addTab(b)
+        }),
+      ),
+    ).finally(() => setLoading(false))
+  }, [router.query])
 
   useEffect(() => {
     if ('launchQueue' in window && 'LaunchParams' in window) {
@@ -61,7 +80,7 @@ export default function Index() {
         <title>{focusedTab?.title ?? 'Lota'}</title>
       </Head>
       <ReaderGridView />
-      <Library />
+      {loading || <Library />}
     </>
   )
 }
@@ -108,11 +127,22 @@ export const Library: React.FC = () => {
       <div className="mb-4 space-y-2.5">
         <div>
           <TextField
-            name="src"
+            name={SOURCE}
             placeholder="https://link.to/remote.epub"
             type="url"
             hideLabel
             actions={[
+              {
+                title: 'Share',
+                Icon: MdOutlineShare,
+                onClick(el) {
+                  if (el?.reportValidity()) {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/?${SOURCE}=${el.value}`,
+                    )
+                  }
+                },
+              },
               {
                 title: 'Download',
                 Icon: MdOutlineFileDownload,
