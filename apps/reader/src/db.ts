@@ -90,36 +90,4 @@ export class DB extends Dexie {
   }
 }
 
-// https://stackoverflow.com/a/49424051/13151903
-async function renameDatabase(sourceName: string, destinationName: string) {
-  if (!(await Dexie.exists(sourceName))) return
-
-  // Open source database
-  const origDb = new DB(sourceName)
-  return origDb.open().then(() => {
-    // Create the destination database
-    const destDb = new DB(destinationName)
-
-    // Clone Data
-    return origDb.tables
-      .reduce(
-        (prev: Promise<any>, table) =>
-          prev
-            .then(() => table.toArray())
-            .then((rows) => destDb.table(table.name).bulkAdd(rows)),
-        Promise.resolve(),
-      )
-      .then(() => {
-        origDb.delete()
-        destDb.close()
-      })
-  })
-}
-
-async function prepareDatabase() {
-  await renameDatabase('re-reader', 'lota')
-
-  return new DB('lota')
-}
-
-export const db = IS_SERVER ? null : await prepareDatabase()
+export const db = IS_SERVER ? null : new DB('re-reader')
