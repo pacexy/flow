@@ -10,7 +10,7 @@ export default function Pricing() {
   return (
     <>
       <Seo scope="pricing" />
-      <div className="">
+      <div className="container">
         <div className="flex flex-col items-center py-16">
           <h2 className="typescale-headline-medium">{t('pricing_plans')}</h2>
           <div>
@@ -24,6 +24,10 @@ export default function Pricing() {
               {t('yearly')}
             </label>
           </div>
+          <div
+            className="text-outline typescale-body-medium mb-6 max-w-sm text-center"
+            dangerouslySetInnerHTML={{ __html: t('pricing_tips') }}
+          ></div>
           <div className="flex flex-wrap justify-center gap-8">
             <Plan
               name={t('free.title')}
@@ -42,7 +46,7 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div className="container py-16">
+        <div className="py-16">
           <h2 className="typescale-headline-medium mb-8 text-center">
             {t('frequently_asked_questions')}
           </h2>
@@ -61,14 +65,14 @@ interface PlanProps {
   name: string
   privileges: string[]
   description: string
-  price: number
+  price?: number
   annual?: boolean
 }
 const Plan: React.FC<PlanProps> = ({
   name,
   privileges,
   description,
-  price,
+  // price,
   annual = false,
 }) => {
   const { t } = useTranslation()
@@ -77,10 +81,7 @@ const Plan: React.FC<PlanProps> = ({
     <div className="bg-outline/5 flex w-64 flex-col gap-8 p-8">
       <h2 className="typescale-title-large text-center">{name}</h2>
       <div className="text-center">
-        <span className="typescale-display-large mr-1">
-          {t('currency')}
-          {annual ? price * 10 : price}
-        </span>
+        <span className="typescale-display-large mr-1">{t('currency')}0</span>
         <span className="text-outline">/{t(annual ? 'year' : 'month')}</span>
       </div>
 

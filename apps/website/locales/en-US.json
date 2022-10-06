@@ -45,6 +45,7 @@
   },
 
   "pricing_plans": "Pricing Plans",
+  "pricing_tips": "To get more feedback on features and pricing, <b>Premium is now free</b> until these features are stable enough and new pricing is set.",
   "month": "month",
   "year": "year",
   "yearly": "Yearly",
@@ -77,8 +78,8 @@
       "a": "Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription manually."
     },
     "2": {
-      "q": "Will the data saved in the cloud be deleted after I cancel my subscription?",
-      "a": "No, but you will not be able to synchronize data."
+      "q": "What cloud storage can be used?",
+      "a": "Cloud storage with WebDAV support."
     }
   },
   "frequently_asked_questions": "Frequently asked questions",
