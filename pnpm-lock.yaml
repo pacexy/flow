@@ -69,6 +69,7 @@ importers:
       '@supabase/supabase-js': ^1.35.4
       '@tailwindcss/aspect-ratio': 0.4.0
       '@tailwindcss/line-clamp': 0.3.1
+      '@types/file-saver': ^2.0.5
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       '@types/react-highlight-words': ^0.16.4
@@ -80,6 +81,8 @@ importers:
       dexie: 3.2.2
       dexie-react-hooks: 1.1.1
       epubjs: 0.3.93
+      file-saver: ^2.0.5
+      jszip: ^3.10.1
       m3-tokens: 0.0.3
       next: 12.1.5
       next-pwa: 5.5.2
@@ -123,6 +126,8 @@ importers:
       dexie: 3.2.2
       dexie-react-hooks: 1.1.1_ju2oxrf4x7cdc6cvza53mnlrii
       epubjs: 0.3.93
+      file-saver: 2.0.5
+      jszip: 3.10.1
       next: 12.1.5_zpnidt7m3osuk7shl3s4oenomq
       next-seo: 5.4.0_dtzmyspcyj3erncazrhasijzmy
       react: 18.0.0
@@ -142,6 +147,7 @@ importers:
       '@literal-ui/plugins': 0.0.3_tailwindcss@3.0.24
       '@tailwindcss/aspect-ratio': 0.4.0_tailwindcss@3.0.24
       '@tailwindcss/line-clamp': 0.3.1_tailwindcss@3.0.24
+      '@types/file-saver': 2.0.5
       '@types/node': 17.0.22
       '@types/react': 17.0.43
       '@types/uuid': 8.3.4
@@ -2486,6 +2492,10 @@ packages:
     resolution: {integrity: sha512-C6N5s2ZFtuZRj54k2/zyRhNDjJwwcViAM3Nbm8zjBpbqAdZ00mr0CFxvSKeO8Y/e03WVFLpQMdHYVfUd6SB+Hw==}
     dev: false
 
+  /@types/file-saver/2.0.5:
+    resolution: {integrity: sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==}
+    dev: true
+
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -4021,7 +4031,7 @@ packages:
       '@xmldom/xmldom': 0.7.5
       core-js: 3.21.1
       event-emitter: 0.3.5
-      jszip: 3.9.1
+      jszip: 3.10.1
       localforage: 1.10.0
       lodash: 4.17.21
       marks-pane: 1.0.9
@@ -4843,6 +4853,10 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+    dev: false
+
   /filelist/1.0.2:
     resolution: {integrity: sha512-z7O0IS8Plc39rTCq6i6iHxk43duYOn8uFJiWSewIq0Bww1RNybVHSCjahmcC87ZqAm4OTvFzlzeGu3XAzG1ctQ==}
     dependencies:
@@ -5354,7 +5368,7 @@ packages:
     dev: true
 
   /immediate/3.0.6:
-    resolution: {integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=}
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
     dev: false
 
   /import-fresh/3.3.0:
@@ -5705,7 +5719,7 @@ packages:
     engines: {node: '>=0.10.0'}
 
   /isarray/1.0.0:
-    resolution: {integrity: sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=}
+    resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
     dev: false
 
   /isexe/2.0.0:
@@ -5887,13 +5901,13 @@ packages:
       object.assign: 4.1.2
     dev: true
 
-  /jszip/3.9.1:
-    resolution: {integrity: sha512-H9A60xPqJ1CuC4Ka6qxzXZeU8aNmgOeP5IFqwJbQQwtu2EUYxota3LdsiZWplF7Wgd9tkAd0mdu36nceSaPuYw==}
+  /jszip/3.10.1:
+    resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
     dependencies:
       lie: 3.3.0
       pako: 1.0.11
       readable-stream: 2.3.7
-      set-immediate-shim: 1.0.1
+      setimmediate: 1.0.5
     dev: false
 
   /keyv/4.3.3:
@@ -5955,7 +5969,7 @@ packages:
     dev: true
 
   /lie/3.1.1:
-    resolution: {integrity: sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=}
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
     dependencies:
       immediate: 3.0.6
     dev: false
@@ -8068,11 +8082,6 @@ packages:
     engines: {node: '>=6.9'}
     dev: false
 
-  /set-immediate-shim/1.0.1:
-    resolution: {integrity: sha1-SysbJ+uAip+NzEgaWOXlb1mfP2E=}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /set-value/2.0.1:
     resolution: {integrity: sha512-JxHc1weCN68wRY0fhCoXpyK55m/XPHafOmK4UWD7m2CI14GMcFypt4w/0+NV5f/ZMby2F6S2wwA7fgynh9gWSw==}
     engines: {node: '>=0.10.0'}
@@ -8081,6 +8090,10 @@ packages:
       is-extendable: 0.1.1
       is-plain-object: 2.0.4
       split-string: 3.1.0
+    dev: false
+
+  /setimmediate/1.0.5:
+    resolution: {integrity: sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==}
     dev: false
 
   /shallow-clone/3.0.1:

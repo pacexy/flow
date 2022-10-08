@@ -31,7 +31,7 @@ export default function Pricing() {
           <div className="flex flex-wrap justify-center gap-8">
             <Plan
               name={t('free.title')}
-              privileges={range(5).map((i) => t(`free.${i}`))}
+              privileges={range(6).map((i) => t(`free.${i}`))}
               description={t('free_includes')}
               price={t('free.price')}
               annual={annual}

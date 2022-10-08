@@ -32,6 +32,7 @@ import {
   useSubscription,
 } from '../hooks'
 import { lock } from '../styles'
+import { pack } from '../sync'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -219,18 +220,27 @@ export const Library: React.FC = () => {
                 </Button>
               </>
             ) : (
-              <Button className="relative">
-                <input
-                  type="file"
-                  accept="application/epub+zip,application/epub"
-                  className="absolute inset-0 cursor-pointer opacity-0"
-                  onChange={(e) => {
-                    const files = e.target.files
-                    if (files) handleFiles(files)
-                  }}
-                />
-                Import
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  disabled={!books?.length}
+                  onClick={pack}
+                >
+                  Export
+                </Button>
+                <Button className="relative">
+                  <input
+                    type="file"
+                    accept="application/epub+zip,application/epub,application/zip"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    onChange={(e) => {
+                      const files = e.target.files
+                      if (files) handleFiles(files)
+                    }}
+                  />
+                  Import
+                </Button>
+              </>
             )}
           </div>
         </div>
