@@ -3,6 +3,12 @@ import JSZip from 'jszip'
 
 import { BookRecord, db } from './db'
 
+export const mapToToken = {
+  dropbox: 'dropbox-refresh-token',
+}
+
+export const OAUTH_SUCCESS_MESSAGE = 'oauth_success'
+
 export async function pack() {
   const books = await db?.books.toArray()
   const covers = await db?.covers.toArray()
