@@ -1,5 +1,7 @@
+import { Dropbox } from 'dropbox'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
+import { parseCookies } from 'nookies'
 
 import { BookRecord, db } from './db'
 
@@ -8,6 +10,21 @@ export const mapToToken = {
 }
 
 export const OAUTH_SUCCESS_MESSAGE = 'oauth_success'
+
+const cookies = parseCookies()
+const refreshToken = cookies[mapToToken['dropbox']]
+export const dbx = new Dropbox({
+  clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
+  refreshToken,
+})
+dbx.auth.refreshAccessToken = () => {
+  fetch(`/api/refresh?token=${refreshToken}`)
+    .then((res) => res.json())
+    .then((data) => {
+      dbx.auth.setAccessToken(data.accessToken)
+      dbx.auth.setAccessTokenExpiresAt(data.accessTokenExpiresAt)
+    })
+}
 
 export async function pack() {
   const books = await db?.books.toArray()
@@ -20,7 +37,6 @@ export async function pack() {
 
   const folder = zip.folder('files')
   files?.forEach((f) => folder?.file(f.file.name, f.file))
-  console.log(folder, files)
 
   const date = new Intl.DateTimeFormat('fr-CA').format().replaceAll('-', '')
 
@@ -46,7 +62,6 @@ export async function unpack(file: File) {
 
   const folder = zip.folder('files')
   folder?.forEach(async (_, f) => {
-    console.log(f)
     const book = books.find((b) => `files/${b.name}` === f.name)
     if (!book) return
 

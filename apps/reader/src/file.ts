@@ -68,17 +68,20 @@ export async function addFile(id: string, file: File, epub?: Book) {
   db?.covers.add({ id, cover })
 }
 
-async function toDataUrl(url: string) {
-  const res = await fetch(url)
-  const buffer = await res.blob()
-
+export function readBlob(fn: (reader: FileReader) => void) {
   return new Promise<string>((resolve) => {
     const reader = new FileReader()
     reader.addEventListener('load', () => {
       resolve(reader.result as string)
     })
-    reader.readAsDataURL(buffer)
+    fn(reader)
   })
+}
+
+async function toDataUrl(url: string) {
+  const res = await fetch(url)
+  const buffer = await res.blob()
+  return readBlob((r) => r.readAsDataURL(buffer))
 }
 
 export async function fetchBook(url: string) {

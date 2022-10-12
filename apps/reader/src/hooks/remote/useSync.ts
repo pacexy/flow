@@ -1,25 +1,45 @@
-import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useCallback, useEffect } from 'react'
-import { snapshot, useSnapshot } from 'valtio'
+import { useSnapshot } from 'valtio'
 
 import { BookRecord } from '@ink/reader/db'
 import { BookTab } from '@ink/reader/models'
+import { dbx } from '@ink/reader/sync'
 
 import { useRemoteBooks } from './useRemote'
 
 export function useSync(tab: BookTab) {
-  const remoteBooks = useRemoteBooks()
+  const { mutate } = useRemoteBooks()
   const { location, book, definitions } = useSnapshot(tab)
 
   const id = tab.book.id
 
   const sync = useCallback(
     async (changes: Partial<BookRecord>) => {
-      if (remoteBooks?.find((b) => b.id === id)) {
-        await supabaseClient.from('Book').update(changes).eq('id', id)
-      }
+      // to remove effect dependency `remoteBooks`
+      mutate(
+        (remoteBooks) => {
+          if (remoteBooks) {
+            const i = remoteBooks.findIndex((b) => b.id === id)
+            if (i < 0) return remoteBooks
+
+            const newRemoteBooks = remoteBooks.splice(i, 1, {
+              ...remoteBooks[i]!,
+              ...changes,
+            })
+
+            dbx.filesUpload({
+              path: '/books.json',
+              mode: { '.tag': 'overwrite' },
+              contents: JSON.stringify(newRemoteBooks),
+            })
+
+            return newRemoteBooks
+          }
+        },
+        { revalidate: false },
+      )
     },
-    [remoteBooks, id],
+    [id, mutate],
   )
 
   useEffect(() => {
@@ -31,7 +51,7 @@ export function useSync(tab: BookTab) {
 
   useEffect(() => {
     sync({
-      definitions: snapshot(definitions) as string[],
+      definitions: definitions as string[],
     })
   }, [sync, definitions])
 }
