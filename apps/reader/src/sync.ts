@@ -17,16 +17,17 @@ export const dbx = new Dropbox({
   clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
   refreshToken,
 })
+let _req: Promise<void> | undefined
 dbx.auth.refreshAccessToken = () => {
-  fetch(`/api/refresh?token=${refreshToken}`)
+  _req ??= fetch(`/api/refresh?token=${refreshToken}`)
     .then((res) => res.json())
     .then((data) => {
       dbx.auth.setAccessToken(data.accessToken)
       dbx.auth.setAccessTokenExpiresAt(data.accessTokenExpiresAt)
+      _req = undefined
     })
+  return _req
 }
-// generate access token first to avoid to block subsequent requests
-dbx.auth.refreshAccessToken()
 
 export async function pack() {
   const books = await db?.books.toArray()
