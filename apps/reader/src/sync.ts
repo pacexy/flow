@@ -1,7 +1,6 @@
 import { Dropbox } from 'dropbox'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
-import { parseCookies } from 'nookies'
 
 import { BookRecord, db } from './db'
 
@@ -11,15 +10,13 @@ export const mapToToken = {
 
 export const OAUTH_SUCCESS_MESSAGE = 'oauth_success'
 
-const cookies = parseCookies()
-const refreshToken = cookies[mapToToken['dropbox']]
 export const dbx = new Dropbox({
   clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
-  refreshToken,
+  refreshToken: '__fake_token__',
 })
 let _req: Promise<void> | undefined
 dbx.auth.refreshAccessToken = () => {
-  _req ??= fetch(`/api/refresh?token=${refreshToken}`)
+  _req ??= fetch(`/api/refresh`)
     .then((res) => res.json())
     .then((data) => {
       dbx.auth.setAccessToken(data.accessToken)
