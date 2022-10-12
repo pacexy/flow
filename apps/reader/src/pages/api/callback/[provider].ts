@@ -1,13 +1,9 @@
-import { Dropbox } from 'dropbox'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import nookies from 'nookies'
 
 import { mapToToken } from '@ink/reader/sync'
 
-const dbx = new Dropbox({
-  clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
-  clientSecret: process.env.DROPBOX_CLIENT_SECRET,
-})
+import { dbx } from '../utils'
 
 export default async function handler(
   req: NextApiRequest,

@@ -45,7 +45,7 @@
   },
 
   "pricing_plans": "Pricing Plans",
-  "pricing_tips": "To get more feedback on features and pricing, <b>Premium is now free</b> until these features are stable enough and new pricing is set.",
+  "pricing_tips": "<b>Premium is free</b> until we figure out our pricing",
   "month": "month",
   "year": "year",
   "yearly": "Yearly",
@@ -65,7 +65,7 @@
   "premium": {
     "title": "Premium",
     "price": "1",
-    "0": "10GB cloud storage",
+    "0": "Cloud storage",
     "1": "Data synchronization"
   },
   "get_started": "Get Started",
@@ -79,8 +79,8 @@
       "a": "Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription manually."
     },
     "2": {
-      "q": "What cloud storage can be used?",
-      "a": "Cloud storage with WebDAV support."
+      "q": "What cloud storage do you support?",
+      "a": "Only Dropbox for now."
     }
   },
   "frequently_asked_questions": "Frequently asked questions",
