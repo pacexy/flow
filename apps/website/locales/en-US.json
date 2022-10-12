@@ -45,6 +45,7 @@
   },
 
   "pricing_plans": "Pricing Plans",
+  "pricing_tips": "<b>Premium is free</b> until we figure out our pricing",
   "month": "month",
   "year": "year",
   "yearly": "Yearly",
@@ -58,12 +59,13 @@
     "1": "In-book search",
     "2": "Image preview",
     "3": "Custom typography",
-    "4": "Annotation (soon)"
+    "4": "Annotation (soon)",
+    "5": "Data export"
   },
   "premium": {
     "title": "Premium",
     "price": "1",
-    "0": "10GB cloud storage",
+    "0": "Cloud storage",
     "1": "Data synchronization"
   },
   "get_started": "Get Started",
@@ -77,8 +79,8 @@
       "a": "Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription manually."
     },
     "2": {
-      "q": "Will the data saved in the cloud be deleted after I cancel my subscription?",
-      "a": "No, but you will not be able to synchronize data."
+      "q": "What cloud storage do you support?",
+      "a": "Only Dropbox for now."
     }
   },
   "frequently_asked_questions": "Frequently asked questions",

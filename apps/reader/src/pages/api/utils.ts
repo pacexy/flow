@@ -1,5 +1,6 @@
 import { PaddleSDK } from '@invertase/node-paddle-sdk'
 import { PrismaClient } from '@prisma/client'
+import { Dropbox } from 'dropbox'
 
 export const paddle = new PaddleSDK(
   Number(process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID),
@@ -9,3 +10,8 @@ export const paddle = new PaddleSDK(
 )
 
 export const prisma = new PrismaClient()
+
+export const dbx = new Dropbox({
+  clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
+  clientSecret: process.env.DROPBOX_CLIENT_SECRET,
+})

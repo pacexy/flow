@@ -83,13 +83,16 @@ const Subscription: React.FC = () => {
     }
   } else {
     buttonProps = {
-      onClick: () =>
+      onClick: () => {
+        return
         window.Paddle.Checkout.open({
           product: Number(process.env.NEXT_PUBLIC_PADDLE_PRODUCT_ID),
           email: user?.email,
           disableLogout: true,
-        }),
+        })
+      },
       children: 'Subscribe',
+      disabled: true,
     }
   }
 

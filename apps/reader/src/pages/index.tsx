@@ -1,5 +1,4 @@
-import { useBoolean, useEventListener } from '@literal-ui/hooks'
-import { supabaseClient } from '@supabase/auth-helpers-nextjs'
+import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Head from 'next/head'
@@ -13,6 +12,7 @@ import {
   MdOutlineShare,
 } from 'react-icons/md'
 import { useSet } from 'react-use'
+import { usePrevious } from 'react-use'
 import { useSnapshot } from 'valtio'
 
 import {
@@ -23,8 +23,9 @@ import {
   DropZone,
 } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
-import { fetchBook, addFile, handleFiles } from '../file'
+import { addFile, fetchBook, handleFiles } from '../file'
 import {
+  isSubscriptionActive,
   useLibrary,
   useMobile,
   useRemoteBooks,
@@ -32,6 +33,7 @@ import {
   useSubscription,
 } from '../hooks'
 import { lock } from '../styles'
+import { dbx, pack } from '../sync'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -88,25 +90,75 @@ export default function Index() {
 export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
-  const remoteBooks = useRemoteBooks()
-  const remoteFiles = useRemoteFiles()
-  const usage = remoteFiles.data?.reduce(
-    (a, c) => a + (c.metadata as any).size,
-    0,
-  )
 
-  const exceeded = !!usage && usage > 10 * 1024 ** 3
+  const { data: remoteBooks, mutate: mutateRemoteBooks } = useRemoteBooks()
+  const { data: remoteFiles, mutate: mutateRemoteFiles } = useRemoteFiles()
+  const previousRemoteBooks = usePrevious(remoteBooks)
+  const previousRemoteFiles = usePrevious(remoteFiles)
 
   const [select, toggleSelect] = useBoolean(false)
-  const [selectedBooks, { add, has, toggle, reset }] = useSet<string>()
-  const allSelected = selectedBooks.size === books?.length
+  const [selectedBookIds, { add, has, toggle, reset }] = useSet<string>()
+  const selectedBooks = [...selectedBookIds].map((id) =>
+    books?.find((b) => b.id === id),
+  ) as BookRecord[]
+  const allSelected = selectedBookIds.size === books?.length
+
+  const [loading, setLoading] = useState<string | undefined>()
+  const [readyToSync, setReadyToSync] = useState(false)
 
   const { groups } = useSnapshot(reader)
   const subscription = useSubscription()
 
   useEffect(() => {
-    if (remoteBooks) db?.books.bulkPut(remoteBooks)
+    if (previousRemoteFiles && remoteFiles) {
+      // to remove effect dependency `books`
+      db?.books.toArray().then((books) => {
+        if (books.length === 0) return
+
+        const newRemoteBooks = remoteFiles.map((f) =>
+          books.find((b) => b.name === f.name),
+        ) as BookRecord[]
+
+        dbx.filesUpload({
+          path: '/books.json',
+          mode: { '.tag': 'overwrite' },
+          contents: JSON.stringify(newRemoteBooks),
+        })
+        mutateRemoteBooks(newRemoteBooks, { revalidate: false })
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mutateRemoteBooks, remoteFiles])
+
+  useEffect(() => {
+    if (!previousRemoteBooks && remoteBooks) {
+      db?.books.bulkPut(remoteBooks).then(() => setReadyToSync(true))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remoteBooks])
+
+  useEffect(() => {
+    if (!remoteFiles || !readyToSync) return
+
+    db?.books.toArray().then(async (books) => {
+      for (const remoteFile of remoteFiles) {
+        const book = books.find((b) => b.name === remoteFile.name)
+        if (!book) continue
+
+        const file = await db?.files.get(book.id)
+        if (file) continue
+
+        setLoading(book.id)
+        await dbx
+          .filesDownload({ path: `/files/${remoteFile.name}` })
+          .then((d) => {
+            const blob: Blob = (d.result as any).fileBlob
+            return addFile(book.id, new File([blob], book.name))
+          })
+        setLoading(undefined)
+      }
+    })
+  }, [readyToSync, remoteFiles])
 
   useEffect(() => {
     if (!select) reset()
@@ -191,46 +243,82 @@ export const Library: React.FC = () => {
             {select ? (
               <>
                 <Button
-                  disabled={subscription?.status !== 'active' || exceeded}
-                  onClick={() => {
+                  disabled={!isSubscriptionActive(subscription)}
+                  onClick={async () => {
                     toggleSelect()
-                    const event = new Event('upload')
-                    window.dispatchEvent(event)
+
+                    for (const book of selectedBooks) {
+                      const remoteFile = remoteFiles?.find(
+                        (f) => f.name === book.name,
+                      )
+                      if (remoteFile) continue
+
+                      const file = await db?.files.get(book.id)
+                      if (!file) continue
+
+                      setLoading(book.id)
+                      await dbx.filesUpload({
+                        path: `/files/${book.name}`,
+                        contents: file.file,
+                      })
+                      setLoading(undefined)
+
+                      mutateRemoteFiles()
+                    }
                   }}
                 >
                   Upload
                 </Button>
                 <Button
-                  onClick={() => {
+                  onClick={async () => {
                     toggleSelect()
-                    selectedBooks.forEach(async (id) => {
-                      db?.files.delete(id)
-                      db?.covers.delete(id)
-                      db?.books.delete(id)
+                    const bookIds = [...selectedBookIds]
 
-                      await supabaseClient.from('Book').delete().eq('id', id)
-                      supabaseClient.storage
-                        .from('books')
-                        .remove([`${subscription?.email}/${id}`])
-                    })
+                    db?.books.bulkDelete(bookIds)
+                    db?.covers.bulkDelete(bookIds)
+                    db?.files.bulkDelete(bookIds)
+
+                    // folder data is not updated after `filesDeleteBatch`
+                    mutateRemoteFiles(
+                      async (data) => {
+                        await dbx.filesDeleteBatch({
+                          entries: selectedBooks.map((b) => ({
+                            path: `/files/${b.name}`,
+                          })),
+                        })
+                        return data?.filter(
+                          (f) => !selectedBooks.find((b) => b.name === f.name),
+                        )
+                      },
+                      { revalidate: false },
+                    )
                   }}
                 >
                   Delete
                 </Button>
               </>
             ) : (
-              <Button className="relative">
-                <input
-                  type="file"
-                  accept="application/epub+zip,application/epub"
-                  className="absolute inset-0 cursor-pointer opacity-0"
-                  onChange={(e) => {
-                    const files = e.target.files
-                    if (files) handleFiles(files)
-                  }}
-                />
-                Import
-              </Button>
+              <>
+                <Button
+                  variant="secondary"
+                  disabled={!books?.length}
+                  onClick={pack}
+                >
+                  Export
+                </Button>
+                <Button className="relative">
+                  <input
+                    type="file"
+                    accept="application/epub+zip,application/epub,application/zip"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    onChange={(e) => {
+                      const files = e.target.files
+                      if (files) handleFiles(files)
+                    }}
+                  />
+                  Import
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -252,6 +340,7 @@ export const Library: React.FC = () => {
               covers={covers}
               select={select}
               selected={has(book.id)}
+              loading={loading === book.id}
               toggle={toggle}
             />
           ))}
@@ -266,6 +355,7 @@ interface BookProps {
   covers?: CoverRecord[]
   select?: boolean
   selected?: boolean
+  loading?: boolean
   toggle: (id: string) => void
 }
 export const Book: React.FC<BookProps> = ({
@@ -273,51 +363,16 @@ export const Book: React.FC<BookProps> = ({
   covers,
   select,
   selected,
+  loading,
   toggle,
 }) => {
   const remoteFiles = useRemoteFiles()
-  const subscription = useSubscription()
+
   const router = useRouter()
   const mobile = useMobile()
-  const [loading, setLoading] = useState(false)
 
   const cover = covers?.find((c) => c.id === book.id)?.cover
-  const remoteFile = remoteFiles.data?.find((f) => f.name === book.id)
-
-  useEffect(() => {
-    if (!remoteFile) return
-    db?.files.get(book.id).then((file) => {
-      if (file) return
-      setLoading(true)
-      supabaseClient.storage
-        .from('books')
-        .download(`${subscription?.email}/${book.id}`)
-        .then(({ data }) => {
-          if (data) addFile(book.id, new File([data], book.name))
-          setLoading(false)
-        })
-    })
-  }, [book, remoteFile, subscription])
-
-  useEventListener<any>('upload', async () => {
-    if (loading) return
-    if (!selected) return
-    if (remoteFiles.data?.find((f) => f.name === book.id)) return
-
-    const file = await db?.files.get(book.id)
-    if (!file) return
-
-    setLoading(true)
-    const owner = subscription?.email
-    supabaseClient.storage
-      .from('books')
-      .upload(`${owner}/${book.id}`, file.file)
-      .then(() => supabaseClient.from('Book').upsert({ ...book, owner }))
-      .then(() => {
-        remoteFiles.mutate()
-        setLoading(false)
-      })
-  })
+  const remoteFile = remoteFiles.data?.find((f) => f.name === book.name)
 
   const Icon = selected ? MdCheckBox : MdCheckBoxOutlineBlank
 

@@ -2,6 +2,8 @@ import ePub, { Book } from 'epubjs'
 import { v4 as uuidv4 } from 'uuid'
 
 import { db } from './db'
+import { mapExtToMimes } from './mime'
+import { unpack } from './sync'
 
 export async function fileToEpub(file: File) {
   const data = await file.arrayBuffer()
@@ -15,7 +17,12 @@ export async function handleFiles(files: Iterable<File>) {
   for (const file of files) {
     console.log(file)
 
-    if (!['application/epub+zip', 'application/epub'].includes(file.type)) {
+    if (mapExtToMimes['.zip'].includes(file.type)) {
+      unpack(file)
+      continue
+    }
+
+    if (!mapExtToMimes['.epub'].includes(file.type)) {
       console.error(`Unsupported file type: ${file.type}`)
       continue
     }
@@ -61,17 +68,20 @@ export async function addFile(id: string, file: File, epub?: Book) {
   db?.covers.add({ id, cover })
 }
 
-async function toDataUrl(url: string) {
-  const res = await fetch(url)
-  const buffer = await res.blob()
-
+export function readBlob(fn: (reader: FileReader) => void) {
   return new Promise<string>((resolve) => {
     const reader = new FileReader()
     reader.addEventListener('load', () => {
       resolve(reader.result as string)
     })
-    reader.readAsDataURL(buffer)
+    fn(reader)
   })
+}
+
+async function toDataUrl(url: string) {
+  const res = await fetch(url)
+  const buffer = await res.blob()
+  return readBlob((r) => r.readAsDataURL(buffer))
 }
 
 export async function fetchBook(url: string) {
