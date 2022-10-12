@@ -25,6 +25,8 @@ dbx.auth.refreshAccessToken = () => {
       dbx.auth.setAccessTokenExpiresAt(data.accessTokenExpiresAt)
     })
 }
+// generate access token first to avoid to block subsequent requests
+dbx.auth.refreshAccessToken()
 
 export async function pack() {
   const books = await db?.books.toArray()

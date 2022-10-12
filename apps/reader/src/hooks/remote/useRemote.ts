@@ -4,7 +4,7 @@ import { BookRecord } from '@ink/reader/db'
 import { readBlob } from '@ink/reader/file'
 import { dbx } from '@ink/reader/sync'
 
-import { useSubscription } from './useSubscription'
+import { isSubscriptionActive, useSubscription } from './useSubscription'
 
 const dropboxFilesFetcher = (path: string) => {
   return dbx.filesListFolder({ path }).then((d) => d.result.entries)
@@ -24,7 +24,7 @@ export function useRemoteFiles() {
   const subscription = useSubscription()
 
   return useSWR(
-    subscription?.status === 'active' ? '/files' : null,
+    isSubscriptionActive(subscription) ? '/files' : null,
     dropboxFilesFetcher,
   )
 }
@@ -33,7 +33,7 @@ export function useRemoteBooks() {
   const subscription = useSubscription()
 
   return useSWR(
-    subscription?.status === 'active' ? '/books.json' : null,
+    isSubscriptionActive(subscription) ? '/books.json' : null,
     dropboxBooksFetcher,
   )
 }

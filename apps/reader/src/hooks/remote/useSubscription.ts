@@ -1,3 +1,4 @@
+import { Maybe } from '@literal-ui/hooks'
 import { Subscription } from '@prisma/client'
 import { supabaseClient } from '@supabase/auth-helpers-nextjs'
 import { useUser } from '@supabase/auth-helpers-react'
@@ -35,4 +36,9 @@ export function useInitSubscription() {
 
 export function useSubscription() {
   return useRecoilValue(subscriptionState)
+}
+
+export function isSubscriptionActive(subscription: Maybe<Subscription>) {
+  return true
+  return subscription?.status === 'active'
 }

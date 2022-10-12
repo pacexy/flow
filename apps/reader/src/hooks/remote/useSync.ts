@@ -22,18 +22,18 @@ export function useSync(tab: BookTab) {
             const i = remoteBooks.findIndex((b) => b.id === id)
             if (i < 0) return remoteBooks
 
-            const newRemoteBooks = remoteBooks.splice(i, 1, {
+            remoteBooks[i] = {
               ...remoteBooks[i]!,
               ...changes,
-            })
+            }
 
             dbx.filesUpload({
               path: '/books.json',
               mode: { '.tag': 'overwrite' },
-              contents: JSON.stringify(newRemoteBooks),
+              contents: JSON.stringify(remoteBooks),
             })
 
-            return newRemoteBooks
+            return [...remoteBooks]
           }
         },
         { revalidate: false },

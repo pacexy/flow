@@ -25,6 +25,7 @@ import {
 import { BookRecord, CoverRecord, db } from '../db'
 import { addFile, fetchBook, handleFiles } from '../file'
 import {
+  isSubscriptionActive,
   useLibrary,
   useMobile,
   useRemoteBooks,
@@ -89,8 +90,10 @@ export default function Index() {
 export const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
+
   const { data: remoteBooks, mutate: mutateRemoteBooks } = useRemoteBooks()
   const { data: remoteFiles, mutate: mutateRemoteFiles } = useRemoteFiles()
+  const previousRemoteBooks = usePrevious(remoteBooks)
   const previousRemoteFiles = usePrevious(remoteFiles)
 
   const [select, toggleSelect] = useBoolean(false)
@@ -128,9 +131,10 @@ export const Library: React.FC = () => {
   }, [mutateRemoteBooks, remoteFiles])
 
   useEffect(() => {
-    if (remoteBooks) {
+    if (!previousRemoteBooks && remoteBooks) {
       db?.books.bulkPut(remoteBooks).then(() => setReadyToSync(true))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remoteBooks])
 
   useEffect(() => {
@@ -239,7 +243,7 @@ export const Library: React.FC = () => {
             {select ? (
               <>
                 <Button
-                  disabled={subscription?.status !== 'active'}
+                  disabled={!isSubscriptionActive(subscription)}
                   onClick={async () => {
                     toggleSelect()
 

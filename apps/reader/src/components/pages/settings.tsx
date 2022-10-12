@@ -1,16 +1,13 @@
 import { useEventListener } from '@literal-ui/hooks'
 import Dexie from 'dexie'
-import { Dropbox } from 'dropbox'
 import { parseCookies, destroyCookie } from 'nookies'
 
 import { ColorScheme, useColorScheme, useForceRender } from '@ink/reader/hooks'
-import { mapToToken, OAUTH_SUCCESS_MESSAGE } from '@ink/reader/sync'
+import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@ink/reader/sync'
 
 import { Button } from '../Button'
 import { Page } from '../Page'
 import { Select } from '../Select'
-
-const dbx = new Dropbox({ clientId: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID })
 
 export const Settings: React.FC = () => {
   const { scheme, setScheme } = useColorScheme()
