@@ -9,8 +9,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (typeof req.query.state !== 'string') return
-  if (typeof req.query.code !== 'string') return
+  if (
+    typeof req.query.state !== 'string' ||
+    typeof req.query.code !== 'string'
+  ) {
+    return res.status(400)
+  }
 
   const state = JSON.parse(req.query.state)
 
