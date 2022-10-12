@@ -21,6 +21,9 @@ dbx.auth.refreshAccessToken = () => {
     .then((data) => {
       dbx.auth.setAccessToken(data.accessToken)
       dbx.auth.setAccessTokenExpiresAt(data.accessTokenExpiresAt)
+    })
+    .finally(() => {
+      // will fail if no refresh token
       _req = undefined
     })
   return _req

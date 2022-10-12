@@ -53,7 +53,8 @@ const Synchronization: React.FC = () => {
 
   useEventListener('message', (e) => {
     if (e.data === OAUTH_SUCCESS_MESSAGE) {
-      render()
+      // init app (generate access token, fetch remote data, etc.)
+      window.location.reload()
     }
   })
 
