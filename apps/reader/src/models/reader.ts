@@ -22,7 +22,12 @@ export function compareHref(
 ) {
   if (sectionHref && navitemHref) {
     const [target] = navitemHref.split('#')
-    return sectionHref.endsWith(target!)
+
+    return (
+      sectionHref.endsWith(target!) ||
+      // fix for relative nav path `../Text/example.html`
+      target?.endsWith(sectionHref)
+    )
   }
 }
 
