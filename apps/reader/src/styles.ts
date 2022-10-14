@@ -4,6 +4,19 @@ import { CSSProperties } from 'react'
 import { Settings } from './state'
 import { keys } from './utils'
 
+export const defaultStyle = {
+  html: {
+    padding: '0 !important',
+  },
+  'a:any-link': {
+    color: '#3b82f6 !important',
+    'text-decoration': 'none !important',
+  },
+  '::selection': {
+    'background-color': 'rgba(3, 102, 214, 0.2)',
+  },
+}
+
 const camelToSnake = (str: string) =>
   str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
 

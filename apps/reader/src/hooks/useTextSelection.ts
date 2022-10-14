@@ -7,6 +7,7 @@ type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
 
 type TextSelectionState = {
   selection?: Selection
+  range?: Range
   rects?: ClientRect[]
   isCollapsed?: boolean
   textContent?: string
@@ -63,6 +64,7 @@ export function useTextSelection(win?: Window) {
 
         const rects = [...range.getClientRects()].filter((r) => r.width)
 
+        newState.range = range
         newState.rects = rects
         newState.forward = forward
         newState.selection = selection

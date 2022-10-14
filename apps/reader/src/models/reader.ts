@@ -9,7 +9,7 @@ import { proxy, ref, snapshot } from 'valtio'
 
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
-import { updateCustomStyle } from '../styles'
+import { defaultStyle, updateCustomStyle } from '../styles'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -329,15 +329,7 @@ export class BookTab extends BaseTab {
     this.rendition.display(
       this.location?.start.cfi ?? this.book.cfi ?? undefined,
     )
-    this.rendition.themes.default({
-      html: {
-        padding: '0 !important',
-      },
-      'a:any-link': {
-        color: '#3b82f6 !important',
-        'text-decoration': 'none !important',
-      },
-    })
+    this.rendition.themes.default(defaultStyle)
     this.rendition.hooks.render.register((view: any) => {
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
@@ -386,6 +378,9 @@ export class BookTab extends BaseTab {
     this.rendition.on('rendered', (section: Section, view: any) => {
       console.log('rendered', [section, view])
       this.iframe = ref(view.window as Window)
+    })
+    this.rendition.on('selected', (...args: any[]) => {
+      console.log('selected', args)
     })
     this.rendition.on('removed', (...args: any[]) => {
       console.log('removed', args)
