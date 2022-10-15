@@ -1,24 +1,12 @@
 import useSWR from 'swr/immutable'
 
-import { BookRecord } from '@ink/reader/db'
-import { readBlob } from '@ink/reader/file'
-import { dbx } from '@ink/reader/sync'
+import {
+  DATA_FILENAME,
+  dropboxBooksFetcher,
+  dropboxFilesFetcher,
+} from '@ink/reader/sync'
 
 import { isSubscriptionActive, useSubscription } from './useSubscription'
-
-const dropboxFilesFetcher = (path: string) => {
-  return dbx.filesListFolder({ path }).then((d) => d.result.entries)
-}
-
-const dropboxBooksFetcher = (path: string) => {
-  return dbx
-    .filesDownload({ path })
-    .then((d) => {
-      const blob: Blob = (d.result as any).fileBlob
-      return readBlob((r) => r.readAsText(blob))
-    })
-    .then((d) => JSON.parse(d) as BookRecord[])
-}
 
 export function useRemoteFiles() {
   const subscription = useSubscription()
@@ -33,7 +21,7 @@ export function useRemoteBooks() {
   const subscription = useSubscription()
 
   return useSWR(
-    isSubscriptionActive(subscription) ? '/books.json' : null,
+    isSubscriptionActive(subscription) ? `/${DATA_FILENAME}` : null,
     dropboxBooksFetcher,
   )
 }

@@ -33,7 +33,7 @@ import {
   useSubscription,
 } from '../hooks'
 import { lock } from '../styles'
-import { dbx, pack } from '../sync'
+import { dbx, pack, uploadData } from '../sync'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -119,11 +119,7 @@ export const Library: React.FC = () => {
           books.find((b) => b.name === f.name),
         ) as BookRecord[]
 
-        dbx.filesUpload({
-          path: '/books.json',
-          mode: { '.tag': 'overwrite' },
-          contents: JSON.stringify(newRemoteBooks),
-        })
+        uploadData(newRemoteBooks)
         mutateRemoteBooks(newRemoteBooks, { revalidate: false })
       })
     }

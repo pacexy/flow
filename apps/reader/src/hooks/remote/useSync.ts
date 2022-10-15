@@ -3,7 +3,7 @@ import { useSnapshot } from 'valtio'
 
 import { BookRecord } from '@ink/reader/db'
 import { BookTab } from '@ink/reader/models'
-import { dbx } from '@ink/reader/sync'
+import { uploadData } from '@ink/reader/sync'
 
 import { useRemoteBooks } from './useRemote'
 
@@ -27,11 +27,7 @@ export function useSync(tab: BookTab) {
               ...changes,
             }
 
-            dbx.filesUpload({
-              path: '/books.json',
-              mode: { '.tag': 'overwrite' },
-              contents: JSON.stringify(remoteBooks),
-            })
+            uploadData(remoteBooks)
 
             return [...remoteBooks]
           }
