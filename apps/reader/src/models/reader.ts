@@ -141,16 +141,12 @@ export class BookTab extends BaseTab {
   }
 
   definitions = this.book.definitions
-  onAddDefinition?: (def: string) => void
   addDefinition(def: string) {
     if (this.definitions.includes(def)) return
-    this.onAddDefinition?.(def)
     this.definitions.push(def)
     this.updateBook({ definitions: snapshot(this.definitions) })
   }
-  onRemoveDefinition?: (def: string) => void
   removeDefinition(def: string) {
-    this.onRemoveDefinition?.(def)
     this.definitions = this.definitions.filter((d) => d !== def)
     this.updateBook({ definitions: snapshot(this.definitions) })
   }
