@@ -5,7 +5,7 @@ import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
-import { proxy, ref, snapshot } from 'valtio'
+import { proxy, ref } from 'valtio'
 
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
@@ -136,27 +136,25 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
-  updateBook(changes: Partial<ReadonlyDeep<BookRecord>>) {
-    db?.books.update(this.book.id, { ...changes, updatedAt: Date.now() })
+  updateBook(changes: Partial<BookRecord>) {
+    changes = {
+      ...changes,
+      updatedAt: Date.now(),
+    }
+    this.book = { ...this.book, ...changes }
+    db?.books.update(this.book.id, changes)
   }
 
-  definitions = this.book.definitions
-  addDefinition(def: string) {
-    if (this.definitions.includes(def)) return
-    this.definitions.push(def)
-    this.updateBook({ definitions: snapshot(this.definitions) })
+  define(def: string) {
+    this.updateBook({ definitions: [...this.book.definitions, def] })
   }
-  removeDefinition(def: string) {
-    this.definitions = this.definitions.filter((d) => d !== def)
-    this.updateBook({ definitions: snapshot(this.definitions) })
+  undefine(def: string) {
+    this.updateBook({
+      definitions: this.book.definitions.filter((d) => d !== def),
+    })
   }
-  toggleDefinition(def: string) {
-    def = def.trim()
-    if (this.definitions.includes(def)) {
-      this.removeDefinition(def)
-    } else {
-      this.addDefinition(def)
-    }
+  isDefined(def: string) {
+    return this.book.definitions.includes(def)
   }
 
   keyword = ''
@@ -357,7 +355,6 @@ export class BookTab extends BaseTab {
           previousSectionsPercentage +
           currentSectionPercentage * displayedPercentage
 
-        this.book.percentage = percentage
         this.updateBook({ cfi: start.cfi, percentage })
       }
     })
@@ -383,9 +380,12 @@ export class BookTab extends BaseTab {
     })
   }
 
-  constructor(public readonly book: BookRecord) {
+  constructor(public book: BookRecord) {
     super(book.id, book.name)
-    this.book = ref(book)
+
+    // don't subscribe `db.books` in `constructor`, it will
+    // 1. update the unproxied instance, which is not reactive
+    // 2. update unnecessary state (e.g. percentage) of all tabs with the same book
   }
 }
 

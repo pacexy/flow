@@ -1,6 +1,5 @@
 import { useSnapshot } from 'valtio'
 
-
 import { reader } from '../Reader'
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
@@ -11,12 +10,12 @@ export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   return (
     <PaneView {...props}>
       <Pane headline="Definitions">
-        {focusedBookTab?.definitions.map((d) => {
+        {focusedBookTab?.book.definitions.map((d) => {
           return (
             <Row
               key={d}
               onDelete={() => {
-                reader.focusedBookTab?.removeDefinition(d)
+                reader.focusedBookTab?.undefine(d)
               }}
             >
               {d}

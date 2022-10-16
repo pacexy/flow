@@ -12,6 +12,7 @@ import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import useTilg from 'tilg'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { navbarState, settingsState } from '@ink/reader/state'
@@ -201,15 +202,11 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const prevSize = useRef(0)
   const settings = useRecoilValue(settingsState)
   const { dark } = useColorScheme()
-  const {
-    iframe,
-    rendition,
-    locationToReturn,
-    location,
-    definitions,
-    rendered,
-    book,
-  } = useSnapshot(tab)
+
+  const { iframe, rendition, locationToReturn, location, rendered, book } =
+    useSnapshot(tab)
+
+  useTilg()
 
   useEffect(() => {
     const el = ref.current
@@ -368,7 +365,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         <TextSelectionMenu tab={tab} />
         <FindMatches tab={tab} />
         {/* with `key`, react will mount/unmount it automatically */}
-        {definitions.map((definition) => (
+        {book.definitions.map((definition) => (
           <Definition key={definition} tab={tab} definition={definition} />
         ))}
       </div>

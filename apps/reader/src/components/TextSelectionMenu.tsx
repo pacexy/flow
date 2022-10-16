@@ -2,7 +2,12 @@ import { Overlay } from '@literal-ui/core'
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useCallback, useEffect, useState } from 'react'
-import { MdOutlineAddBox, MdOutlineEdit, MdSearch } from 'react-icons/md'
+import {
+  MdOutlineAddBox,
+  MdOutlineEdit,
+  MdOutlineIndeterminateCheckBox,
+  MdSearch,
+} from 'react-icons/md'
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
@@ -79,6 +84,8 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 
   if (!display || !range || !rect || !textContent) return null
 
+  const text = textContent.trim()
+
   return (
     <>
       <div
@@ -106,7 +113,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
             onClick={() => {
               selection?.removeAllRanges()
               setAction('Search')
-              reader.focusedBookTab?.setKeyword(textContent)
+              reader.focusedBookTab?.setKeyword(text)
             }}
           />
           <IconButton
@@ -119,15 +126,27 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
               selection?.removeAllRanges()
             }}
           />
-          <IconButton
-            title="Define"
-            Icon={MdOutlineAddBox}
-            size={20}
-            onClick={() => {
-              selection?.removeAllRanges()
-              reader.focusedBookTab?.toggleDefinition(textContent)
-            }}
-          />
+          {reader.focusedBookTab?.isDefined(text) ? (
+            <IconButton
+              title="Undefine"
+              Icon={MdOutlineIndeterminateCheckBox}
+              size={20}
+              onClick={() => {
+                selection?.removeAllRanges()
+                reader.focusedBookTab?.undefine(text)
+              }}
+            />
+          ) : (
+            <IconButton
+              title="Define"
+              Icon={MdOutlineAddBox}
+              size={20}
+              onClick={() => {
+                selection?.removeAllRanges()
+                reader.focusedBookTab?.define(text)
+              }}
+            />
+          )}
         </div>
         <div className="mt-2 space-y-2 p-1">
           {keys(typeMap).map((type) => (
