@@ -31,7 +31,8 @@ const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
           undefined,
           undefined,
           {
-            fill: 'rgba(255, 223, 93, 0.3)',
+            // tailwind yellow-500
+            fill: 'rgba(234, 179, 8, 0.3)',
             'fill-opacity': 'unset',
           },
         ) as any
