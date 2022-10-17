@@ -5,8 +5,9 @@ import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
-import { proxy, ref } from 'valtio'
+import { proxy, ref, snapshot } from 'valtio'
 
+import { AnnotationColor } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
 import { defaultStyle, updateCustomStyle } from '../styles'
@@ -103,6 +104,7 @@ export class BookTab extends BaseTab {
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
   locationToReturn?: Location
+  section?: ISection
   sections?: ISection[]
   results?: Match[]
   activeResultID?: string
@@ -136,11 +138,12 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
-  updateBook(changes: Partial<BookRecord>) {
+  async updateBook(changes: Partial<BookRecord>) {
     changes = {
       ...changes,
       updatedAt: Date.now(),
     }
+    // don't wait promise resolve to make valtio batch updates
     this.book = { ...this.book, ...changes }
     db?.books.update(this.book.id, changes)
   }
@@ -155,6 +158,39 @@ export class BookTab extends BaseTab {
   }
   isDefined(def: string) {
     return this.book.definitions.includes(def)
+  }
+
+  annotate(
+    type: 'highlight',
+    cfi: string,
+    color: AnnotationColor,
+    text: string,
+    notes?: string,
+  ) {
+    const spine = this.section
+    if (!spine?.navitem) return
+
+    const now = Date.now()
+    const annotation = {
+      id: uuidv4(),
+      bookId: this.book.id,
+      cfi,
+      spine: {
+        index: spine.index,
+        title: spine.navitem.label,
+      },
+      createAt: now,
+      updatedAt: now,
+      type,
+      color,
+      notes,
+      text,
+    }
+
+    this.updateBook({
+      // DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.
+      annotations: [...snapshot(this.book.annotations), annotation],
+    })
   }
 
   keyword = ''
@@ -206,14 +242,8 @@ export class BookTab extends BaseTab {
     return this.location?.start.href
   }
 
-  get currentSection() {
-    return this.sections?.find((s) => s.href === this.currentHref)
-  }
-
   get currentNavItem() {
-    return this.location
-      ? this.mapSectionToNavItem(this.location.start.href)
-      : undefined
+    return this.section?.navitem
   }
 
   get view() {
@@ -241,7 +271,7 @@ export class BookTab extends BaseTab {
     return path
   }
 
-  searchInSection(keyword = this.keyword, section = this.currentSection) {
+  searchInSection(keyword = this.keyword, section = this.section) {
     if (!section) return
 
     const subitems = section.find(keyword) as unknown as Match[]
@@ -325,6 +355,7 @@ export class BookTab extends BaseTab {
     )
     this.rendition.themes.default(defaultStyle)
     this.rendition.hooks.render.register((view: any) => {
+      console.log('hooks.render', view)
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
       updateCustomStyle(view.contents, settings)
@@ -368,8 +399,9 @@ export class BookTab extends BaseTab {
     this.rendition.on('displayed', (...args: any[]) => {
       console.log('displayed', args)
     })
-    this.rendition.on('rendered', (section: Section, view: any) => {
+    this.rendition.on('rendered', (section: ISection, view: any) => {
       console.log('rendered', [section, view])
+      this.section = ref(section)
       this.iframe = ref(view.window as Window)
     })
     this.rendition.on('selected', (...args: any[]) => {

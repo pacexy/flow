@@ -2,6 +2,7 @@ import { IS_SERVER } from '@literal-ui/hooks'
 import Dexie, { Table } from 'dexie'
 import { PackagingMetadataObject } from 'epubjs/types/packaging'
 
+import { Annotation } from './annotation'
 import { fileToEpub } from './file'
 
 export interface FileRecord {
@@ -25,6 +26,7 @@ export interface BookRecord {
   cfi?: string
   percentage?: number
   definitions: string[]
+  annotations: Annotation[]
 }
 
 export class DB extends Dexie {
@@ -36,6 +38,19 @@ export class DB extends Dexie {
 
   constructor(name: string) {
     super(name)
+
+    this.version(4)
+      .stores({
+        books:
+          'id, name, size, metadata, createdAt, updatedAt, cfi, percentage, definitions, annotations',
+      })
+      .upgrade(async (t) => {
+        t.table('books')
+          .toCollection()
+          .modify((r) => {
+            r.annotations = []
+          })
+      })
 
     this.version(3)
       .stores({

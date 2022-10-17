@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
+import { colorMap, Annotation as IAnnotation } from '../annotation'
 import { BookTab, compareHref } from '../models'
 import { actionState } from '../state'
 
@@ -99,6 +100,39 @@ export const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
       )
     }
   }, [currentHref, definition, rendition?.annotations, setAction, tab])
+
+  return null
+}
+
+interface AnnotationProps {
+  tab: BookTab
+  annotation: IAnnotation
+}
+export const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
+  const { rendition } = useSnapshot(tab)
+
+  useEffect(() => {
+    rendition?.annotations.add(
+      annotation.type,
+      annotation.cfi,
+      undefined,
+      () => {},
+      undefined,
+      {
+        fill: colorMap[annotation.color],
+        'fill-opacity': '0.5',
+      },
+    )
+
+    return () => {
+      rendition?.annotations.remove(annotation.cfi, annotation.type)
+    }
+  }, [
+    annotation.cfi,
+    annotation.color,
+    annotation.type,
+    rendition?.annotations,
+  ])
 
   return null
 }

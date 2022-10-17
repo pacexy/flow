@@ -11,6 +11,7 @@ import {
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
+import { typeMap, colorMap } from '../annotation'
 import { useMobile, useTextSelection } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
@@ -18,26 +19,6 @@ import { keys, last } from '../utils'
 
 import { IconButton } from './Button'
 import { reader } from './Reader'
-
-const typeMap = {
-  highlight: {
-    style: 'backgroundColor',
-    class: 'rounded',
-  },
-  // underline: {
-  //   style: 'border-bottom-color',
-  //   class: 'border-b-2',
-  // },
-}
-
-// "dark color + low opacity" is clearer than "light color + high opacity"
-// from tailwind [color]-600
-const colorMap = {
-  yellow: 'rgba(217, 119, 6, 0.2)',
-  red: 'rgba(220, 38, 38, 0.2)',
-  green: 'rgba(22, 163, 74, 0.2)',
-  blue: 'rgba(37, 99, 235, 0.2)',
-}
 
 interface TextSelectionMenuProps {
   tab: BookTab
@@ -161,17 +142,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
                   )}
                   onClick={() => {
                     const cfi = view().contents.cfiFromRange(range)
-                    reader.focusedBookTab?.rendition?.annotations.add(
-                      type,
-                      cfi,
-                      undefined,
-                      () => {},
-                      undefined,
-                      {
-                        fill: colorMap[color],
-                        'fill-opacity': '0.5',
-                      },
-                    )
+                    reader.focusedBookTab?.annotate(type, cfi, color, text)
                   }}
                 >
                   A
