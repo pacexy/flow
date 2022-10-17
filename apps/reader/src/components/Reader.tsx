@@ -26,9 +26,7 @@ import { updateCustomStyle } from '../styles'
 import {
   getClickedAnnotation,
   setClickedAnnotation,
-  Definition,
-  FindMatches,
-  Annotation,
+  Annotations,
 } from './Annotation'
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
@@ -204,15 +202,8 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const settings = useRecoilValue(settingsState)
   const { dark } = useColorScheme()
 
-  const {
-    iframe,
-    rendition,
-    locationToReturn,
-    location,
-    rendered,
-    book,
-    section,
-  } = useSnapshot(tab)
+  const { iframe, rendition, locationToReturn, location, rendered, book } =
+    useSnapshot(tab)
 
   useTilg()
 
@@ -377,16 +368,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
           )}
         />
         <TextSelectionMenu tab={tab} />
-        <FindMatches tab={tab} />
-        {/* with `key`, react will mount/unmount it automatically */}
-        {book.annotations
-          .filter((a) => a.spine.index === section?.index)
-          .map((annotation) => (
-            <Annotation key={annotation.id} tab={tab} annotation={annotation} />
-          ))}
-        {book.definitions.map((definition) => (
-          <Definition key={definition} tab={tab} definition={definition} />
-        ))}
+        <Annotations tab={tab} />
       </div>
       <Bar>
         {locationToReturn ? (

@@ -15,7 +15,7 @@ export const setClickedAnnotation = (v: boolean) => (clickedAnnotation = v)
 interface FindMatchProps {
   tab: BookTab
 }
-export const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
+const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
   const setAction = useSetRecoilState(actionState)
   const { rendition, results, currentHref } = useSnapshot(tab)
 
@@ -60,7 +60,7 @@ interface DefinitionProps {
   tab: BookTab
   definition: string
 }
-export const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
+const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
   const setAction = useSetRecoilState(actionState)
   const { rendition, currentHref } = useSnapshot(tab)
 
@@ -108,7 +108,7 @@ interface AnnotationProps {
   tab: BookTab
   annotation: IAnnotation
 }
-export const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
+const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
   const { rendition } = useSnapshot(tab)
 
   useEffect(() => {
@@ -135,4 +135,27 @@ export const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
   ])
 
   return null
+}
+
+interface AnnotationsProps {
+  tab: BookTab
+}
+export const Annotations: React.FC<AnnotationsProps> = ({ tab }) => {
+  const { book, section } = useSnapshot(tab)
+
+  return (
+    <>
+      <FindMatches tab={tab} />
+      {/* with `key`, react will mount/unmount it automatically */}
+      {book.annotations
+        // seems to fix annotation flash when executing `next()` and `display()`
+        .filter((a) => a.spine.index === section?.index)
+        .map((annotation) => (
+          <Annotation key={annotation.id} tab={tab} annotation={annotation} />
+        ))}
+      {book.definitions.map((definition) => (
+        <Definition key={definition} tab={tab} definition={definition} />
+      ))}
+    </>
+  )
 }
