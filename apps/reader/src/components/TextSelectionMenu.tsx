@@ -1,7 +1,7 @@
 import { Overlay } from '@literal-ui/core'
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   MdOutlineAddBox,
   MdOutlineEdit,
@@ -19,6 +19,7 @@ import { keys, last } from '../utils'
 
 import { IconButton } from './Button'
 import { reader } from './Reader'
+import { TextField } from './TextField'
 
 interface TextSelectionMenuProps {
   tab: BookTab
@@ -26,10 +27,8 @@ interface TextSelectionMenuProps {
 export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   tab,
 }) => {
-  const setAction = useSetRecoilState(actionState)
   const { rendition } = useSnapshot(tab)
   const [display, setDisplay] = useState(false)
-  const mobile = useMobile()
 
   // `manager` is not reactive, so we need to use getter
   const view = useCallback(() => {
@@ -68,10 +67,40 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const text = textContent.trim()
 
   return (
+    <TextSelectionMenuRenderer
+      view={view}
+      selection={selection}
+      range={range}
+      rect={rect}
+      text={text}
+      forward={forward}
+      offsetLeft={offsetLeft}
+    />
+  )
+}
+
+interface TextSelectionMenuRendererProps {
+  view: () => any
+  selection?: Selection
+  range: Range
+  rect: DOMRect
+  text: string
+  forward?: boolean
+  offsetLeft: number
+}
+export const TextSelectionMenuRenderer: React.FC<
+  TextSelectionMenuRendererProps
+> = ({ view, selection, range, rect, text, forward, offsetLeft }) => {
+  const setAction = useSetRecoilState(actionState)
+  const ref = useRef<HTMLInputElement>(null)
+  const [annotate, setAnnotate] = useState(false)
+  const mobile = useMobile()
+
+  return (
     <>
       <div
         className={clsx(
-          'bg-surface text-on-surface-variant shadow-1 absolute z-20 -translate-x-1/2 p-1',
+          'bg-surface text-on-surface-variant shadow-1 absolute z-20 -translate-x-1/2 p-2',
           !forward && '-translate-y-full',
         )}
         style={
@@ -86,50 +115,60 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
               }
         }
       >
-        <div className="flex gap-1">
-          <IconButton
-            title="Search in book"
-            Icon={MdSearch}
-            size={20}
-            onClick={() => {
-              selection?.removeAllRanges()
-              setAction('Search')
-              reader.focusedBookTab?.setKeyword(text)
-            }}
-          />
-          <IconButton
-            title="Annotate"
-            Icon={MdOutlineEdit}
-            size={20}
-            onClick={() => {
-              const cfi = view().contents.cfiFromRange(range)
-              reader.focusedBookTab?.rendition?.annotations.mark(cfi)
-              selection?.removeAllRanges()
-            }}
-          />
-          {reader.focusedBookTab?.isDefined(text) ? (
+        {annotate ? (
+          <div className="mb-3">
+            <TextField
+              mRef={ref}
+              as="textarea"
+              name="notes"
+              hideLabel
+              className="h-40 w-72"
+            />
+          </div>
+        ) : (
+          <div className="-m-1 mb-3 flex gap-1">
             <IconButton
-              title="Undefine"
-              Icon={MdOutlineIndeterminateCheckBox}
+              title="Search in book"
+              Icon={MdSearch}
               size={20}
               onClick={() => {
                 selection?.removeAllRanges()
-                reader.focusedBookTab?.undefine(text)
+                setAction('Search')
+                reader.focusedBookTab?.setKeyword(text)
               }}
             />
-          ) : (
             <IconButton
-              title="Define"
-              Icon={MdOutlineAddBox}
+              title="Annotate"
+              Icon={MdOutlineEdit}
               size={20}
               onClick={() => {
-                selection?.removeAllRanges()
-                reader.focusedBookTab?.define(text)
+                setAnnotate(true)
               }}
             />
-          )}
-        </div>
-        <div className="mt-2 space-y-2 p-1">
+            {reader.focusedBookTab?.isDefined(text) ? (
+              <IconButton
+                title="Undefine"
+                Icon={MdOutlineIndeterminateCheckBox}
+                size={20}
+                onClick={() => {
+                  selection?.removeAllRanges()
+                  reader.focusedBookTab?.undefine(text)
+                }}
+              />
+            ) : (
+              <IconButton
+                title="Define"
+                Icon={MdOutlineAddBox}
+                size={20}
+                onClick={() => {
+                  selection?.removeAllRanges()
+                  reader.focusedBookTab?.define(text)
+                }}
+              />
+            )}
+          </div>
+        )}
+        <div className="space-y-2">
           {keys(typeMap).map((type) => (
             <div key={type} className="flex gap-2">
               {keys(colorMap).map((color) => (
@@ -142,7 +181,14 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
                   )}
                   onClick={() => {
                     const cfi = view().contents.cfiFromRange(range)
-                    reader.focusedBookTab?.annotate(type, cfi, color, text)
+                    reader.focusedBookTab?.annotate(
+                      type,
+                      cfi,
+                      color,
+                      text,
+                      ref.current?.value,
+                    )
+                    selection?.removeAllRanges()
                   }}
                 >
                   A

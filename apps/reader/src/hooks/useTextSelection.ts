@@ -3,12 +3,10 @@
 import { useIsomorphicEffect } from '@literal-ui/hooks'
 import { useState } from 'react'
 
-type ClientRect = Record<keyof Omit<DOMRect, 'toJSON'>, number>
-
 type TextSelectionState = {
   selection?: Selection
   range?: Range
-  rects?: ClientRect[]
+  rects?: DOMRect[]
   isCollapsed?: boolean
   textContent?: string
   forward?: boolean
