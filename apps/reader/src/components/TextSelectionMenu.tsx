@@ -16,7 +16,7 @@ import { BookTab } from '../models'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
-import { IconButton } from './Button'
+import { Button, IconButton } from './Button'
 import { TextField } from './TextField'
 
 interface TextSelectionMenuProps {
@@ -50,7 +50,8 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     rendition?.on('relocated', handler)
   }, [handler, rendition])
 
-  const range = annotationRange ?? selection?.getRangeAt(0)
+  // it is possible that both `selection` and `tab.annotationRange` are set when select end within an annotation
+  const range = selection?.getRangeAt(0) ?? annotationRange
 
   if (!range) return null
 
@@ -77,7 +78,11 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
         if (selection) {
           selection.removeAllRanges()
           setSelection(undefined)
-        } else if (tab.annotationRange) {
+        }
+        /**
+         * {@link range}
+         */
+        if (tab.annotationRange) {
           tab.annotationRange = undefined
         }
       }}
@@ -99,7 +104,10 @@ export const TextSelectionMenuRenderer: React.FC<
 > = ({ tab, range, rect, text, forward, offsetLeft, hide }) => {
   const setAction = useSetRecoilState(actionState)
   const ref = useRef<HTMLInputElement>(null)
-  const [annotate, setAnnotate] = useState(false)
+
+  const cfi = tab.rangeToCfi(range)
+  const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
+  const [annotate, setAnnotate] = useState(!!annotation)
 
   return (
     <>
@@ -131,6 +139,7 @@ export const TextSelectionMenuRenderer: React.FC<
               mRef={ref}
               as="textarea"
               name="notes"
+              defaultValue={annotation?.notes}
               hideLabel
               className="h-40 w-72"
             />
@@ -190,7 +199,13 @@ export const TextSelectionMenuRenderer: React.FC<
                     typeMap[type].class,
                   )}
                   onClick={() => {
-                    tab.annotate(type, range, color, text, ref.current?.value)
+                    tab.putAnnotation(
+                      type,
+                      cfi,
+                      color,
+                      text,
+                      ref.current?.value,
+                    )
                     hide()
                   }}
                 >
@@ -200,6 +215,38 @@ export const TextSelectionMenuRenderer: React.FC<
             </div>
           ))}
         </div>
+        {annotate && (
+          <div className="mt-3 flex">
+            {annotation && (
+              <Button
+                compact
+                variant="secondary"
+                onClick={() => {
+                  tab.removeAnnotation(cfi)
+                  hide()
+                }}
+              >
+                Delete
+              </Button>
+            )}
+            <Button
+              className="ml-auto"
+              compact
+              onClick={() => {
+                tab.putAnnotation(
+                  annotation?.type ?? 'highlight',
+                  cfi,
+                  annotation?.color ?? 'yellow',
+                  text,
+                  ref.current?.value,
+                )
+                hide()
+              }}
+            >
+              {annotation ? 'Update' : 'Create'}
+            </Button>
+          </div>
+        )}
       </div>
     </>
   )

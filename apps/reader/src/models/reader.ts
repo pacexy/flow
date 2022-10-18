@@ -7,7 +7,7 @@ import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
-import { Annotation, AnnotationColor } from '../annotation'
+import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
 import { defaultStyle, updateCustomStyle } from '../styles'
@@ -166,9 +166,12 @@ export class BookTab extends BaseTab {
     return this.book.definitions.includes(def)
   }
 
-  annotate(
-    type: 'highlight',
-    range: Range,
+  rangeToCfi(range: Range) {
+    return this.view.contents.cfiFromRange(range)
+  }
+  putAnnotation(
+    type: AnnotationType,
+    cfi: string,
     color: AnnotationColor,
     text: string,
     notes?: string,
@@ -176,28 +179,49 @@ export class BookTab extends BaseTab {
     const spine = this.section
     if (!spine?.navitem) return
 
-    const cfi = this.view.contents.cfiFromRange(range)
+    const i = this.book.annotations.findIndex((a) => a.cfi === cfi)
+    let annotation = this.book.annotations[i]
 
     const now = Date.now()
-    const annotation: Annotation = {
-      id: uuidv4(),
-      bookId: this.book.id,
-      cfi,
-      spine: {
-        index: spine.index,
-        title: spine.navitem.label,
-      },
-      createAt: now,
-      updatedAt: now,
-      type,
-      color,
-      notes,
-      text,
-    }
+    if (!annotation) {
+      annotation = {
+        id: uuidv4(),
+        bookId: this.book.id,
+        cfi,
+        spine: {
+          index: spine.index,
+          title: spine.navitem.label,
+        },
+        createAt: now,
+        updatedAt: now,
+        type,
+        color,
+        notes,
+        text,
+      }
 
-    this.updateBook({
-      // DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.
-      annotations: [...snapshot(this.book.annotations), annotation],
+      this.updateBook({
+        // DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.
+        annotations: [...snapshot(this.book.annotations), annotation],
+      })
+    } else {
+      annotation = {
+        ...this.book.annotations[i]!,
+        type,
+        updatedAt: now,
+        color,
+        notes,
+        text,
+      }
+      this.book.annotations.splice(i, 1, annotation)
+      this.updateBook({
+        annotations: [...snapshot(this.book.annotations)],
+      })
+    }
+  }
+  removeAnnotation(cfi: string) {
+    return this.updateBook({
+      annotations: snapshot(this.book.annotations).filter((a) => a.cfi !== cfi),
     })
   }
 
