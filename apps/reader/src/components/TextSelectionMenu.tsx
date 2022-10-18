@@ -1,5 +1,4 @@
 import { Overlay } from '@literal-ui/core'
-import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -12,13 +11,12 @@ import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { typeMap, colorMap } from '../annotation'
-import { useMobile, useTextSelection } from '../hooks'
+import { isForwardSelection, useTextSelection } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
 import { IconButton } from './Button'
-import { reader } from './Reader'
 import { TextField } from './TextField'
 
 interface TextSelectionMenuProps {
@@ -27,8 +25,7 @@ interface TextSelectionMenuProps {
 export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   tab,
 }) => {
-  const { rendition } = useSnapshot(tab)
-  const [display, setDisplay] = useState(false)
+  const { rendition, annotationRange } = useSnapshot(tab)
 
   // `manager` is not reactive, so we need to use getter
   const view = useCallback(() => {
@@ -36,10 +33,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   }, [rendition])
 
   const win = view()?.window
-
-  const { selection, range, rects, forward, textContent } =
-    useTextSelection(win)
-  const rect = rects && (forward ? last(rects) : rects[0])
+  const [selection, setSelection] = useTextSelection(win)
 
   const [offsetLeft, setOffsetLeft] = useState(0)
 
@@ -56,51 +50,67 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     rendition?.on('relocated', handler)
   }, [handler, rendition])
 
-  useEffect(() => {
-    setDisplay(false)
-  }, [selection])
+  const range = annotationRange ?? selection?.getRangeAt(0)
 
-  useEventListener(win, 'mouseup', () => setDisplay(true))
+  if (!range) return null
 
-  if (!display || !range || !rect || !textContent) return null
+  const forward = selection ? isForwardSelection(selection) : true
 
-  const text = textContent.trim()
+  const rects = [...range.getClientRects()].filter((r) => r.width)
+  const rect = rects && (forward ? last(rects) : rects[0])
+  if (!rect) return null
+
+  const contents = range.cloneContents()
+  const text = contents.textContent?.trim()
+  if (!text) return null
 
   return (
+    // to reset inner state
     <TextSelectionMenuRenderer
-      view={view}
-      selection={selection}
-      range={range}
+      tab={tab}
+      range={range as Range}
       rect={rect}
       text={text}
       forward={forward}
       offsetLeft={offsetLeft}
+      hide={() => {
+        if (selection) {
+          selection.removeAllRanges()
+          setSelection(undefined)
+        } else if (tab.annotationRange) {
+          tab.annotationRange = undefined
+        }
+      }}
     />
   )
 }
 
 interface TextSelectionMenuRendererProps {
-  view: () => any
-  selection?: Selection
+  tab: BookTab
   range: Range
   rect: DOMRect
   text: string
   forward?: boolean
   offsetLeft: number
+  hide: () => void
 }
 export const TextSelectionMenuRenderer: React.FC<
   TextSelectionMenuRendererProps
-> = ({ view, selection, range, rect, text, forward, offsetLeft }) => {
+> = ({ tab, range, rect, text, forward, offsetLeft, hide }) => {
   const setAction = useSetRecoilState(actionState)
   const ref = useRef<HTMLInputElement>(null)
   const [annotate, setAnnotate] = useState(false)
-  const mobile = useMobile()
 
   return (
     <>
+      <Overlay
+        // cover `sash`
+        className="!z-50 !bg-transparent"
+        onMouseDown={hide}
+      />
       <div
         className={clsx(
-          'bg-surface text-on-surface-variant shadow-1 absolute z-20 -translate-x-1/2 p-2',
+          'bg-surface text-on-surface-variant shadow-1 absolute z-50 -translate-x-1/2 p-2',
           !forward && '-translate-y-full',
         )}
         style={
@@ -132,9 +142,9 @@ export const TextSelectionMenuRenderer: React.FC<
               Icon={MdSearch}
               size={20}
               onClick={() => {
-                selection?.removeAllRanges()
+                hide()
                 setAction('Search')
-                reader.focusedBookTab?.setKeyword(text)
+                tab.setKeyword(text)
               }}
             />
             <IconButton
@@ -145,14 +155,14 @@ export const TextSelectionMenuRenderer: React.FC<
                 setAnnotate(true)
               }}
             />
-            {reader.focusedBookTab?.isDefined(text) ? (
+            {tab.isDefined(text) ? (
               <IconButton
                 title="Undefine"
                 Icon={MdOutlineIndeterminateCheckBox}
                 size={20}
                 onClick={() => {
-                  selection?.removeAllRanges()
-                  reader.focusedBookTab?.undefine(text)
+                  hide()
+                  tab.undefine(text)
                 }}
               />
             ) : (
@@ -161,8 +171,8 @@ export const TextSelectionMenuRenderer: React.FC<
                 Icon={MdOutlineAddBox}
                 size={20}
                 onClick={() => {
-                  selection?.removeAllRanges()
-                  reader.focusedBookTab?.define(text)
+                  hide()
+                  tab.define(text)
                 }}
               />
             )}
@@ -180,15 +190,8 @@ export const TextSelectionMenuRenderer: React.FC<
                     typeMap[type].class,
                   )}
                   onClick={() => {
-                    const cfi = view().contents.cfiFromRange(range)
-                    reader.focusedBookTab?.annotate(
-                      type,
-                      cfi,
-                      color,
-                      text,
-                      ref.current?.value,
-                    )
-                    selection?.removeAllRanges()
+                    tab.annotate(type, range, color, text, ref.current?.value)
+                    hide()
                   }}
                 >
                   A
@@ -198,12 +201,6 @@ export const TextSelectionMenuRenderer: React.FC<
           ))}
         </div>
       </div>
-      {mobile && (
-        <Overlay
-          className="!bg-transparent"
-          onClick={() => selection?.removeAllRanges()}
-        />
-      )}
     </>
   )
 }

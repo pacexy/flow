@@ -40,7 +40,6 @@ const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
         const g = h?.mark.element as SVGGElement
         g?.addEventListener('click', () => {
           setClickedAnnotation(true)
-          setAction('Search')
         })
       } catch (error) {
         // ignore matched text in `<title>`
@@ -86,9 +85,8 @@ const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
 
         // `<rect>` should be reserved to response `click`
         g?.addEventListener('click', () => {
+          tab.setAnnotationRange(m.cfi!)
           setClickedAnnotation(true)
-          setAction('Search')
-          tab.setKeyword(definition)
         })
       } catch (error) {
         // ignore matched text in `<title>`
@@ -113,17 +111,24 @@ const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
   const { rendition } = useSnapshot(tab)
 
   useEffect(() => {
-    rendition?.annotations.add(
-      annotation.type,
+    const h = rendition?.annotations[annotation.type](
       annotation.cfi,
       undefined,
-      () => {},
+      undefined,
       undefined,
       {
         fill: colorMap[annotation.color],
         'fill-opacity': '0.5',
       },
-    )
+    ) as any
+
+    const g = h?.mark.element as SVGGElement
+
+    // `<rect>` should be reserved to response `click`
+    g?.addEventListener('click', () => {
+      tab.setAnnotationRange(annotation.cfi)
+      setClickedAnnotation(true)
+    })
 
     return () => {
       rendition?.annotations.remove(annotation.cfi, annotation.type)
@@ -133,6 +138,7 @@ const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
     annotation.color,
     annotation.type,
     rendition?.annotations,
+    tab,
   ])
 
   return null

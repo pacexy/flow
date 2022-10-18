@@ -7,7 +7,7 @@ import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
-import { AnnotationColor } from '../annotation'
+import { Annotation, AnnotationColor } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
 import { defaultStyle, updateCustomStyle } from '../styles'
@@ -148,6 +148,12 @@ export class BookTab extends BaseTab {
     db?.books.update(this.book.id, changes)
   }
 
+  annotationRange?: Range
+  setAnnotationRange(cfi: string) {
+    const range = this.view?.contents.range(cfi)
+    if (range) this.annotationRange = ref(range)
+  }
+
   define(def: string) {
     this.updateBook({ definitions: [...this.book.definitions, def] })
   }
@@ -162,7 +168,7 @@ export class BookTab extends BaseTab {
 
   annotate(
     type: 'highlight',
-    cfi: string,
+    range: Range,
     color: AnnotationColor,
     text: string,
     notes?: string,
@@ -170,8 +176,10 @@ export class BookTab extends BaseTab {
     const spine = this.section
     if (!spine?.navitem) return
 
+    const cfi = this.view.contents.cfiFromRange(range)
+
     const now = Date.now()
-    const annotation = {
+    const annotation: Annotation = {
       id: uuidv4(),
       bookId: this.book.id,
       cfi,
