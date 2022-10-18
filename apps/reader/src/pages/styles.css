@@ -102,3 +102,7 @@ p {
     transform: translateX(2000%) scaleX(1);
   }
 }
+
+.list-row:hover .action {
+  display: block;
+}
