@@ -3,6 +3,8 @@
 import { useEventListener } from '@literal-ui/hooks'
 import { useState } from 'react'
 
+import { useForceRender } from './useForceRender'
+
 export function hasSelection(
   selection?: Selection | null,
 ): selection is Selection {
@@ -18,14 +20,23 @@ export function isForwardSelection(selection: Selection) {
 
     return !range.collapsed
   }
+
+  return true
 }
 
 export function useTextSelection(win?: Window) {
   const [selection, setSelection] = useState<Selection | undefined>()
+  const render = useForceRender()
 
   useEventListener(win, 'mouseup', () => {
     const s = win?.getSelection()
-    if (hasSelection(s)) setSelection(s)
+
+    if (hasSelection(s)) {
+      // sometime `getSelection` will return the same `selection`
+      // when select text by clicking empty space
+      render()
+      setSelection(s)
+    }
   })
 
   return [selection, setSelection] as const

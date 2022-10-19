@@ -1,6 +1,6 @@
 import { Overlay } from '@literal-ui/core'
 import clsx from 'clsx'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import {
   MdOutlineAddBox,
   MdOutlineEdit,
@@ -16,8 +16,10 @@ import { BookTab } from '../models'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
+
 import { Button, IconButton } from './Button'
 import { TextField } from './TextField'
+import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
 
 interface TextSelectionMenuProps {
   tab: BookTab
@@ -35,31 +37,19 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const win = view()?.window
   const [selection, setSelection] = useTextSelection(win)
 
-  const [offsetLeft, setOffsetLeft] = useState(0)
+  const el = view()?.element as HTMLElement
+  if (!el) return null
 
-  const handler = useCallback(() => {
-    const el = view()?.element as HTMLElement
-    if (!el) return
-
-    const containerLeft = el.parentElement!.getBoundingClientRect().left
-    const viewLeft = el.getBoundingClientRect().left
-    setOffsetLeft(viewLeft - containerLeft)
-  }, [view])
-
-  useEffect(() => {
-    rendition?.on('relocated', handler)
-  }, [handler, rendition])
-
-  // it is possible that both `selection` and `tab.annotationRange` are set when select end within an annotation
+  // it is possible that both `selection` and `tab.annotationRange`
+  // are set when select end within an annotation
   const range = selection?.getRangeAt(0) ?? annotationRange
-
   if (!range) return null
 
   const forward = selection ? isForwardSelection(selection) : true
 
   const rects = [...range.getClientRects()].filter((r) => r.width)
-  const rect = rects && (forward ? last(rects) : rects[0])
-  if (!rect) return null
+  const anchorRect = rects && (forward ? last(rects) : rects[0])
+  if (!anchorRect) return null
 
   const contents = range.cloneContents()
   const text = contents.textContent?.trim()
@@ -70,10 +60,11 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     <TextSelectionMenuRenderer
       tab={tab}
       range={range as Range}
-      rect={rect}
+      anchorRect={anchorRect}
+      containerRect={el.parentElement!.getBoundingClientRect()}
+      viewRect={el.getBoundingClientRect()}
       text={text}
       forward={forward}
-      offsetLeft={offsetLeft}
       hide={() => {
         if (selection) {
           selection.removeAllRanges()
@@ -93,21 +84,37 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 interface TextSelectionMenuRendererProps {
   tab: BookTab
   range: Range
-  rect: DOMRect
+  anchorRect: DOMRect
+  containerRect: DOMRect
+  viewRect: DOMRect
   text: string
-  forward?: boolean
-  offsetLeft: number
+  forward: boolean
   hide: () => void
 }
 export const TextSelectionMenuRenderer: React.FC<
   TextSelectionMenuRendererProps
-> = ({ tab, range, rect, text, forward, offsetLeft, hide }) => {
+> = ({
+  tab,
+  range,
+  anchorRect,
+  containerRect,
+  viewRect,
+  forward,
+  text,
+  hide,
+}) => {
   const setAction = useSetRecoilState(actionState)
   const ref = useRef<HTMLInputElement>(null)
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
 
   const cfi = tab.rangeToCfi(range)
   const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
   const [annotate, setAnnotate] = useState(!!annotation)
+
+  const position = forward
+    ? LayoutAnchorPosition.Before
+    : LayoutAnchorPosition.After
 
   return (
     <>
@@ -117,21 +124,27 @@ export const TextSelectionMenuRenderer: React.FC<
         onMouseDown={hide}
       />
       <div
+        ref={(el) => {
+          if (!el) return
+          setWidth(el.clientWidth)
+          setHeight(el.clientHeight)
+        }}
         className={clsx(
-          'bg-surface text-on-surface-variant shadow-1 absolute z-50 -translate-x-1/2 p-2',
-          !forward && '-translate-y-full',
+          'bg-surface text-on-surface-variant shadow-1 absolute z-50 p-2',
         )}
-        style={
-          forward
-            ? {
-                top: rect.bottom,
-                left: rect.right + offsetLeft,
-              }
-            : {
-                top: rect.top,
-                left: rect.left + offsetLeft,
-              }
-        }
+        style={{
+          left: layout(containerRect.width, width, {
+            offset: anchorRect.left + viewRect.left - containerRect.left,
+            size: anchorRect.width,
+            mode: LayoutAnchorMode.ALIGN,
+            position,
+          }),
+          top: layout(containerRect.height, height, {
+            offset: anchorRect.top,
+            size: anchorRect.height,
+            position,
+          }),
+        }}
       >
         {annotate ? (
           <div className="mb-3">
