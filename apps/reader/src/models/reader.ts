@@ -138,7 +138,7 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
-  async updateBook(changes: Partial<BookRecord>) {
+  updateBook(changes: Partial<BookRecord>) {
     changes = {
       ...changes,
       updatedAt: Date.now(),

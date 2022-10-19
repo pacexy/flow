@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
 
+import { Annotation } from '@ink/reader/annotation'
 import { BookRecord } from '@ink/reader/db'
 import { BookTab } from '@ink/reader/models'
 import { uploadData } from '@ink/reader/sync'
@@ -9,7 +10,7 @@ import { useRemoteBooks } from './useRemote'
 
 export function useSync(tab: BookTab) {
   const { mutate } = useRemoteBooks()
-  const { location, book, definitions } = useSnapshot(tab)
+  const { location, book } = useSnapshot(tab)
 
   const id = tab.book.id
 
@@ -47,7 +48,13 @@ export function useSync(tab: BookTab) {
 
   useEffect(() => {
     sync({
-      definitions: definitions as string[],
+      definitions: book.definitions as string[],
     })
-  }, [sync, definitions])
+  }, [book.definitions, sync])
+
+  useEffect(() => {
+    sync({
+      annotations: book.annotations as Annotation[],
+    })
+  }, [book.annotations, sync])
 }
