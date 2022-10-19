@@ -12,23 +12,26 @@ import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import useTilg from 'tilg'
 import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
 
-import { actionState, navbarState, settingsState } from '@ink/reader/state'
+import { navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
-import { Reader, BookTab, compareHref } from '../models'
+import { Reader, BookTab } from '../models'
 import { updateCustomStyle } from '../styles'
 
+import {
+  getClickedAnnotation,
+  setClickedAnnotation,
+  Annotations,
+} from './Annotation'
 import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
 import * as pages from './pages'
-
-// avoid click penetration
-let clickedAnnotation = false
 
 export const reader = proxy(new Reader())
 
@@ -198,17 +201,11 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const prevSize = useRef(0)
   const settings = useRecoilValue(settingsState)
   const { dark } = useColorScheme()
-  const {
-    iframe,
-    rendition,
-    locationToReturn,
-    results,
-    location,
-    definitions,
-    rendered,
-    currentHref,
-    book,
-  } = useSnapshot(tab)
+
+  const { iframe, rendition, locationToReturn, location, rendered, book } =
+    useSnapshot(tab)
+
+  useTilg()
 
   useEffect(() => {
     const el = ref.current
@@ -233,97 +230,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   useSync(tab)
 
   const setNavbar = useSetRecoilState(navbarState)
-  const setAction = useSetRecoilState(actionState)
   const mobile = useMobile()
-
-  useEffect(() => {
-    const result = results?.find((r) => compareHref(location?.start.href, r.id))
-
-    const matches = result?.subitems
-    matches?.forEach((m) => {
-      try {
-        const h = rendition?.annotations.highlight(
-          m.cfi!,
-          undefined,
-          undefined,
-          undefined,
-          {
-            fill: 'rgba(255, 223, 93, 0.3)',
-            'fill-opacity': 'unset',
-          },
-        ) as any
-
-        const g = h?.mark.element as SVGGElement
-        g?.addEventListener('click', () => {
-          clickedAnnotation = true
-          setAction('Search')
-        })
-      } catch (error) {
-        // ignore matched text in `<title>`
-      }
-    })
-
-    return () => {
-      matches?.forEach((m) => {
-        rendition?.annotations.remove(m.cfi!, 'highlight')
-      })
-    }
-  }, [
-    location?.start.href,
-    rendition?.annotations,
-    results,
-    setAction,
-    settings,
-  ])
-
-  const underline = useCallback(
-    async (def: string, type: 'add' | 'remove') => {
-      const result = await tab.searchInSection(def)
-      result?.subitems?.forEach((m) => {
-        try {
-          if (type === 'remove') {
-            rendition?.annotations.remove(m.cfi!, 'underline')
-          } else {
-            const h = rendition?.annotations.underline(
-              m.cfi!,
-              undefined,
-              undefined,
-              undefined,
-              {
-                stroke: '',
-                'stroke-opacity': 1,
-              },
-            ) as any
-
-            const g = h?.mark.element as SVGGElement
-            g?.addEventListener('click', () => {
-              clickedAnnotation = true
-              setAction('Search')
-              tab.setKeyword(def)
-            })
-          }
-        } catch (error) {
-          console.log(error, def, m)
-          // ignore matched text in `<title>`
-        }
-      })
-    },
-    [rendition?.annotations, setAction, tab],
-  )
-
-  useEffect(() => {
-    definitions?.forEach((d) => underline(d, 'add'))
-    return () => {
-      definitions?.forEach((d) => underline(d, 'remove'))
-    }
-    // re-run when section changed
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentHref, underline])
-
-  useEffect(() => {
-    tab.onAddDefinition = (d) => underline(d, 'add')
-    tab.onRemoveDefinition = (d) => underline(d, 'remove')
-  }, [tab, underline])
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
@@ -379,8 +286,8 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     }
 
     if (mobile) {
-      if (clickedAnnotation) {
-        clickedAnnotation = false
+      if (getClickedAnnotation()) {
+        setClickedAnnotation(false)
         return
       }
 
@@ -453,8 +360,17 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className={clsx('relative flex-1', rendered || '-z-10')}>
+      <div ref={ref} className={clsx('relative flex-1')}>
+        <div
+          className={clsx(
+            'bg-default absolute inset-0',
+            // do not cover `sash`
+            'z-20',
+            rendered && 'hidden',
+          )}
+        />
         <TextSelectionMenu tab={tab} />
+        <Annotations tab={tab} />
       </div>
       <Bar>
         {locationToReturn ? (

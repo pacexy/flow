@@ -7,9 +7,10 @@ import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot } from 'valtio'
 
+import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
-import { updateCustomStyle } from '../styles'
+import { defaultStyle, updateCustomStyle } from '../styles'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -103,6 +104,7 @@ export class BookTab extends BaseTab {
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
   locationToReturn?: Location
+  section?: ISection
   sections?: ISection[]
   results?: Match[]
   activeResultID?: string
@@ -136,31 +138,91 @@ export class BookTab extends BaseTab {
     this.rendition?.next()
   }
 
-  updateBook(changes: Partial<ReadonlyDeep<BookRecord>>) {
-    db?.books.update(this.book.id, { ...changes, updatedAt: Date.now() })
+  updateBook(changes: Partial<BookRecord>) {
+    changes = {
+      ...changes,
+      updatedAt: Date.now(),
+    }
+    // don't wait promise resolve to make valtio batch updates
+    this.book = { ...this.book, ...changes }
+    db?.books.update(this.book.id, changes)
   }
 
-  definitions = this.book.definitions
-  onAddDefinition?: (def: string) => void
-  addDefinition(def: string) {
-    if (this.definitions.includes(def)) return
-    this.onAddDefinition?.(def)
-    this.definitions.push(def)
-    this.updateBook({ definitions: snapshot(this.definitions) })
+  annotationRange?: Range
+  setAnnotationRange(cfi: string) {
+    const range = this.view?.contents.range(cfi)
+    if (range) this.annotationRange = ref(range)
   }
-  onRemoveDefinition?: (def: string) => void
-  removeDefinition(def: string) {
-    this.onRemoveDefinition?.(def)
-    this.definitions = this.definitions.filter((d) => d !== def)
-    this.updateBook({ definitions: snapshot(this.definitions) })
+
+  define(def: string) {
+    this.updateBook({ definitions: [...this.book.definitions, def] })
   }
-  toggleDefinition(def: string) {
-    def = def.trim()
-    if (this.definitions.includes(def)) {
-      this.removeDefinition(def)
+  undefine(def: string) {
+    this.updateBook({
+      definitions: this.book.definitions.filter((d) => d !== def),
+    })
+  }
+  isDefined(def: string) {
+    return this.book.definitions.includes(def)
+  }
+
+  rangeToCfi(range: Range) {
+    return this.view.contents.cfiFromRange(range)
+  }
+  putAnnotation(
+    type: AnnotationType,
+    cfi: string,
+    color: AnnotationColor,
+    text: string,
+    notes?: string,
+  ) {
+    const spine = this.section
+    if (!spine?.navitem) return
+
+    const i = this.book.annotations.findIndex((a) => a.cfi === cfi)
+    let annotation = this.book.annotations[i]
+
+    const now = Date.now()
+    if (!annotation) {
+      annotation = {
+        id: uuidv4(),
+        bookId: this.book.id,
+        cfi,
+        spine: {
+          index: spine.index,
+          title: spine.navitem.label,
+        },
+        createAt: now,
+        updatedAt: now,
+        type,
+        color,
+        notes,
+        text,
+      }
+
+      this.updateBook({
+        // DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.
+        annotations: [...snapshot(this.book.annotations), annotation],
+      })
     } else {
-      this.addDefinition(def)
+      annotation = {
+        ...this.book.annotations[i]!,
+        type,
+        updatedAt: now,
+        color,
+        notes,
+        text,
+      }
+      this.book.annotations.splice(i, 1, annotation)
+      this.updateBook({
+        annotations: [...snapshot(this.book.annotations)],
+      })
     }
+  }
+  removeAnnotation(cfi: string) {
+    return this.updateBook({
+      annotations: snapshot(this.book.annotations).filter((a) => a.cfi !== cfi),
+    })
   }
 
   keyword = ''
@@ -212,14 +274,8 @@ export class BookTab extends BaseTab {
     return this.location?.start.href
   }
 
-  get currentSection() {
-    return this.sections?.find((s) => s.href === this.currentHref)
-  }
-
   get currentNavItem() {
-    return this.location
-      ? this.mapSectionToNavItem(this.location.start.href)
-      : undefined
+    return this.section?.navitem
   }
 
   get view() {
@@ -247,7 +303,7 @@ export class BookTab extends BaseTab {
     return path
   }
 
-  searchInSection(keyword = this.keyword, section = this.currentSection) {
+  searchInSection(keyword = this.keyword, section = this.section) {
     if (!section) return
 
     const subitems = section.find(keyword) as unknown as Match[]
@@ -329,16 +385,9 @@ export class BookTab extends BaseTab {
     this.rendition.display(
       this.location?.start.cfi ?? this.book.cfi ?? undefined,
     )
-    this.rendition.themes.default({
-      html: {
-        padding: '0 !important',
-      },
-      'a:any-link': {
-        color: '#3b82f6 !important',
-        'text-decoration': 'none !important',
-      },
-    })
+    this.rendition.themes.default(defaultStyle)
     this.rendition.hooks.render.register((view: any) => {
+      console.log('hooks.render', view)
       const str = localStorage.getItem('settings')
       const settings = str && JSON.parse(str)
       updateCustomStyle(view.contents, settings)
@@ -369,7 +418,6 @@ export class BookTab extends BaseTab {
           previousSectionsPercentage +
           currentSectionPercentage * displayedPercentage
 
-        this.book.percentage = percentage
         this.updateBook({ cfi: start.cfi, percentage })
       }
     })
@@ -383,18 +431,25 @@ export class BookTab extends BaseTab {
     this.rendition.on('displayed', (...args: any[]) => {
       console.log('displayed', args)
     })
-    this.rendition.on('rendered', (section: Section, view: any) => {
+    this.rendition.on('rendered', (section: ISection, view: any) => {
       console.log('rendered', [section, view])
+      this.section = ref(section)
       this.iframe = ref(view.window as Window)
+    })
+    this.rendition.on('selected', (...args: any[]) => {
+      console.log('selected', args)
     })
     this.rendition.on('removed', (...args: any[]) => {
       console.log('removed', args)
     })
   }
 
-  constructor(public readonly book: BookRecord) {
+  constructor(public book: BookRecord) {
     super(book.id, book.name)
-    this.book = ref(book)
+
+    // don't subscribe `db.books` in `constructor`, it will
+    // 1. update the unproxied instance, which is not reactive
+    // 2. update unnecessary state (e.g. percentage) of all tabs with the same book
   }
 }
 

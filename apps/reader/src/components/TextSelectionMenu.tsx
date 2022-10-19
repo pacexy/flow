@@ -1,19 +1,25 @@
 import { Overlay } from '@literal-ui/core'
-import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { useCallback, useEffect, useState } from 'react'
-import { MdSearch } from 'react-icons/md'
-import { VscSymbolInterface } from 'react-icons/vsc'
+import { useCallback, useRef, useState } from 'react'
+import {
+  MdOutlineAddBox,
+  MdOutlineEdit,
+  MdOutlineIndeterminateCheckBox,
+  MdSearch,
+} from 'react-icons/md'
 import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
-import { useMobile, useTextSelection } from '../hooks'
+import { typeMap, colorMap } from '../annotation'
+import { isForwardSelection, useTextSelection } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
-import { last } from '../utils'
+import { keys, last } from '../utils'
 
-import { IconButton } from './Button'
-import { reader } from './Reader'
+
+import { Button, IconButton } from './Button'
+import { TextField } from './TextField'
+import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
 
 interface TextSelectionMenuProps {
   tab: BookTab
@@ -21,10 +27,7 @@ interface TextSelectionMenuProps {
 export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   tab,
 }) => {
-  const setAction = useSetRecoilState(actionState)
-  const { rendition } = useSnapshot(tab)
-  const [display, setDisplay] = useState(false)
-  const mobile = useMobile()
+  const { rendition, annotationRange } = useSnapshot(tab)
 
   // `manager` is not reactive, so we need to use getter
   const view = useCallback(() => {
@@ -32,78 +35,232 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   }, [rendition])
 
   const win = view()?.window
+  const [selection, setSelection] = useTextSelection(win)
 
-  const { selection, rects, forward, textContent } = useTextSelection(win)
-  const rect = rects && (forward ? last(rects) : rects[0])
+  const el = view()?.element as HTMLElement
+  if (!el) return null
 
-  const [offsetLeft, setOffsetLeft] = useState(0)
+  // it is possible that both `selection` and `tab.annotationRange`
+  // are set when select end within an annotation
+  const range = selection?.getRangeAt(0) ?? annotationRange
+  if (!range) return null
 
-  const handler = useCallback(() => {
-    const el = view()?.element as HTMLElement
-    if (!el) return
+  const forward = selection ? isForwardSelection(selection) : true
 
-    const containerLeft = el.parentElement!.getBoundingClientRect().left
-    const viewLeft = el.getBoundingClientRect().left
-    setOffsetLeft(viewLeft - containerLeft)
-  }, [view])
+  const rects = [...range.getClientRects()].filter((r) => r.width)
+  const anchorRect = rects && (forward ? last(rects) : rects[0])
+  if (!anchorRect) return null
 
-  useEffect(() => {
-    rendition?.on('relocated', handler)
-  }, [handler, rendition])
+  const contents = range.cloneContents()
+  const text = contents.textContent?.trim()
+  if (!text) return null
 
-  useEffect(() => {
-    setDisplay(false)
-  }, [selection])
+  return (
+    // to reset inner state
+    <TextSelectionMenuRenderer
+      tab={tab}
+      range={range as Range}
+      anchorRect={anchorRect}
+      containerRect={el.parentElement!.getBoundingClientRect()}
+      viewRect={el.getBoundingClientRect()}
+      text={text}
+      forward={forward}
+      hide={() => {
+        if (selection) {
+          selection.removeAllRanges()
+          setSelection(undefined)
+        }
+        /**
+         * {@link range}
+         */
+        if (tab.annotationRange) {
+          tab.annotationRange = undefined
+        }
+      }}
+    />
+  )
+}
 
-  useEventListener(win, 'mouseup', () => setDisplay(true))
+interface TextSelectionMenuRendererProps {
+  tab: BookTab
+  range: Range
+  anchorRect: DOMRect
+  containerRect: DOMRect
+  viewRect: DOMRect
+  text: string
+  forward: boolean
+  hide: () => void
+}
+export const TextSelectionMenuRenderer: React.FC<
+  TextSelectionMenuRendererProps
+> = ({
+  tab,
+  range,
+  anchorRect,
+  containerRect,
+  viewRect,
+  forward,
+  text,
+  hide,
+}) => {
+  const setAction = useSetRecoilState(actionState)
+  const ref = useRef<HTMLInputElement>(null)
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
 
-  if (!display || !rect || !textContent) return null
+  const cfi = tab.rangeToCfi(range)
+  const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
+  const [annotate, setAnnotate] = useState(!!annotation)
+
+  const position = forward
+    ? LayoutAnchorPosition.Before
+    : LayoutAnchorPosition.After
 
   return (
     <>
+      <Overlay
+        // cover `sash`
+        className="!z-50 !bg-transparent"
+        onMouseDown={hide}
+      />
       <div
+        ref={(el) => {
+          if (!el) return
+          setWidth(el.clientWidth)
+          setHeight(el.clientHeight)
+        }}
         className={clsx(
-          'bg-inverse-surface text-inverse-on-surface absolute z-20 flex -translate-x-1/2 gap-1 p-0.5',
-          !forward && '-translate-y-full',
+          'bg-surface text-on-surface-variant shadow-1 absolute z-50 p-2',
         )}
-        style={
-          forward
-            ? {
-                top: rect.bottom,
-                left: rect.right + offsetLeft,
-              }
-            : {
-                top: rect.top,
-                left: rect.left + offsetLeft,
-              }
-        }
+        style={{
+          left: layout(containerRect.width, width, {
+            offset: anchorRect.left + viewRect.left - containerRect.left,
+            size: anchorRect.width,
+            mode: LayoutAnchorMode.ALIGN,
+            position,
+          }),
+          top: layout(containerRect.height, height, {
+            offset: anchorRect.top,
+            size: anchorRect.height,
+            position,
+          }),
+        }}
       >
-        <IconButton
-          title="Search in book"
-          Icon={MdSearch}
-          size={20}
-          onClick={() => {
-            selection?.removeAllRanges()
-            setAction('Search')
-            reader.focusedBookTab?.setKeyword(textContent)
-          }}
-        />
-        <IconButton
-          title="Define"
-          Icon={VscSymbolInterface}
-          size={20}
-          onClick={() => {
-            selection?.removeAllRanges()
-            reader.focusedBookTab?.toggleDefinition(textContent)
-          }}
-        />
+        {annotate ? (
+          <div className="mb-3">
+            <TextField
+              mRef={ref}
+              as="textarea"
+              name="notes"
+              defaultValue={annotation?.notes}
+              hideLabel
+              className="h-40 w-72"
+            />
+          </div>
+        ) : (
+          <div className="-m-1 mb-3 flex gap-1">
+            <IconButton
+              title="Search in book"
+              Icon={MdSearch}
+              size={20}
+              onClick={() => {
+                hide()
+                setAction('Search')
+                tab.setKeyword(text)
+              }}
+            />
+            <IconButton
+              title="Annotate"
+              Icon={MdOutlineEdit}
+              size={20}
+              onClick={() => {
+                setAnnotate(true)
+              }}
+            />
+            {tab.isDefined(text) ? (
+              <IconButton
+                title="Undefine"
+                Icon={MdOutlineIndeterminateCheckBox}
+                size={20}
+                onClick={() => {
+                  hide()
+                  tab.undefine(text)
+                }}
+              />
+            ) : (
+              <IconButton
+                title="Define"
+                Icon={MdOutlineAddBox}
+                size={20}
+                onClick={() => {
+                  hide()
+                  tab.define(text)
+                }}
+              />
+            )}
+          </div>
+        )}
+        <div className="space-y-2">
+          {keys(typeMap).map((type) => (
+            <div key={type} className="flex gap-2">
+              {keys(colorMap).map((color) => (
+                <div
+                  key={color}
+                  style={{ [typeMap[type].style]: colorMap[color] }}
+                  className={clsx(
+                    'typescale-body-large text-on-surface-variant h-6 w-6 cursor-pointer text-center',
+                    typeMap[type].class,
+                  )}
+                  onClick={() => {
+                    tab.putAnnotation(
+                      type,
+                      cfi,
+                      color,
+                      text,
+                      ref.current?.value,
+                    )
+                    hide()
+                  }}
+                >
+                  A
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        {annotate && (
+          <div className="mt-3 flex">
+            {annotation && (
+              <Button
+                compact
+                variant="secondary"
+                onClick={() => {
+                  tab.removeAnnotation(cfi)
+                  hide()
+                }}
+              >
+                Delete
+              </Button>
+            )}
+            <Button
+              className="ml-auto"
+              compact
+              onClick={() => {
+                tab.putAnnotation(
+                  annotation?.type ?? 'highlight',
+                  cfi,
+                  annotation?.color ?? 'yellow',
+                  text,
+                  ref.current?.value,
+                )
+                hide()
+              }}
+            >
+              {annotation ? 'Update' : 'Create'}
+            </Button>
+          </div>
+        )}
       </div>
-      {mobile && (
-        <Overlay
-          className="!bg-transparent"
-          onClick={() => selection?.removeAllRanges()}
-        />
-      )}
     </>
   )
 }

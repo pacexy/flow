@@ -1,7 +1,7 @@
 import ePub, { Book } from 'epubjs'
 import { v4 as uuidv4 } from 'uuid'
 
-import { db } from './db'
+import { BookRecord, db } from './db'
 import { mapExtToMimes } from './mime'
 import { unpack } from './sync'
 
@@ -43,13 +43,14 @@ export async function addBook(file: File) {
   const epub = await fileToEpub(file)
   const metadata = await epub.loaded.metadata
 
-  const book = {
+  const book: BookRecord = {
     id: uuidv4(),
     name: file.name || `${metadata.title}.epub`,
     size: file.size,
     metadata,
     createdAt: Date.now(),
     definitions: [],
+    annotations: [],
   }
   db?.books.add(book)
   addFile(book.id, file, epub)

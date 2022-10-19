@@ -50,7 +50,7 @@ export const Row: React.FC<RowProps> = ({
   return (
     <div
       className={clsx(
-        'relative flex cursor-pointer items-center py-0.5 pr-3 text-left',
+        'list-row relative flex cursor-pointer items-center py-0.5 pr-3 text-left',
         active && 'bg-outline/20',
         className,
       )}
@@ -87,6 +87,7 @@ export const Row: React.FC<RowProps> = ({
         )}
         {onDelete && (
           <IconButton
+            className="action hidden"
             Icon={MdClose}
             onClick={(e) => {
               e.stopPropagation()

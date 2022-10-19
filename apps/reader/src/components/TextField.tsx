@@ -38,6 +38,7 @@ export function TextField<T extends ElementType = 'input'>({
   ...props
 }: TextFieldProps<T>) {
   const Component = as || 'input'
+  const isInput = Component === 'input'
   const innerRef = useRef<HTMLInputElement>(null)
   const ref = outerRef || innerRef
   const mobile = useMobile()
@@ -68,26 +69,31 @@ export function TextField<T extends ElementType = 'input'>({
       >
         {name}
       </label>
-      <div className="bg-outline/5 textfield flex grow items-center gap-1 px-1">
+      <div className="bg-outline/5 textfield flex grow items-center">
         <Component
           ref={ref}
           name={name}
           id={name}
-          className="typescale-body-medium text-on-surface-variant placeholder:text-outline/60 w-0 flex-1 bg-transparent py-1 !text-[13px]"
+          className={clsx(
+            'typescale-body-medium text-on-surface-variant placeholder:text-outline/60 w-0 flex-1 bg-transparent py-1 px-1.5 !text-[13px]',
+            isInput || 'scroll h-full resize-none',
+          )}
           {...props}
         />
-        <div className="flex gap-0.5">
-          {actions.map(({ onClick, ...a }) => (
-            <IconButton
-              className="text-outline !p-px"
-              key={a.title}
-              onClick={() => {
-                onClick(ref.current)
-              }}
-              {...a}
-            />
-          ))}
-        </div>
+        {!!actions.length && (
+          <div className="mx-1 flex gap-0.5">
+            {actions.map(({ onClick, ...a }) => (
+              <IconButton
+                className="text-outline !p-px"
+                key={a.title}
+                onClick={() => {
+                  onClick(ref.current)
+                }}
+                {...a}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
