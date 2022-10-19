@@ -4,7 +4,10 @@ import { PreventFlash } from '../components'
 
 export default function Document() {
   return (
-    <Html>
+    // https://github.com/vercel/next.js/issues/10285
+    // Next injects `<style data-next-hide-fouc="true">body{display:none}</style>`,
+    // so we should set background on `html`
+    <Html className="bg-default">
       <Head>
         <GoogleTagManager />
         <link rel="icon" href="/icons/192.png"></link>

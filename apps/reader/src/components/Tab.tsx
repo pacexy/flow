@@ -28,8 +28,8 @@ export function Tab({
       className={clsx(
         ' typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
         selected
-          ? 'text-outline bg-white dark:bg-[#121212]'
-          : 'text-outline/60 hover:bg-white dark:hover:bg-[#121212]',
+          ? 'text-outline bg-default'
+          : 'text-outline/60 hover:bg-default',
         focused && '!text-on-surface',
         className,
       )}

@@ -9,7 +9,10 @@ export const PreventFlash: React.FC = () => {
   return (
     <>
       <style>{`
-        html.dark {
+        .bg-default, .hover\\:bg-default:hover {
+          background: white;
+        }
+        .dark.bg-default, .dark .bg-default, .dark .hover\\:bg-default:hover {
           background: #121212;
         }
       `}</style>

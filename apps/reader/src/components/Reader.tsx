@@ -363,7 +363,9 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       <div ref={ref} className={clsx('relative flex-1')}>
         <div
           className={clsx(
-            'absolute inset-0 z-50 bg-white',
+            'bg-default absolute inset-0',
+            // do not cover `sash`
+            'z-20',
             rendered && 'hidden',
           )}
         />
