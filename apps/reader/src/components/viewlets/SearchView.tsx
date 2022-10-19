@@ -61,7 +61,7 @@ interface ResultListProps {
   results: Match[]
   keyword: string
 }
-export const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
+const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   const rows = results.flatMap((r) => flatTree(r)) ?? []
   const { outerRef, innerRef, items } = useList(rows)
 

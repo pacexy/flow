@@ -18,7 +18,7 @@ export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   )
 }
 
-export const DefinitionPane: React.FC = () => {
+const DefinitionPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
 
   return (

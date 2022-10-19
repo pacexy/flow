@@ -61,10 +61,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
 interface NumberFieldProps extends Omit<TextFieldProps<'input'>, 'onChange'> {
   onChange: (v?: number) => void
 }
-export const NumberField: React.FC<NumberFieldProps> = ({
-  onChange,
-  ...props
-}) => {
+const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
   const ref = useRef<HTMLInputElement>(null)
   return (
     <TextField
@@ -133,7 +130,7 @@ interface TypefaceProps {
   fontFamily: string
   sentence: string
 }
-export const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
+const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
   const [settings, setSettings] = useRecoilState(settingsState)
 
   // avoid hydration mismatching

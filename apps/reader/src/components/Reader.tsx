@@ -178,10 +178,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 interface PaneContainerProps {
   active: boolean
 }
-export const PaneContainer: React.FC<PaneContainerProps> = ({
-  active,
-  children,
-}) => {
+const PaneContainer: React.FC<PaneContainerProps> = ({ active, children }) => {
   return <div className={clsx('h-full', active || 'hidden')}>{children}</div>
 }
 
@@ -400,7 +397,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 interface ReaderPaneHeaderProps {
   tab: BookTab
 }
-export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
+const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
   const { location } = useSnapshot(tab)
   const navPath = tab.getNavPath()
 
@@ -431,7 +428,7 @@ export const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
 }
 
 interface LineProps extends ComponentProps<'div'> {}
-export const Bar: React.FC<LineProps> = ({ className, ...props }) => {
+const Bar: React.FC<LineProps> = ({ className, ...props }) => {
   return (
     <div
       className={clsx(

@@ -81,7 +81,7 @@ export default function Index() {
   )
 }
 
-export const Library: React.FC = () => {
+const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
 
@@ -348,7 +348,7 @@ interface BookProps {
   loading?: boolean
   toggle: (id: string) => void
 }
-export const Book: React.FC<BookProps> = ({
+const Book: React.FC<BookProps> = ({
   book,
   covers,
   select,
