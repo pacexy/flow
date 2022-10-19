@@ -225,9 +225,6 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
-    return () => {
-      tab.rendition = undefined
-    }
   }, [tab])
 
   useEffect(() => {
