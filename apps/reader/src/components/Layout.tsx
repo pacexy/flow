@@ -18,7 +18,6 @@ import {
   RiHome6Line,
 } from 'react-icons/ri'
 import { useRecoilState, useSetRecoilState } from 'recoil'
-import { useSnapshot } from 'valtio'
 
 import {
   ENV,
@@ -27,9 +26,9 @@ import {
   useInitSubscription,
   useMobile,
 } from '../hooks'
+import { reader, useReaderSnapshot } from '../models'
 import { Action, actionState, navbarState } from '../state'
 
-import { reader } from './Reader'
 import { SplitView, useSplitViewItem } from './base'
 import { Account, Auth, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
@@ -219,7 +218,7 @@ function PageActionBar() {
 }
 
 function NavigationBar() {
-  const r = useSnapshot(reader)
+  const r = useReaderSnapshot()
   const readMode = r.focusedTab?.isBook
   const [visible, setVisible] = useRecoilState(navbarState)
 
@@ -318,7 +317,7 @@ const SideBar: React.FC = () => {
 interface ReaderProps extends ComponentProps<'div'> {}
 const Reader: React.FC = ({ className, ...props }: ReaderProps) => {
   useSplitViewItem(Reader)
-  const r = useSnapshot(reader)
+  const r = useReaderSnapshot()
   const readMode = r.focusedTab?.isBook
 
   return (

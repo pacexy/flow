@@ -1,16 +1,15 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useSnapshot } from 'valtio'
 
 import { useList } from '@ink/reader/hooks'
+import { reader, useReaderSnapshot } from '@ink/reader/models'
 
-import { reader } from '../Reader'
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 dayjs.extend(relativeTime)
 export const TimelineView: React.FC<PaneViewProps> = (props) => {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
   const rows = focusedBookTab?.timeline
   const { outerRef, innerRef, items } = useList(rows)
 

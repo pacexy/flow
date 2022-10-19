@@ -13,14 +13,14 @@ import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
-import { proxy, snapshot, subscribe, useSnapshot } from 'valtio'
+import { useSnapshot } from 'valtio'
 
 import { navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
-import { Reader, BookTab } from '../models'
+import { BookTab, reader, useReaderSnapshot } from '../models'
 import { updateCustomStyle } from '../styles'
 
 import {
@@ -32,12 +32,6 @@ import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
 import * as pages from './pages'
-
-export const reader = proxy(new Reader())
-
-subscribe(reader, () => {
-  console.log(snapshot(reader))
-})
 
 function handleKeyDown(tab?: BookTab) {
   return (e: KeyboardEvent) => {
@@ -61,7 +55,7 @@ function handleKeyDown(tab?: BookTab) {
 }
 
 export function ReaderGridView() {
-  const { groups } = useSnapshot(reader)
+  const { groups } = useReaderSnapshot()
 
   useEventListener('keydown', handleKeyDown(reader.focusedBookTab))
 
@@ -80,7 +74,7 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex } = useSnapshot(reader)
+  const { focusedIndex } = useReaderSnapshot()
   const { tabs, selectedIndex } = useSnapshot(group)
 
   const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`, {

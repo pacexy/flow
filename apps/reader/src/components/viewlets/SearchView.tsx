@@ -1,20 +1,18 @@
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
-import { useSnapshot } from 'valtio'
 
 import { useList } from '@ink/reader/hooks'
-import { flatTree, Match } from '@ink/reader/models'
+import { flatTree, Match, useReaderSnapshot, reader } from '@ink/reader/models'
 import { actionState } from '@ink/reader/state'
 
-import { reader } from '../Reader'
 import { Row } from '../Row'
 import { TextField } from '../TextField'
 import { PaneViewProps, PaneView } from '../base'
 
 export const SearchView: React.FC<PaneViewProps> = (props) => {
   const action = useRecoilValue(actionState)
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
 
   const keyword = focusedBookTab?.keyword
   const results = focusedBookTab?.results
