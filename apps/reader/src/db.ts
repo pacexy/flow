@@ -78,7 +78,7 @@ export class DB extends Dexie {
             r.size = files[i].file.size
           })
           .catch((e) => {
-            console.log(e)
+            console.error(e)
             throw e
           })
       })

@@ -1,12 +1,11 @@
 import { useBoolean } from '@literal-ui/hooks'
 import React, { Fragment } from 'react'
 import { useMemo } from 'react'
-import { useSnapshot } from 'valtio'
 
 import { Annotation } from '@ink/reader/annotation'
+import { reader, useReaderSnapshot } from '@ink/reader/models'
 import { group, keys } from '@ink/reader/utils'
 
-import { reader } from '../Reader'
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
@@ -19,8 +18,8 @@ export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   )
 }
 
-export const DefinitionPane: React.FC = () => {
-  const { focusedBookTab } = useSnapshot(reader)
+const DefinitionPane: React.FC = () => {
+  const { focusedBookTab } = useReaderSnapshot()
 
   return (
     <Pane headline="Definitions" preferredSize={120}>
@@ -41,7 +40,7 @@ export const DefinitionPane: React.FC = () => {
 }
 
 const AnnotationPane: React.FC = () => {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
   const groupedAnnotation = useMemo(() => {
     return group(
       (focusedBookTab?.book.annotations as Annotation[]) ?? [],

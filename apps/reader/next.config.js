@@ -26,13 +26,8 @@ const sentryWebpackPluginOptions = {
  * @type {import('next').NextConfig}
  **/
 const config = {
-  reactStrictMode: false,
   pageExtensions: ['ts', 'tsx'],
   webpack(config) {
-    config.experiments = {
-      topLevelAwait: true,
-      layers: true,
-    }
     return config
   },
   pwa: {

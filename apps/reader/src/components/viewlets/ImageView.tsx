@@ -1,14 +1,12 @@
 import { useBoolean } from '@literal-ui/hooks'
-import { useSnapshot } from 'valtio'
 
-import { ISection } from '@ink/reader/models'
+import { ISection, reader, useReaderSnapshot } from '@ink/reader/models'
 
-import { reader } from '../Reader'
 import { Row } from '../Row'
 import { PaneView, PaneViewProps } from '../base'
 
 export const ImageView: React.FC<PaneViewProps> = (props) => {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
   const sections = focusedBookTab?.sections?.filter((s) => s.images.length) as
     | ISection[]
     | undefined
@@ -30,7 +28,7 @@ interface BlockProps {
   section: ISection
 }
 const Block: React.FC<BlockProps> = ({ section }) => {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
   const [expanded, toggle] = useBoolean(false)
 
   const resources = focusedBookTab?.epub?.resources

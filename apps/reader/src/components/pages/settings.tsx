@@ -103,7 +103,7 @@ const Synchronization: React.FC = () => {
 interface PartProps {
   title: string
 }
-export const Item: React.FC<PartProps> = ({ title, children }) => {
+const Item: React.FC<PartProps> = ({ title, children }) => {
   return (
     <div>
       <h3 className="typescale-title-small text-on-surface-variant">{title}</h3>

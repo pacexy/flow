@@ -31,7 +31,6 @@ const opts = {
  * @type {import('next').NextConfig}
  **/
 const config = {
-  reactStrictMode: false,
   pageExtensions: ['ts', 'tsx', 'mdx'],
   pwa: {
     dest: 'public',

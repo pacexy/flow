@@ -1,7 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
 
-import { PreventFlash } from '../components'
-
 export default function Document() {
   return (
     // https://github.com/vercel/next.js/issues/10285
@@ -73,5 +71,32 @@ function GoogleTagManagerNoScript() {
         style={{ display: 'none', visibility: 'hidden' }}
       ></iframe>
     </noscript>
+  )
+}
+
+// external import in `_document.tsx` will break fast refresh,
+// so move it to `_document.tsx`
+function PreventFlash() {
+  const setColorScheme = () => {
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const scheme = localStorage.getItem('literal-color-scheme') ?? 'system'
+
+    if (scheme === '"dark"' || (scheme === '"system"' && mql.matches))
+      document.documentElement.classList.toggle('dark', true)
+  }
+  return (
+    <>
+      <style>{`
+        .bg-default, .hover\\:bg-default:hover {
+          background: white;
+        }
+        .dark.bg-default, .dark .bg-default, .dark .hover\\:bg-default:hover {
+          background: #121212;
+        }
+      `}</style>
+      <script
+        dangerouslySetInnerHTML={{ __html: `(${setColorScheme})()` }}
+      ></script>
+    </>
   )
 }

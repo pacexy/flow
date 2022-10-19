@@ -13,15 +13,8 @@ import {
 } from 'react-icons/md'
 import { useSet } from 'react-use'
 import { usePrevious } from 'react-use'
-import { useSnapshot } from 'valtio'
 
-import {
-  ReaderGridView,
-  reader,
-  Button,
-  TextField,
-  DropZone,
-} from '../components'
+import { ReaderGridView, Button, TextField, DropZone } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import { addFile, fetchBook, handleFiles } from '../file'
 import {
@@ -32,6 +25,7 @@ import {
   useRemoteFiles,
   useSubscription,
 } from '../hooks'
+import { reader, useReaderSnapshot } from '../models'
 import { lock } from '../styles'
 import { dbx, pack, uploadData } from '../sync'
 
@@ -40,7 +34,7 @@ const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" 
 const SOURCE = 'src'
 
 export default function Index() {
-  const { focusedTab } = useSnapshot(reader)
+  const { focusedTab } = useReaderSnapshot()
   const router = useRouter()
   const src = new URL(window.location.href).searchParams.get(SOURCE)
   const [loading, setLoading] = useState(!!src)
@@ -73,8 +67,13 @@ export default function Index() {
   }, [])
 
   useEffect(() => {
-    if (router.pathname === '/') reader.clear()
-  }, [router.pathname])
+    router.beforePopState(({ as }) => {
+      if (as === '/') {
+        reader.clear()
+      }
+      return true
+    })
+  }, [router])
 
   return (
     <>
@@ -87,7 +86,7 @@ export default function Index() {
   )
 }
 
-export const Library: React.FC = () => {
+const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
 
@@ -106,7 +105,7 @@ export const Library: React.FC = () => {
   const [loading, setLoading] = useState<string | undefined>()
   const [readyToSync, setReadyToSync] = useState(false)
 
-  const { groups } = useSnapshot(reader)
+  const { groups } = useReaderSnapshot()
   const subscription = useSubscription()
 
   useEffect(() => {
@@ -354,7 +353,7 @@ interface BookProps {
   loading?: boolean
   toggle: (id: string) => void
 }
-export const Book: React.FC<BookProps> = ({
+const Book: React.FC<BookProps> = ({
   book,
   covers,
   select,

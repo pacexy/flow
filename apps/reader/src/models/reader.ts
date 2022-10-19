@@ -5,7 +5,7 @@ import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
-import { proxy, ref, snapshot } from 'valtio'
+import { proxy, ref, snapshot, subscribe, useSnapshot } from 'valtio'
 
 import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
@@ -587,9 +587,23 @@ export class Reader {
   resize() {
     this.groups.forEach(({ bookTabs }) => {
       bookTabs.forEach(({ rendition }) => {
-        // @ts-ignore
-        rendition?.resize()
+        try {
+          // @ts-ignore
+          rendition?.resize()
+        } catch (error) {
+          console.error(error)
+        }
       })
     })
   }
+}
+
+export const reader = proxy(new Reader())
+
+subscribe(reader, () => {
+  console.log(snapshot(reader))
+})
+
+export function useReaderSnapshot() {
+  return useSnapshot(reader)
 }

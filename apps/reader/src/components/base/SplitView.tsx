@@ -25,11 +25,11 @@ interface SplitViewContext {
 const SplitViewContext = createContext<Partial<SplitViewContext>>({})
 SplitViewContext.displayName = 'SplitViewContext'
 
-export function useSplitView() {
+function useSplitView() {
   return useContext(SplitViewContext)
 }
 
-export function useRegisterView(key: string, view: ISplitViewItem) {
+function useRegisterView(key: string, view: ISplitViewItem) {
   const { registerView } = useSplitView()
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function useRegisterView(key: string, view: ISplitViewItem) {
   }, [key, registerView, view])
 }
 
-export function useSize(
+function useSize(
   preferredSize?: number,
   minSize = 0,
   maxSize = Number.POSITIVE_INFINITY,

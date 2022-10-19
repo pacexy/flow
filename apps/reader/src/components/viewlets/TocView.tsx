@@ -1,11 +1,16 @@
 import { StateLayer } from '@literal-ui/core'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
-import { useSnapshot } from 'valtio'
 
 import { useLibrary, useList, useMobile } from '@ink/reader/hooks'
-import { compareHref, dfs, flatTree, INavItem } from '@ink/reader/models'
+import {
+  compareHref,
+  dfs,
+  flatTree,
+  INavItem,
+  reader,
+  useReaderSnapshot,
+} from '@ink/reader/models'
 
-import { reader } from '../Reader'
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
@@ -43,7 +48,7 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const { focusedBookTab } = useSnapshot(reader)
+  const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)

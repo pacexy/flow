@@ -16,7 +16,6 @@ import { BookTab } from '../models'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
-
 import { Button, IconButton } from './Button'
 import { TextField } from './TextField'
 import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
@@ -91,9 +90,7 @@ interface TextSelectionMenuRendererProps {
   forward: boolean
   hide: () => void
 }
-export const TextSelectionMenuRenderer: React.FC<
-  TextSelectionMenuRendererProps
-> = ({
+const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   tab,
   range,
   anchorRect,
