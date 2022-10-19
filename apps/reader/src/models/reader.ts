@@ -587,8 +587,12 @@ export class Reader {
   resize() {
     this.groups.forEach(({ bookTabs }) => {
       bookTabs.forEach(({ rendition }) => {
-        // @ts-ignore
-        rendition?.resize()
+        try {
+          // @ts-ignore
+          rendition?.resize()
+        } catch (error) {
+          console.error(error)
+        }
       })
     })
   }

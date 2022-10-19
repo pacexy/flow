@@ -67,8 +67,13 @@ export default function Index() {
   }, [])
 
   useEffect(() => {
-    if (router.pathname === '/') reader.clear()
-  }, [router.pathname])
+    router.beforePopState(({ as }) => {
+      if (as === '/') {
+        reader.clear()
+      }
+      return true
+    })
+  }, [router])
 
   return (
     <>
