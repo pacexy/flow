@@ -64,6 +64,7 @@ export default class Contents {
 
   fit(width: number, height: number): void
 
+  height(): number
   height(h: number): number
 
   locationOf(
@@ -107,6 +108,7 @@ export default class Contents {
 
   viewport(options: ViewportSettings): ViewportSettings
 
+  width(): number
   width(w: number): number
 
   writingMode(mode: string): string

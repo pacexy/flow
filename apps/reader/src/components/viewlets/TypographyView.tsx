@@ -2,16 +2,15 @@ import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
-import { useRecoilState } from 'recoil'
 
-import { settingsState } from '@ink/reader/state'
+import { useSettings } from '@ink/reader/state'
 
 import { TextField, TextFieldProps } from '../TextField'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [{ fontSize, fontWeight, lineHeight }, setSettings] =
-    useRecoilState(settingsState)
+  const [{ fontSize, fontWeight, lineHeight, zoom }, setSettings] =
+    useSettings()
   return (
     <PaneView {...props}>
       <div className="mx-5 space-y-2 py-2">
@@ -49,6 +48,18 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             setSettings((prev) => ({
               ...prev,
               lineHeight: v || undefined,
+            }))
+          }}
+        />
+        <NumberField
+          name="zoom"
+          min={1}
+          step={0.1}
+          defaultValue={zoom}
+          onChange={(v) => {
+            setSettings((prev) => ({
+              ...prev,
+              zoom: v ?? 1,
             }))
           }}
         />
@@ -131,7 +142,7 @@ interface TypefaceProps {
   sentence: string
 }
 const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
-  const [settings, setSettings] = useRecoilState(settingsState)
+  const [settings, setSettings] = useSettings()
 
   // avoid hydration mismatching
   if (!useMounted()) return null

@@ -38,12 +38,26 @@ export function updateCustomStyle(
 ) {
   if (!contents || !settings) return
 
-  return contents.addStylesheetCss(
-    `a, article, cite, div, li, p, pre, span, table, body {
-        ${mapToCss(settings)}
-    }`,
-    Style.Custom,
-  )
+  const { zoom, ...other } = settings
+  let css = `a, article, cite, div, li, p, pre, span, table, body {
+    ${mapToCss(other)}
+  }`
+
+  if (zoom) {
+    css += `body {
+      ${
+        zoom &&
+        mapToCss({
+          transformOrigin: 'top left',
+          transform: `scale(${zoom})`,
+          width: `${contents.width(contents.width() / zoom)}px`,
+          height: `${contents.height(contents.height() / zoom)}px`,
+        })
+      }
+    }`
+  }
+
+  return contents.addStylesheetCss(css, Style.Custom)
 }
 
 export function lock(l: number, r: number, unit = 'px') {

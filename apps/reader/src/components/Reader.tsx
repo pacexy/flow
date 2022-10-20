@@ -10,12 +10,12 @@ import React, {
 import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
 import { Contents } from '@ink/epubjs'
-import { navbarState, settingsState } from '@ink/reader/state'
+import { navbarState, useSettings } from '@ink/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
@@ -190,7 +190,7 @@ interface BookPaneProps {
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const prevSize = useRef(0)
-  const settings = useRecoilValue(settingsState)
+  const [settings] = useSettings()
   const { dark } = useColorScheme()
 
   const { iframe, rendition, locationToReturn, location, rendered, book } =
