@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EPUB.js Annotator Example</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+  <script src="../dist/epub.js"></script>
+
+  <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/annotator/1.2.9/annotator.min.js"></script> -->
+
+  <link rel="stylesheet" type="text/css" href="examples.css">
+
+</head>
+<body>
+  <div id="viewer" class="spreads"></div>
+  <div id="prev" class="arrow">‹</div>
+  <div id="next" class="arrow">›</div>
+  <script>
+    // Load the opf
+    var book = ePub("https://s3.amazonaws.com/moby-dick/OPS/package.opf");
+    var rendition = book.renderTo("viewer", {
+      width: "100%",
+      height: 600,
+      ignoreClass: 'annotator-hl'
+    });
+
+    var displayed = rendition.display(3);
+
+    // Navigation loaded
+    book.loaded.navigation.then(function(toc){
+      // console.log(toc);
+    });
+
+    var next = document.getElementById("next");
+    next.addEventListener("click", function(){
+      rendition.next();
+    }, false);
+
+    var prev = document.getElementById("prev");
+    prev.addEventListener("click", function(){
+      rendition.prev();
+    }, false);
+
+    var keyListener = function(e){
+
+      // Left Key
+      if ((e.keyCode || e.which) == 37) {
+        rendition.prev();
+      }
+
+      // Right Key
+      if ((e.keyCode || e.which) == 39) {
+        rendition.next();
+      }
+
+    };
+
+    rendition.on("keyup", keyListener);
+    document.addEventListener("keyup", keyListener, false);
+
+    rendition.on("relocated", function(location){
+      // console.log(location);
+    });
+
+    rendition.hooks.render.register(function (view) {
+
+      var adder = [
+        ['.annotator-adder, .annotator-outer', ['position', 'fixed']]
+      ];
+
+      view.addScript('https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js').
+        then(function () {
+          return view.addScript('https://cdn.jsdelivr.net/annotator/1.2.9/annotator-full.min.js');
+        }).
+        then(function () {
+          return view.addCss('https://cdn.jsdelivr.net/annotator/1.2.9/annotator.min.css');
+        }).
+        then(function () {
+
+          view.addStylesheetRules(adder);
+
+          view.window.Annotator.Util.mousePosition = function(event) {
+              var body = view.document.body;
+              // var offset = view.position();
+
+              return {
+                  top: event.pageY,
+                  left: event.pageX
+              };
+          };
+          var ann = new view.window.Annotator(view.document.body);
+        });
+
+
+    })
+
+
+  </script>
+
+</body>
+</html>

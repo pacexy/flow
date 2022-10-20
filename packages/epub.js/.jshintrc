@@ -1,0 +1,23 @@
+{
+  "browser": true,
+  "devel": true,
+  "worker": true,
+
+  "trailing": true,
+  "strict": false,
+
+  "boss": true,
+  "funcscope": true,
+  "globalstrict": true,
+  "loopfunc": true,
+  "maxerr": 1000,
+  "nonstandard": true,
+  "sub": true,
+  "validthis": true,
+
+  "globals": {
+    "_": false,
+    "define" : false,
+    "module" : false
+  }
+}
