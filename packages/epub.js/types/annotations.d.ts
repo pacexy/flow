@@ -21,7 +21,7 @@ export default class Annotations {
     cb?: Function,
     className?: string,
     styles?: object,
-  ): void
+  ): Annotation
 
   underline(
     cfiRange: string,
@@ -29,7 +29,7 @@ export default class Annotations {
     cb?: Function,
     className?: string,
     styles?: object,
-  ): void
+  ): Annotation
 
   mark(cfiRange: string, data?: object, cb?: Function): void
 
@@ -57,6 +57,8 @@ declare class Annotation {
     className?: string
     styles?: object
   })
+
+  mark: any
 
   update(data: object): void
 

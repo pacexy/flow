@@ -18,6 +18,9 @@ export default class Resources {
 
   replacements(): Promise<Array<string>>
 
+  replacementUrls: string[]
+  assets: any[]
+
   relativeTo(absolute: boolean, resolver?: Function): Array<string>
 
   get(path: string): string

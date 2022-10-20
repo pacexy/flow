@@ -16,6 +16,8 @@ export default class Navigation {
   constructor(xml: XMLDocument)
 
   toc: Array<NavItem>
+  tocByHref: Record<string, number>
+  tocById: Record<string, number>
   landmarks: Array<LandmarkItem>
 
   parse(xml: XMLDocument): void
@@ -42,9 +44,5 @@ export default class Navigation {
 
   private ncxItem(item: Element): NavItem
 
-  private getByIndex(
-    target: string,
-    index: number,
-    navItems: NavItem[],
-  ): NavItem
+  getByIndex(target: string, index: number, navItems: NavItem[]): NavItem
 }

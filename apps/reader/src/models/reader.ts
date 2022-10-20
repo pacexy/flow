@@ -293,9 +293,7 @@ export class BookTab extends BaseTab {
         if (!parentId) {
           navItem = undefined
         } else {
-          // @ts-ignore
-          const index = this.nav.tocById[parentId]
-          // @ts-ignore
+          const index = this.nav.tocById[parentId]!
           navItem = this.nav.getByIndex(parentId, index, this.nav.toc)
         }
       }
@@ -589,7 +587,6 @@ export class Reader {
     this.groups.forEach(({ bookTabs }) => {
       bookTabs.forEach(({ rendition }) => {
         try {
-          // @ts-ignore
           rendition?.resize()
         } catch (error) {
           console.error(error)
