@@ -1,6 +1,5 @@
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { Contents } from 'epubjs'
 import React, {
   ComponentProps,
   useCallback,
@@ -15,6 +14,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
+import { Contents } from '@ink/epubjs'
 import { navbarState, settingsState } from '@ink/reader/state'
 
 import { db } from '../db'

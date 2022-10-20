@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@github/mini-throttle": "^2.1.0",
+    "@ink/epubjs": "workspace:*",
     "@ink/internal": "workspace:*",
     "@invertase/node-paddle-sdk": "^0.3.1",
     "@literal-ui/core": "0.0.13",
@@ -30,7 +31,6 @@
     "dexie": "3.2.2",
     "dexie-react-hooks": "1.1.1",
     "dropbox": "^10.32.0",
-    "epubjs": "0.3.93",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "next": "12.1.5",

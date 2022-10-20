@@ -1,11 +1,12 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import type { Rendition, Location, Book } from 'epubjs'
-import Navigation, { NavItem } from 'epubjs/types/navigation'
-import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot, subscribe, useSnapshot } from 'valtio'
+
+import type { Rendition, Location, Book } from '@ink/epubjs'
+import Navigation, { NavItem } from '@ink/epubjs/types/navigation'
+import Section from '@ink/epubjs/types/section'
 
 import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'

@@ -1,8 +1,8 @@
 {
-  "name": "epubjs",
+  "name": "@ink/epubjs",
   "version": "0.3.93",
   "description": "Parse and Render Epubs",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "module": "src/index.js",
   "types": "types/index.d.ts",
   "repository": "https://github.com/futurepress/epub.js",
@@ -21,8 +21,7 @@
     "legacy": "NODE_ENV=production LEGACY=true webpack --progress",
     "productionLegacy": "NODE_ENV=production MINIMIZE=true LEGACY=true webpack --progress",
     "compile": "babel -d lib/ src/",
-    "watch": "babel --watch -d lib/ src/",
-    "prepare": "npm run compile && npm run build && npm run minify && npm run legacy && npm run productionLegacy"
+    "watch": "babel --watch -d lib/ src/"
   },
   "author": "fchasen@gmail.com",
   "license": "BSD-2-Clause",

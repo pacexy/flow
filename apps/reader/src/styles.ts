@@ -1,5 +1,6 @@
-import { Contents } from 'epubjs'
 import { CSSProperties } from 'react'
+
+import { Contents } from '@ink/epubjs'
 
 import { Settings } from './state'
 import { keys } from './utils'
