@@ -6,8 +6,8 @@ import { useList } from '@ink/reader/hooks'
 import { flatTree, Match, useReaderSnapshot, reader } from '@ink/reader/models'
 import { actionState } from '@ink/reader/state'
 
+import { TextField } from '../Form'
 import { Row } from '../Row'
-import { TextField } from '../TextField'
 import { PaneViewProps, PaneView } from '../base'
 
 export const SearchView: React.FC<PaneViewProps> = (props) => {

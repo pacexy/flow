@@ -120,6 +120,29 @@ export const Checkbox: React.FC<CheckboxProps> = ({ name, ...props }) => {
   )
 }
 
+interface SelectProps extends ComponentProps<'select'> {
+  name?: string
+}
+export const Select: React.FC<SelectProps> = ({
+  name,
+  className,
+  ...props
+}) => {
+  return (
+    <div className={clsx('flex flex-col', className)}>
+      {name && <Label name={name} className="mb-1" />}
+      <select
+        name={name}
+        id={name}
+        className={clsx(
+          'typescale-body-medium text-on-surface-variant bg-default max-w-xs px-0.5 py-1 !text-[13px]',
+        )}
+        {...props}
+      ></select>
+    </div>
+  )
+}
+
 interface LabelProps extends ComponentProps<'label'> {
   name: string
   hide?: boolean
@@ -129,7 +152,7 @@ const Label: React.FC<LabelProps> = ({ name, hide = false, className }) => {
     <label
       htmlFor={name}
       className={clsx(
-        'typescale-label-medium text-on-surface-variant uppercase',
+        'typescale-label-medium text-on-surface-variant !text-[13px]',
         hide && 'hidden',
         className,
       )}

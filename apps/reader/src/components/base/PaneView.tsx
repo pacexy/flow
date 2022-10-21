@@ -30,16 +30,14 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
       }}
     >
       <div role="button" className="flex items-center py-0.5" onClick={toggle}>
-        <div>
-          <Icon size={20} className="text-outline" />
-        </div>
-        <div className="typescale-label-medium text-on-surface-variant">
+        <Icon size={18} className="text-outline mx-px" />
+        <div className="typescale-label-small text-on-surface">
           {headline.toUpperCase()}
         </div>
         {actions && (
           <ActionBar
             actions={actions}
-            className="ml-auto hidden pr-1 group-hover:flex"
+            className="invisible ml-auto flex pr-1 group-hover:visible"
           />
         )}
       </div>
