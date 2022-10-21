@@ -15,7 +15,6 @@ import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
-import { Contents } from '@ink/epubjs'
 import { navbarState, useSettings } from '@ink/reader/state'
 
 import { db } from '../db'
@@ -229,13 +228,18 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   }, [tab])
 
   useEffect(() => {
-    const [contents] = (rendition?.getContents() ?? []) as unknown as Contents[]
-    updateCustomStyle(contents, settings)
-  }, [rendition, settings])
+    /**
+     * when `spread` changes, we should call `spread()` to re-layout,
+     * then call {@link updateCustomStyle} to update custom style
+     * according to the latest layout
+     */
+    rendition?.spread(settings.spread ?? RenditionSpread.Auto)
+  }, [settings.spread, rendition])
 
   useEffect(() => {
-    tab.rendition?.spread(settings.spread ?? RenditionSpread.Auto)
-  }, [settings.spread, tab.rendition])
+    const [contents] = rendition?.getContents() ?? []
+    updateCustomStyle(contents, settings)
+  }, [rendition, settings])
 
   useEffect(() => {
     if (dark === undefined) return
