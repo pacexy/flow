@@ -3,7 +3,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 })
 const { withSentryConfig } = require('@sentry/nextjs')
 const withPWA = require('next-pwa')
-const withTM = require('next-transpile-modules')(['@ink/internal'])
+const withTM = require('next-transpile-modules')([
+  '@ink/internal',
+  '@ink/epubjs',
+])
 
 const IS_DEV = process.env.NODE_ENV === 'development'
 

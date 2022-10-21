@@ -1,15 +1,16 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { useSettings } from '@ink/reader/state'
 
-import { TextField, TextFieldProps } from '../TextField'
+import { Checkbox, TextField, TextFieldProps } from '../TextField'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [{ fontSize, fontWeight, lineHeight, zoom }, setSettings] =
+  const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
     useSettings()
   return (
     <PaneView {...props}>
@@ -60,6 +61,18 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             setSettings((prev) => ({
               ...prev,
               zoom: v ?? 1,
+            }))
+          }}
+        />
+        <Checkbox
+          name="spread"
+          checked={spread !== RenditionSpread.None}
+          onChange={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              spread: e.target.checked
+                ? RenditionSpread.Auto
+                : RenditionSpread.None,
             }))
           }}
         />

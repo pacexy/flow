@@ -10,7 +10,7 @@ import {
 } from './packaging'
 import Packaging from './packaging'
 import PageList, { PageListItem } from './pagelist'
-import Rendition, { RenditionOptions } from './rendition'
+import { Rendition, RenditionOptions } from './rendition'
 import Resources from './resources'
 import Section, { SpineItem } from './section'
 import Spine from './spine'

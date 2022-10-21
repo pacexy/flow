@@ -10,7 +10,7 @@ export default Epub
 
 export { default as Book } from './book'
 export { default as EpubCFI } from './epubcfi'
-export { default as Rendition, Location } from './rendition'
+export { Rendition, Location } from './rendition'
 export { default as Contents } from './contents'
 export { default as Layout } from './layout'
 export { NavItem } from './navigation'

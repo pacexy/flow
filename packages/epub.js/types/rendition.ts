@@ -8,15 +8,27 @@ import Themes from './themes'
 import Hook from './utils/hook'
 import Queue from './utils/queue'
 
+export enum RenditionSpread {
+  Auto = 'auto',
+  None = 'none',
+  /* @deprecated */
+  Always = 'always',
+}
+
 export interface RenditionOptions {
   width?: number | string
   height?: number | string
   ignoreClass?: string
-  manager?: string | Function | object
-  view?: string | Function | object
-  flow?: string
-  layout?: string
-  spread?: string
+  manager?: 'default' | 'continuous' | Function | object
+  view?: 'iframe' | Function | object
+  flow?:
+    | 'auto'
+    | 'paginated'
+    | 'scrolled'
+    | 'scrolled-continuous'
+    | 'scrolled-doc'
+  layout?: 'reflowable' | 'pre-paginated'
+  spread?: RenditionSpread
   minSpreadWidth?: number
   stylesheet?: string
   resizeOnOrientationChange?: boolean
@@ -24,7 +36,7 @@ export interface RenditionOptions {
   infinite?: boolean
   overflow?: string
   snap?: boolean | object
-  defaultDirection?: string
+  defaultDirection?: 'ltr'
   allowScriptedContent?: boolean
 }
 
@@ -47,7 +59,7 @@ export interface Location {
   atEnd: boolean
 }
 
-export default class Rendition {
+export declare class Rendition {
   constructor(book: Book, options: RenditionOptions)
 
   settings: RenditionOptions

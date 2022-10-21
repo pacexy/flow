@@ -122,7 +122,7 @@ const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
       },
     )
 
-    const g = h?.mark.element as SVGGElement
+    const g = h?.mark?.element as SVGGElement
 
     // `<rect>` should be reserved to response `click`
     g?.addEventListener('click', () => {

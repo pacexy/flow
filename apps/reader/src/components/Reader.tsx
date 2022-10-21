@@ -1,5 +1,6 @@
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import React, {
   ComponentProps,
   useCallback,
@@ -231,6 +232,10 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     const [contents] = (rendition?.getContents() ?? []) as unknown as Contents[]
     updateCustomStyle(contents, settings)
   }, [rendition, settings])
+
+  useEffect(() => {
+    tab.rendition?.spread(settings.spread ?? RenditionSpread.Auto)
+  }, [settings.spread, tab.rendition])
 
   useEffect(() => {
     if (dark === undefined) return

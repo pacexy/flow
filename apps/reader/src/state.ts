@@ -1,4 +1,5 @@
 import { IS_SERVER } from '@literal-ui/hooks'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { atom, AtomEffect, useRecoilState } from 'recoil'
 
 function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
@@ -42,6 +43,7 @@ export type Settings = {
   fontWeight?: number
   fontFamily?: string
   lineHeight?: number
+  spread?: RenditionSpread
   zoom?: number
 }
 
