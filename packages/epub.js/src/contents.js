@@ -1106,16 +1106,16 @@ class Contents {
     this.css('margin', '0', true)
 
     if (axis === 'vertical') {
-      this.css('padding-top', gap / 2 + 'px', true)
-      this.css('padding-bottom', gap / 2 + 'px', true)
+      this.css('padding-top', gap / 2 + 'px')
+      this.css('padding-bottom', gap / 2 + 'px')
       this.css('padding-left', '20px')
       this.css('padding-right', '20px')
       this.css(COLUMN_AXIS, 'vertical')
     } else {
       this.css('padding-top', '20px')
       this.css('padding-bottom', '20px')
-      this.css('padding-left', gap / 2 + 'px', true)
-      this.css('padding-right', gap / 2 + 'px', true)
+      this.css('padding-left', gap / 2 + 'px')
+      this.css('padding-right', gap / 2 + 'px')
       this.css(COLUMN_AXIS, 'horizontal')
     }
 

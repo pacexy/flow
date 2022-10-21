@@ -44,16 +44,23 @@ export function updateCustomStyle(
   }`
 
   if (zoom) {
+    const body = contents.content as HTMLBodyElement
+    const scale = (p: keyof CSSStyleDeclaration) => ({
+      [p]: `${Math.floor(parseInt(body.style[p] as string) / zoom)}px`,
+    })
     css += `body {
-      ${
-        zoom &&
-        mapToCss({
-          transformOrigin: 'top left',
-          transform: `scale(${zoom})`,
-          width: `${contents.width(contents.width() / zoom)}px`,
-          height: `${contents.height(contents.height() / zoom)}px`,
-        })
-      }
+      ${mapToCss({
+        transformOrigin: 'top left',
+        transform: `scale(${zoom})`,
+        ...scale('width'),
+        ...scale('height'),
+        ...scale('columnWidth'),
+        ...scale('columnGap'),
+        ...scale('paddingTop'),
+        ...scale('paddingBottom'),
+        ...scale('paddingLeft'),
+        ...scale('paddingRight'),
+      })}
     }`
   }
 
