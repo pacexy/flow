@@ -243,8 +243,9 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 
   useEffect(() => {
     if (dark === undefined) return
-    rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a')
-    rendition?.themes.override('background', dark ? '#121212' : 'white')
+    // set `!important` when in dark mode
+    rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a', dark)
+    rendition?.themes.override('background', dark ? '#121212' : 'white', dark)
   }, [rendition, dark])
 
   const [src, setSrc] = useState<string>()
