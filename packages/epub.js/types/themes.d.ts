@@ -1,5 +1,5 @@
 import Contents from './contents'
-import Rendition from './rendition'
+import { Rendition } from './rendition'
 
 export default class Themes {
   constructor(rendition: Rendition)

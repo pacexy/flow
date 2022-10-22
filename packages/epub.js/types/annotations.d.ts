@@ -1,5 +1,5 @@
 import View from './managers/view'
-import Rendition from './rendition'
+import { Rendition } from './rendition'
 
 export default class Annotations {
   constructor(rendition: Rendition)

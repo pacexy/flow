@@ -9,6 +9,7 @@ body,
   height: 100%;
 }
 
+.checkbox,
 .textfield,
 select {
   @apply ring-surface-variant ring-1 ring-inset;

@@ -1,5 +1,6 @@
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import React, {
   ComponentProps,
   useCallback,
@@ -10,12 +11,11 @@ import React, {
 import { MdChevronRight, MdWebAsset } from 'react-icons/md'
 import { RiBookLine } from 'react-icons/ri'
 import { PhotoSlider } from 'react-photo-view'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
-import { Contents } from '@ink/epubjs'
-import { navbarState, settingsState } from '@ink/reader/state'
+import { navbarState, useSettings } from '@ink/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
@@ -190,7 +190,7 @@ interface BookPaneProps {
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const prevSize = useRef(0)
-  const settings = useRecoilValue(settingsState)
+  const [settings] = useSettings()
   const { dark } = useColorScheme()
 
   const { iframe, rendition, locationToReturn, location, rendered, book } =
@@ -228,14 +228,24 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   }, [tab])
 
   useEffect(() => {
-    const [contents] = (rendition?.getContents() ?? []) as unknown as Contents[]
+    /**
+     * when `spread` changes, we should call `spread()` to re-layout,
+     * then call {@link updateCustomStyle} to update custom style
+     * according to the latest layout
+     */
+    rendition?.spread(settings.spread ?? RenditionSpread.Auto)
+  }, [settings.spread, rendition])
+
+  useEffect(() => {
+    const [contents] = rendition?.getContents() ?? []
     updateCustomStyle(contents, settings)
   }, [rendition, settings])
 
   useEffect(() => {
     if (dark === undefined) return
-    rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a')
-    rendition?.themes.override('background', dark ? '#121212' : 'white')
+    // set `!important` when in dark mode
+    rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a', dark)
+    rendition?.themes.override('background', dark ? '#121212' : 'white', dark)
   }, [rendition, dark])
 
   const [src, setSrc] = useState<string>()

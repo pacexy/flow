@@ -70,14 +70,15 @@ const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
 
     matches?.forEach((m) => {
       try {
-        const h = rendition?.annotations.underline(
+        const h = rendition?.annotations.highlight(
           m.cfi!,
           undefined,
           undefined,
           undefined,
           {
-            stroke: '',
-            'stroke-opacity': 0.3,
+            // tailwind gray-600
+            fill: 'rgba(75, 85, 99, 0.15)',
+            'fill-opacity': 'unset',
           },
         )
 
@@ -95,7 +96,7 @@ const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
 
     return () => {
       matches?.forEach((m) =>
-        rendition?.annotations.remove(m.cfi!, 'underline'),
+        rendition?.annotations.remove(m.cfi!, 'highlight'),
       )
     }
   }, [currentHref, definition, rendition?.annotations, setAction, tab])
@@ -122,7 +123,7 @@ const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
       },
     )
 
-    const g = h?.mark.element as SVGGElement
+    const g = h?.mark?.element as SVGGElement
 
     // `<rect>` should be reserved to response `click`
     g?.addEventListener('click', () => {

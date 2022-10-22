@@ -6,8 +6,8 @@ import { ColorScheme, useColorScheme, useForceRender } from '@ink/reader/hooks'
 import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@ink/reader/sync'
 
 import { Button } from '../Button'
+import { Select } from '../Form'
 import { Page } from '../Page'
-import { Select } from '../Select'
 
 export const Settings: React.FC = () => {
   const { scheme, setScheme } = useColorScheme()

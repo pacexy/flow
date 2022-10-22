@@ -17,7 +17,7 @@ import { actionState } from '../state'
 import { keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
-import { TextField } from './TextField'
+import { TextField } from './Form'
 import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
 
 interface TextSelectionMenuProps {

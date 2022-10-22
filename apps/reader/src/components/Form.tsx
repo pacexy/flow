@@ -1,7 +1,13 @@
 import clsx from 'clsx'
-import { ElementType, useRef, useEffect, RefObject } from 'react'
+import {
+  ElementType,
+  useRef,
+  useEffect,
+  RefObject,
+  ComponentProps,
+} from 'react'
 import { IconType } from 'react-icons'
-import { MdClose } from 'react-icons/md'
+import { MdCheck, MdClose } from 'react-icons/md'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
 import { useMobile } from '../hooks'
@@ -60,16 +66,10 @@ export function TextField<T extends ElementType = 'input'>({
 
   return (
     <div className={clsx('flex flex-col', className)}>
-      <label
-        htmlFor={name}
-        className={clsx(
-          'typescale-label-medium text-outline mb-1 uppercase',
-          hideLabel && 'hidden',
-        )}
-      >
+      <Label name={name} hide={hideLabel} className="mb-1">
         {name}
-      </label>
-      <div className="bg-outline/5 textfield flex grow items-center">
+      </Label>
+      <div className="bg-default textfield flex grow items-center">
         <Component
           ref={ref}
           name={name}
@@ -96,5 +96,68 @@ export function TextField<T extends ElementType = 'input'>({
         )}
       </div>
     </div>
+  )
+}
+
+interface CheckboxProps extends ComponentProps<'input'> {
+  name: string
+}
+export const Checkbox: React.FC<CheckboxProps> = ({ name, ...props }) => {
+  return (
+    <div className="flex items-center">
+      <Label name={name} />
+      <div className="checkbox bg-default relative ml-auto rounded-sm">
+        <input
+          type="checkbox"
+          name={name}
+          id={name}
+          className="peer block h-4 w-4 appearance-none"
+          {...props}
+        />
+        <MdCheck className="text-on-surface-variant pointer-events-none invisible absolute top-0 peer-checked:visible" />
+      </div>
+    </div>
+  )
+}
+
+interface SelectProps extends ComponentProps<'select'> {
+  name?: string
+}
+export const Select: React.FC<SelectProps> = ({
+  name,
+  className,
+  ...props
+}) => {
+  return (
+    <div className={clsx('flex flex-col', className)}>
+      {name && <Label name={name} className="mb-1" />}
+      <select
+        name={name}
+        id={name}
+        className={clsx(
+          'typescale-body-medium text-on-surface-variant bg-default max-w-xs px-0.5 py-1 !text-[13px]',
+        )}
+        {...props}
+      ></select>
+    </div>
+  )
+}
+
+interface LabelProps extends ComponentProps<'label'> {
+  name: string
+  hide?: boolean
+}
+const Label: React.FC<LabelProps> = ({ name, hide = false, className }) => {
+  return (
+    <label
+      htmlFor={name}
+      className={clsx(
+        'typescale-label-medium text-on-surface-variant !text-[13px]',
+        hide && 'hidden',
+        className,
+      )}
+    >
+      {name}
+    </label>
   )
 }

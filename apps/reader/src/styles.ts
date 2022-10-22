@@ -38,12 +38,33 @@ export function updateCustomStyle(
 ) {
   if (!contents || !settings) return
 
-  return contents.addStylesheetCss(
-    `a, article, cite, div, li, p, pre, span, table, body {
-        ${mapToCss(settings)}
-    }`,
-    Style.Custom,
-  )
+  const { zoom, ...other } = settings
+  let css = `a, article, cite, div, li, p, pre, span, table, body {
+    ${mapToCss(other)}
+  }`
+
+  if (zoom) {
+    const body = contents.content as HTMLBodyElement
+    const scale = (p: keyof CSSStyleDeclaration) => ({
+      [p]: `${Math.floor(parseInt(body.style[p] as string) / zoom)}px`,
+    })
+    css += `body {
+      ${mapToCss({
+        transformOrigin: 'top left',
+        transform: `scale(${zoom})`,
+        ...scale('width'),
+        ...scale('height'),
+        ...scale('columnWidth'),
+        ...scale('columnGap'),
+        ...scale('paddingTop'),
+        ...scale('paddingBottom'),
+        ...scale('paddingLeft'),
+        ...scale('paddingRight'),
+      })}
+    }`
+  }
+
+  return contents.addStylesheetCss(css, Style.Custom)
 }
 
 export function lock(l: number, r: number, unit = 'px') {

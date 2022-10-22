@@ -1,22 +1,35 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
-import { useRecoilState } from 'recoil'
 
-import { settingsState } from '@ink/reader/state'
+import { useSettings } from '@ink/reader/state'
 
-import { TextField, TextFieldProps } from '../TextField'
+import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [{ fontSize, fontWeight, lineHeight }, setSettings] =
-    useRecoilState(settingsState)
+  const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
+    useSettings()
   return (
     <PaneView {...props}>
-      <div className="mx-5 space-y-2 py-2">
+      <Pane headline="Typography" className="mx-5 space-y-3 pt-2 pb-4">
+        <Select
+          name="Page View"
+          value={spread ?? RenditionSpread.Auto}
+          onChange={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              spread: e.target.value as RenditionSpread,
+            }))
+          }}
+        >
+          <option value={RenditionSpread.Auto}>Double Page</option>
+          <option value={RenditionSpread.None}>Single Page</option>
+        </Select>
         <NumberField
-          name="font_size"
+          name="Font Size"
           min={14}
           max={28}
           defaultValue={fontSize && parseInt(fontSize)}
@@ -28,7 +41,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name="font_weight"
+          name="Font Weight"
           min={100}
           max={900}
           step={100}
@@ -41,7 +54,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name="line_height"
+          name="Line Height"
           min={1}
           step={0.1}
           defaultValue={lineHeight}
@@ -52,7 +65,19 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             }))
           }}
         />
-      </div>
+        <NumberField
+          name="Zoom"
+          min={1}
+          step={0.1}
+          defaultValue={zoom}
+          onChange={(v) => {
+            setSettings((prev) => ({
+              ...prev,
+              zoom: v ?? 1,
+            }))
+          }}
+        />
+      </Pane>
       <TypeFacePane />
     </PaneView>
   )
@@ -109,10 +134,10 @@ const TypeFacePane: React.FC = () => {
     'The quick brown fox jumps over the lazy dog.',
   )
   return (
-    <Pane headline="Typeface" className="mx-5">
+    <Pane headline="Typeface" className="px-5">
       <TextField
         as="textarea"
-        name="sentence"
+        name="Sentence"
         defaultValue={sentence}
         onChange={(e) => setSentence(e.target.value)}
         className="mt-2 mb-4"
@@ -131,7 +156,7 @@ interface TypefaceProps {
   sentence: string
 }
 const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
-  const [settings, setSettings] = useRecoilState(settingsState)
+  const [settings, setSettings] = useSettings()
 
   // avoid hydration mismatching
   if (!useMounted()) return null

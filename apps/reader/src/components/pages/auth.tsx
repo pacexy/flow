@@ -4,7 +4,7 @@ import { FcGoogle } from 'react-icons/fc'
 import { RiGithubFill } from 'react-icons/ri'
 
 import { Button } from '../Button'
-import { TextField } from '../TextField'
+import { TextField } from '../Form'
 
 export const Auth: React.FC = () => {
   const ref = useRef<HTMLInputElement>(null)

@@ -1,5 +1,6 @@
 import { IS_SERVER } from '@literal-ui/hooks'
-import { atom, AtomEffect } from 'recoil'
+import { RenditionSpread } from 'packages/epub.js/types/rendition'
+import { atom, AtomEffect, useRecoilState } from 'recoil'
 
 function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
   return ({ setSelf, onSet }) => {
@@ -42,14 +43,18 @@ export type Settings = {
   fontWeight?: number
   fontFamily?: string
   lineHeight?: number
+  spread?: RenditionSpread
+  zoom?: number
 }
 
-const defaultSettings: Settings = {
-  //typography
-}
+const defaultSettings: Settings = {}
 
-export const settingsState = atom<Settings>({
+const settingsState = atom<Settings>({
   key: 'settings',
   default: defaultSettings,
   effects: [localStorageEffect('settings', defaultSettings)],
 })
+
+export function useSettings() {
+  return useRecoilState(settingsState)
+}
