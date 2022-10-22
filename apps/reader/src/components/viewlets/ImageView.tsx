@@ -32,12 +32,10 @@ const Block: React.FC<BlockProps> = ({ section }) => {
   const [expanded, toggle] = useBoolean(false)
 
   const resources = focusedBookTab?.epub?.resources
-  // @ts-ignore
-  const blobs = resources?.replacementUrls
-  // @ts-ignore
-  const assets = resources?.assets as []
-
   if (!resources) return null
+
+  const blobs = resources.replacementUrls
+  const assets = resources.assets
 
   return (
     <div>
@@ -49,7 +47,7 @@ const Block: React.FC<BlockProps> = ({ section }) => {
         <div>
           {section.images.map((src) => {
             const i = assets.findIndex((a: any) => src.includes(a.href))
-            const asset = assets[i] as any
+            const asset = assets[i]
             const blob = blobs[i]
 
             if (!blob) return null

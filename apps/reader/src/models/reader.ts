@@ -1,11 +1,12 @@
 import { debounce } from '@github/mini-throttle/decorators'
-import type { Rendition, Location, Book } from 'epubjs'
-import Navigation, { NavItem } from 'epubjs/types/navigation'
-import Section from 'epubjs/types/section'
 import React from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot, subscribe, useSnapshot } from 'valtio'
+
+import type { Rendition, Location, Book } from '@ink/epubjs'
+import Navigation, { NavItem } from '@ink/epubjs/types/navigation'
+import Section from '@ink/epubjs/types/section'
 
 import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
@@ -292,9 +293,7 @@ export class BookTab extends BaseTab {
         if (!parentId) {
           navItem = undefined
         } else {
-          // @ts-ignore
-          const index = this.nav.tocById[parentId]
-          // @ts-ignore
+          const index = this.nav.tocById[parentId]!
           navItem = this.nav.getByIndex(parentId, index, this.nav.toc)
         }
       }
@@ -588,7 +587,6 @@ export class Reader {
     this.groups.forEach(({ bookTabs }) => {
       bookTabs.forEach(({ rendition }) => {
         try {
-          // @ts-ignore
           rendition?.resize()
         } catch (error) {
           console.error(error)

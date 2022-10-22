@@ -35,7 +35,7 @@ const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
             fill: 'rgba(234, 179, 8, 0.3)',
             'fill-opacity': 'unset',
           },
-        ) as any
+        )
 
         const g = h?.mark.element as SVGGElement
         g?.addEventListener('click', () => {
@@ -79,7 +79,7 @@ const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
             stroke: '',
             'stroke-opacity': 0.3,
           },
-        ) as any
+        )
 
         const g = h?.mark.element as SVGGElement
 
@@ -120,7 +120,7 @@ const Annotation: React.FC<AnnotationProps> = ({ tab, annotation }) => {
         fill: colorMap[annotation.color],
         'fill-opacity': '0.5',
       },
-    ) as any
+    )
 
     const g = h?.mark.element as SVGGElement
 
