@@ -28,6 +28,7 @@ import {
 } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { Action, actionState, navbarState } from '../state'
+import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
 import { Account, Auth, Settings } from './pages'
@@ -272,7 +273,7 @@ const Action: React.FC<ActionProps> = ({
       {active &&
         (mobile || (
           <div
-            className={clsx('absolute bg-orange-400', 'inset-y-0 left-0 w-0.5')}
+            className={clsx('absolute', 'inset-y-0 left-0 w-0.5', activeClass)}
           />
         ))}
       <Icon size={28} />

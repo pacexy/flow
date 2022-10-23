@@ -40,6 +40,7 @@ const names = [
   'surface-variant',
   'on-surface-variant',
   'outline',
+  'outline-variant',
   'shadow',
   'inverse-surface',
   'inverse-on-surface',

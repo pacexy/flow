@@ -5,9 +5,13 @@ import { Contents } from '@ink/epubjs'
 import { Settings } from './state'
 import { keys } from './utils'
 
+export const activeClass = 'bg-primary'
 export const defaultStyle = {
   html: {
     padding: '0 !important',
+  },
+  body: {
+    background: 'transparent',
   },
   'a:any-link': {
     color: '#3b82f6 !important',

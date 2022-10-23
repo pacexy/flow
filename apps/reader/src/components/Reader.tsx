@@ -56,12 +56,15 @@ function handleKeyDown(tab?: BookTab) {
 
 export function ReaderGridView() {
   const { groups } = useReaderSnapshot()
+  const [{ theme }] = useSettings()
 
   useEventListener('keydown', handleKeyDown(reader.focusedBookTab))
 
   if (!groups.length) return null
   return (
-    <SplitView className="ReaderGridView">
+    <SplitView
+      className={clsx('ReaderGridView', `bg-surface${theme?.background || ''}`)}
+    >
       {groups.map(({ id }, i) => (
         <ReaderGroup key={id} index={i} />
       ))}
@@ -245,7 +248,6 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     if (dark === undefined) return
     // set `!important` when in dark mode
     rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a', dark)
-    rendition?.themes.override('background', dark ? '#121212' : 'white', dark)
   }, [rendition, dark])
 
   const [src, setSrc] = useState<string>()
@@ -358,13 +360,19 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className={clsx('relative flex-1')}>
+      <div
+        ref={ref}
+        className={clsx('relative flex-1')}
+        // `color-scheme: dark` will make iframe background white
+        style={{ colorScheme: 'auto' }}
+      >
         <div
           className={clsx(
-            'bg-default absolute inset-0',
+            'absolute inset-0',
             // do not cover `sash`
             'z-20',
             rendered && 'hidden',
+            `bg-surface${settings.theme?.background || ''}`,
           )}
         />
         <TextSelectionMenu tab={tab} />

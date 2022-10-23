@@ -47,6 +47,7 @@ export type Settings = {
   zoom?: number
   theme?: Partial<{
     source: string
+    background: number
   }>
 }
 

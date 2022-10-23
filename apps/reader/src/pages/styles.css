@@ -37,6 +37,13 @@ input[type='number']::-webkit-outer-spin-button {
   margin: 0;
 }
 
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type='color']::-webkit-color-swatch {
+  @apply border-outline-variant;
+}
+
 .scroll {
   overflow: overlay;
 }

@@ -1,12 +1,13 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { RenditionSpread } from 'packages/epub.js/types/rendition'
+import { range } from 'packages/internal/src'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { useSettings } from '@ink/reader/state'
 
-import { Select, TextField, TextFieldProps } from '../Form'
+import { ColorPicker, Select, TextField, TextFieldProps, Label } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
@@ -16,23 +17,47 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
   ] = useSettings()
   return (
     <PaneView {...props}>
-      <Pane headline="Theme" className="mx-5">
-        <input
-          type="color"
-          className="w-10 appearance-none rounded-full border-none bg-transparent"
-          defaultValue={theme?.source ?? '#fff'}
-          onBlur={(e) => {
-            setSettings((prev) => ({
-              ...prev,
-              theme: {
-                ...prev.theme,
-                source: e.target.value,
-              },
-            }))
-          }}
-        />
+      <Pane headline="Theme" className="space-y-3 px-5 pt-2 pb-4">
+        <div>
+          <ColorPicker
+            name="Source Color"
+            defaultValue={theme?.source ?? '#fff'}
+            onChange={(e) => {
+              setSettings((prev) => ({
+                ...prev,
+                theme: {
+                  ...prev.theme,
+                  source: e.target.value,
+                },
+              }))
+            }}
+          />
+        </div>
+        <div>
+          <Label name="Background Color"></Label>
+          <div className="flex gap-1">
+            {range(6).map((i) => (
+              <div
+                key={i}
+                className={clsx(
+                  'border-surface-variant h-5 w-5 border',
+                  `bg-surface${i || ''}`,
+                )}
+                onClick={() => {
+                  setSettings((prev) => ({
+                    ...prev,
+                    theme: {
+                      ...prev.theme,
+                      background: i,
+                    },
+                  }))
+                }}
+              ></div>
+            ))}
+          </div>
+        </div>
       </Pane>
-      <Pane headline="Typography" className="mx-5 space-y-3 pt-2 pb-4">
+      <Pane headline="Typography" className="space-y-3 px-5 pt-2 pb-4">
         <Select
           name="Page View"
           value={spread ?? RenditionSpread.Auto}
