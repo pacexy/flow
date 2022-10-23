@@ -1,16 +1,15 @@
 const plugin = require('tailwindcss/plugin')
 
 const colors = require('./colors')
-const typography = require('./typography')
-const state = require('./state')
 const elevation = require('./elevation')
+const state = require('./state')
+const typography = require('./typography')
 
 module.exports = plugin.withOptions(
-  ({ source = '#6750a4' } = {}) => {
-    return ({ addUtilities, addComponents, addBase, theme }) => {
+  () => {
+    return ({ addUtilities, addBase }) => {
       addBase({
         ':root': {
-          ...colors.base(source),
           ...typography.base,
           ...state.base,
           ...elevation.base,
@@ -23,7 +22,7 @@ module.exports = plugin.withOptions(
       })
     }
   },
-  function (options) {
+  function () {
     return {
       theme: {
         extend: {
@@ -33,5 +32,5 @@ module.exports = plugin.withOptions(
         },
       },
     }
-  }
+  },
 )

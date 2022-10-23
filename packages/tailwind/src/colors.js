@@ -1,12 +1,3 @@
-const {
-  argbFromHex,
-  hexFromArgb,
-  themeFromSourceColor,
-  redFromArgb,
-  greenFromArgb,
-  blueFromArgb,
-} = require('@material/material-color-utilities')
-
 function makeColorString(variable, opacity) {
   if (opacity === undefined) {
     return `rgb(var(${variable}))`
@@ -64,31 +55,8 @@ exports.map = names.reduce(
     // Derived colors
     disabled: makeColorString('--md-sys-color-on-surface', 0.12),
     'on-disabled': makeColorString('--md-sys-color-on-surface', 0.38),
-  }
+  },
 )
-
-exports.base = (source) => {
-  const theme = themeFromSourceColor(argbFromHex(source))
-  const generateTheme = (schemeName) => {
-    const scheme = theme.schemes[schemeName]
-    const css = { 'color-scheme': schemeName }
-    Object.entries(scheme.toJSON()).forEach(([key, value]) => {
-      const token = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-      css[`--md-sys-color-${token}`] = [
-        redFromArgb,
-        greenFromArgb,
-        blueFromArgb,
-      ]
-        .map((f) => f(value))
-        .join(' ')
-    })
-    return css
-  }
-  return {
-    ...generateTheme('light'),
-    '&.dark': generateTheme('dark'),
-  }
-}
 
 const utilities = {}
 
@@ -103,7 +71,7 @@ const surfaceMap = {
 Object.entries(surfaceMap).forEach(([level, opacity]) => {
   utilities[`.bg-surface${level}`] = {
     backgroundImage: makeLinearGradient(
-      makeColorString(`--md-sys-color-primary`, opacity)
+      makeColorString(`--md-sys-color-primary`, opacity),
     ),
     backgroundColor: makeColorString('--md-sys-color-surface'),
   }

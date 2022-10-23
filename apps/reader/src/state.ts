@@ -45,6 +45,9 @@ export type Settings = {
   lineHeight?: number
   spread?: RenditionSpread
   zoom?: number
+  theme?: Partial<{
+    source: string
+  }>
 }
 
 const defaultSettings: Settings = {}

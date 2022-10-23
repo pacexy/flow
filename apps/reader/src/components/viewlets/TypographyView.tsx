@@ -10,10 +10,28 @@ import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
-    useSettings()
+  const [
+    { fontSize, fontWeight, lineHeight, zoom, spread, theme },
+    setSettings,
+  ] = useSettings()
   return (
     <PaneView {...props}>
+      <Pane headline="Theme" className="mx-5">
+        <input
+          type="color"
+          className="w-10 appearance-none rounded-full border-none bg-transparent"
+          defaultValue={theme?.source ?? '#fff'}
+          onBlur={(e) => {
+            setSettings((prev) => ({
+              ...prev,
+              theme: {
+                ...prev.theme,
+                source: e.target.value,
+              },
+            }))
+          }}
+        />
+      </Pane>
       <Pane headline="Typography" className="mx-5 space-y-3 pt-2 pb-4">
         <Select
           name="Page View"
