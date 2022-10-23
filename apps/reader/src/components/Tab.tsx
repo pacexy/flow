@@ -4,7 +4,7 @@ import { IconType } from 'react-icons'
 import { MdClose } from 'react-icons/md'
 
 import { useSettings } from '../state'
-import { activeClass } from '../styles'
+import { activeClass, bg } from '../styles'
 
 import { IconButton } from './Button'
 
@@ -33,8 +33,8 @@ export function Tab({
       className={clsx(
         ' typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
         selected
-          ? `text-outline bg-surface${theme?.background || ''}`
-          : `text-outline/60 hover:bg-surface${theme?.background || ''}`,
+          ? `text-outline ${bg(theme?.background)}`
+          : `text-outline/60 hover:${bg(theme?.background)}`,
         focused && '!text-on-surface',
         className,
       )}

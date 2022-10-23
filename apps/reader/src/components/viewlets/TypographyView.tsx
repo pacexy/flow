@@ -6,6 +6,7 @@ import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { useSettings } from '@ink/reader/state'
+import { bg } from '@ink/reader/styles'
 
 import { ColorPicker, Select, TextField, TextFieldProps, Label } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
@@ -35,25 +36,28 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
         </div>
         <div>
           <Label name="Background Color"></Label>
-          <div className="flex gap-1">
-            {range(6).map((i) => (
-              <div
-                key={i}
-                className={clsx(
-                  'border-surface-variant h-5 w-5 border',
-                  `bg-surface${i || ''}`,
-                )}
-                onClick={() => {
-                  setSettings((prev) => ({
-                    ...prev,
-                    theme: {
-                      ...prev.theme,
-                      background: i,
-                    },
-                  }))
-                }}
-              ></div>
-            ))}
+          <div className="flex gap-2">
+            {range(7)
+              .filter((i) => !(i % 2))
+              .map((i) => i - 1)
+              .map((i) => (
+                <div
+                  key={i}
+                  className={clsx(
+                    'border-surface-variant light h-6 w-6 border',
+                    bg(i),
+                  )}
+                  onClick={() => {
+                    setSettings((prev) => ({
+                      ...prev,
+                      theme: {
+                        ...prev.theme,
+                        background: i,
+                      },
+                    }))
+                  }}
+                ></div>
+              ))}
           </div>
         </div>
       </Pane>

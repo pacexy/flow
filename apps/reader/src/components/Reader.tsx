@@ -21,7 +21,7 @@ import { db } from '../db'
 import { handleFiles } from '../file'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
-import { updateCustomStyle } from '../styles'
+import { bg, updateCustomStyle } from '../styles'
 
 import {
   getClickedAnnotation,
@@ -62,9 +62,7 @@ export function ReaderGridView() {
 
   if (!groups.length) return null
   return (
-    <SplitView
-      className={clsx('ReaderGridView', `bg-surface${theme?.background || ''}`)}
-    >
+    <SplitView className={clsx('ReaderGridView', bg(theme?.background))}>
       {groups.map(({ id }, i) => (
         <ReaderGroup key={id} index={i} />
       ))}

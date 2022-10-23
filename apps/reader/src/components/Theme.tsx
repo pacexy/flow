@@ -34,20 +34,16 @@ function generateCss(source = '#fff') {
     let css = `color-scheme: ${schemeName};`
     Object.entries(scheme.toJSON()).forEach(([key, value]) => {
       const token = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-
-      css += `--md-sys-color-${token}:${[
-        redFromArgb,
-        greenFromArgb,
-        blueFromArgb,
-      ]
+      const color = [redFromArgb, greenFromArgb, blueFromArgb]
         .map((f) => f(value))
-        .join(' ')};`
+        .join(' ')
+      css += `--md-sys-color-${token}:${color};`
     })
     return css
   }
 
   return (
-    `:root {${generateScheme('light')}}` +
+    `:root, .light {${generateScheme('light')}}` +
     `:root.dark {${generateScheme('dark')}}`
   )
 }

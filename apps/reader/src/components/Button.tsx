@@ -22,7 +22,7 @@ export function IconButton({
 }
 
 const variantMap = {
-  primary: 'bg-tertiary-container text-on-surface',
+  primary: 'bg-primary-container text-on-primary-container',
   secondary: 'bg-outline/10 text-on-surface-variant',
 }
 

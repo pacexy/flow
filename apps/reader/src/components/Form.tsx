@@ -158,7 +158,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
         type="color"
         name={name}
         id={name}
-        className="h-5 w-10"
+        className="h-6 w-12"
         {...props}
       />
     </div>
