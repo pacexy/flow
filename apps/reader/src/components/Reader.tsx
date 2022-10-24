@@ -1,6 +1,5 @@
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import React, {
   ComponentProps,
   useCallback,
@@ -15,6 +14,7 @@ import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
+import { RenditionSpread } from '@ink/epubjs/types/rendition'
 import { navbarState, useSettings } from '@ink/reader/state'
 
 import { db } from '../db'
@@ -61,7 +61,7 @@ export function ReaderGridView() {
 
   if (!groups.length) return null
   return (
-    <SplitView className="ReaderGridView">
+    <SplitView className={clsx('ReaderGridView')}>
       {groups.map(({ id }, i) => (
         <ReaderGroup key={id} index={i} />
       ))}
@@ -135,6 +135,12 @@ function ReaderGroup({ index }: ReaderGroupProps) {
             if (fromTab) {
               const indexes = text.split(',')
               const groupIdx = Number(indexes[0])
+
+              if (index === groupIdx) {
+                if (group.tabs.length === 1) return
+                if (position === 'universe') return
+              }
+
               const tabIdx = Number(indexes[1])
               const tab = reader.removeTab(tabIdx, groupIdx)
               if (tab) tabs.push(tab)
@@ -245,7 +251,6 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     if (dark === undefined) return
     // set `!important` when in dark mode
     rendition?.themes.override('color', dark ? '#bfc8ca' : '#3f484a', dark)
-    rendition?.themes.override('background', dark ? '#121212' : 'white', dark)
   }, [rendition, dark])
 
   const [src, setSrc] = useState<string>()
@@ -358,13 +363,19 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         bannerVisible={false}
       />
       <ReaderPaneHeader tab={tab} />
-      <div ref={ref} className={clsx('relative flex-1')}>
+      <div
+        ref={ref}
+        className={clsx('relative flex-1')}
+        // `color-scheme: dark` will make iframe background white
+        style={{ colorScheme: 'auto' }}
+      >
         <div
           className={clsx(
-            'bg-default absolute inset-0',
+            'absolute inset-0',
             // do not cover `sash`
             'z-20',
             rendered && 'hidden',
+            `bg-surface${settings.theme?.background || ''}`,
           )}
         />
         <TextSelectionMenu tab={tab} />

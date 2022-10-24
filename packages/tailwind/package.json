@@ -1,0 +1,9 @@
+{
+  "name": "@ink/tailwind",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "./src/index.js",
+  "devDependencies": {
+    "tailwindcss": "^3.2.0"
+  }
+}

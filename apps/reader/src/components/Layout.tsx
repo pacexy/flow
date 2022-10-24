@@ -10,6 +10,7 @@ import {
   MdSearch,
   MdToc,
   MdTimeline,
+  MdOutlineLightMode,
 } from 'react-icons/md'
 import {
   RiFontSize,
@@ -21,6 +22,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import {
   ENV,
+  useBackground,
   useColorScheme,
   useEnv,
   useInitSubscription,
@@ -28,12 +30,14 @@ import {
 } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { Action, actionState, navbarState } from '../state'
+import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
 import { Account, Auth, Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
+import { ThemeView } from './viewlets/ThemeView'
 import { TimelineView } from './viewlets/TimelineView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
@@ -109,13 +113,20 @@ const viewActions: IViewAction[] = [
     title: 'Timeline',
     Icon: MdTimeline,
     View: TimelineView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: ENV.Desktop,
   },
   {
     name: 'Typography',
     title: 'Typography',
     Icon: RiFontSize,
     View: TypographyView,
+    env: ENV.Desktop | ENV.MOBILE,
+  },
+  {
+    name: 'Theme',
+    title: 'Theme',
+    Icon: MdOutlineLightMode,
+    View: ThemeView,
     env: ENV.Desktop | ENV.MOBILE,
   },
 ]
@@ -272,7 +283,7 @@ const Action: React.FC<ActionProps> = ({
       {active &&
         (mobile || (
           <div
-            className={clsx('absolute bg-orange-400', 'inset-y-0 left-0 w-0.5')}
+            className={clsx('absolute', 'inset-y-0 left-0 w-0.5', activeClass)}
           />
         ))}
       <Icon size={28} />
@@ -317,12 +328,18 @@ const SideBar: React.FC = () => {
 interface ReaderProps extends ComponentProps<'div'> {}
 const Reader: React.FC = ({ className, ...props }: ReaderProps) => {
   useSplitViewItem(Reader)
+  const [bg] = useBackground()
+
   const r = useReaderSnapshot()
   const readMode = r.focusedTab?.isBook
 
   return (
     <div
-      className={clsx('flex-1 overflow-hidden', readMode || 'mb-12 sm:mb-0')}
+      className={clsx(
+        'Reader flex-1 overflow-hidden',
+        readMode || 'mb-12 sm:mb-0',
+        bg,
+      )}
       {...props}
     />
   )

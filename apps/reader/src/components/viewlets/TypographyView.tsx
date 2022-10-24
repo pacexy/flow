@@ -1,9 +1,9 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
+import { RenditionSpread } from '@ink/epubjs/types/rendition'
 import { useSettings } from '@ink/reader/state'
 
 import { Select, TextField, TextFieldProps } from '../Form'
@@ -12,9 +12,10 @@ import { PaneViewProps, PaneView, Pane } from '../base'
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
     useSettings()
+
   return (
     <PaneView {...props}>
-      <Pane headline="Typography" className="mx-5 space-y-3 pt-2 pb-4">
+      <Pane headline="Typography" className="space-y-3 px-5 pt-2 pb-4">
         <Select
           name="Page View"
           value={spread ?? RenditionSpread.Auto}

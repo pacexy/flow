@@ -3,6 +3,9 @@ import { ComponentProps } from 'react'
 import { IconType } from 'react-icons'
 import { MdClose } from 'react-icons/md'
 
+import { useBackground } from '../hooks'
+import { activeClass } from '../styles'
+
 import { IconButton } from './Button'
 
 interface TabProps extends ComponentProps<'div'> {
@@ -21,15 +24,15 @@ export function Tab({
   onDelete,
   ...props
 }: TabProps) {
+  const [bg] = useBackground()
+
   if (!children) return null
   return (
     <div
       role="tab"
       className={clsx(
         ' typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
-        selected
-          ? 'text-outline bg-default'
-          : 'text-outline/60 hover:bg-default',
+        selected ? `text-outline ${bg}` : `text-outline/60 hover:${bg}`,
         focused && '!text-on-surface',
         className,
       )}
@@ -37,7 +40,7 @@ export function Tab({
       {...props}
     >
       {focused && (
-        <div className="absolute inset-x-0 top-0 h-px bg-orange-400" />
+        <div className={clsx('absolute inset-x-0 top-0 h-px', activeClass)} />
       )}
       <Icon size={16} className="text-outline" />
       <span className="max-w-[200px] truncate">{children}</span>
@@ -59,7 +62,7 @@ const List: React.FC<ListProps> = ({ className, onDelete, ...props }) => {
   return (
     <div
       className={clsx(
-        'bg-outline/5 flex items-center justify-between',
+        'bg-primary/5 flex items-center justify-between',
         className,
       )}
     >

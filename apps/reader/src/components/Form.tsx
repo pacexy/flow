@@ -66,7 +66,7 @@ export function TextField<T extends ElementType = 'input'>({
 
   return (
     <div className={clsx('flex flex-col', className)}>
-      <Label name={name} hide={hideLabel} className="mb-1">
+      <Label name={name} hide={hideLabel}>
         {name}
       </Label>
       <div className="bg-default textfield flex grow items-center">
@@ -130,7 +130,7 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   return (
     <div className={clsx('flex flex-col', className)}>
-      {name && <Label name={name} className="mb-1" />}
+      {name && <Label name={name} />}
       <select
         name={name}
         id={name}
@@ -143,16 +143,42 @@ export const Select: React.FC<SelectProps> = ({
   )
 }
 
+interface ColorPickerProps extends ComponentProps<'input'> {
+  name?: string
+}
+export const ColorPicker: React.FC<ColorPickerProps> = ({
+  name,
+  className,
+  ...props
+}) => {
+  return (
+    <div className={clsx('flex flex-col', className)}>
+      {name && <Label name={name} />}
+      <input
+        type="color"
+        name={name}
+        id={name}
+        className="h-6 w-12"
+        {...props}
+      />
+    </div>
+  )
+}
+
 interface LabelProps extends ComponentProps<'label'> {
   name: string
   hide?: boolean
 }
-const Label: React.FC<LabelProps> = ({ name, hide = false, className }) => {
+export const Label: React.FC<LabelProps> = ({
+  name,
+  hide = false,
+  className,
+}) => {
   return (
     <label
       htmlFor={name}
       className={clsx(
-        'typescale-label-medium text-on-surface-variant !text-[13px]',
+        'typescale-label-medium text-on-surface-variant mb-1 block !text-[13px]',
         hide && 'hidden',
         className,
       )}

@@ -343,8 +343,10 @@ export class BookTab extends BaseTab {
     })
   }
 
+  private _el?: HTMLDivElement
   async render(el: HTMLDivElement) {
-    if (this.rendition) return
+    if (el === this._el) return
+    this._el = ref(el)
 
     const file = await db?.files.get(this.book.id)
     if (!file) return

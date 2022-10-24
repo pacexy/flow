@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react'
 
+import { useMobile } from '@ink/reader/hooks'
 import { clamp } from '@ink/reader/utils'
 
 interface ISplitViewItem {
@@ -133,18 +134,16 @@ interface SashProps {
 const Sash: React.FC<SashProps> = ({ vertical, views }) => {
   const [hover, setHover] = useState(false)
   const [active, setActive] = useState(false)
+  const mobile = useMobile()
 
   const enabled = views.every((v) => v?.visible && v?.resize)
 
   return (
     <div
       className={clsx(
-        'sash relative z-30 hidden shrink-0 sm:block',
-        enabled
-          ? vertical
-            ? 'cursor-ns-resize'
-            : 'cursor-ew-resize'
-          : 'pointer-events-none',
+        'sash relative z-30 shrink-0',
+        (mobile || !enabled) && 'pointer-events-none',
+        vertical ? 'cursor-ns-resize' : 'cursor-ew-resize',
       )}
       style={{
         [vertical ? 'height' : 'width']: SASH_SIZE,
@@ -178,11 +177,11 @@ const Sash: React.FC<SashProps> = ({ vertical, views }) => {
     >
       <div
         className={clsx(
-          'border-surface-variant pointer-events-none absolute inset-0 transition-[background-color]',
+          'border-outline/20 pointer-events-none absolute inset-0 transition-[background-color]',
           vertical
             ? 'top-1/2 -translate-y-1/2 border-b'
             : 'left-1/2 -translate-x-1/2 border-r',
-          (hover || active) && 'h-full w-full border-none bg-blue-500',
+          (hover || active) && 'bg-primary70 h-full w-full border-none',
         )}
       ></div>
       {active && <Overlay className="!bg-transparent" />}

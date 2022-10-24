@@ -17,6 +17,7 @@
     "@literal-ui/core": "0.0.13",
     "@literal-ui/hooks": "0.0.8",
     "@literal-ui/next": "0.0.3",
+    "@material/material-color-utilities": "^0.2.0",
     "@next/bundle-analyzer": "12.1.6",
     "@prisma/client": "^4.1.0",
     "@sentry/nextjs": "^7.12.1",
@@ -52,7 +53,7 @@
     "valtio": "1.6.0"
   },
   "devDependencies": {
-    "@literal-ui/plugins": "0.0.3",
+    "@ink/tailwind": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/line-clamp": "0.4.2",
     "@types/file-saver": "^2.0.5",
@@ -60,7 +61,6 @@
     "@types/react": "17.0.43",
     "@types/uuid": "^8.3.4",
     "autoprefixer": "10.4.4",
-    "m3-tokens": "0.0.3",
     "next-pwa": "5.5.2",
     "next-transpile-modules": "9.0.0",
     "postcss": "8.4.12",

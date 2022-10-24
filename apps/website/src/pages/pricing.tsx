@@ -1,6 +1,7 @@
 import { useBoolean } from '@literal-ui/hooks'
 import useTranslation from 'next-translate/useTranslation'
-import { range } from 'packages/internal/src'
+
+import { range } from '@ink/internal'
 
 import { OpenApp, QA, Seo } from '../components'
 

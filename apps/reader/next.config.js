@@ -6,6 +6,7 @@ const withPWA = require('next-pwa')
 const withTM = require('next-transpile-modules')([
   '@ink/internal',
   '@ink/epubjs',
+  '@material/material-color-utilities',
 ])
 
 const IS_DEV = process.env.NODE_ENV === 'development'
