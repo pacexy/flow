@@ -18,7 +18,7 @@
     "paths": {
       "@ink/reader/*": ["apps/reader/src/*"],
       "@ink/internal": ["packages/internal/src/index.ts"],
-      "@ink/epubjs/*": ["packages/epub.js/*"]
+      "@ink/epubjs/*": ["packages/epubjs/*"]
     }
   },
   "exclude": ["node_modules"]
