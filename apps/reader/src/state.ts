@@ -1,6 +1,7 @@
 import { IS_SERVER } from '@literal-ui/hooks'
-import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { atom, AtomEffect, useRecoilState } from 'recoil'
+
+import { RenditionSpread } from '@ink/epubjs/types/rendition'
 
 function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
   return ({ setSelf, onSet }) => {

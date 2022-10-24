@@ -6,7 +6,8 @@ import {
   blueFromArgb,
 } from '@material/material-color-utilities'
 import Head from 'next/head'
-import { range } from 'packages/internal/src'
+
+import { range } from '@ink/internal'
 
 import { useSourceColor } from '../hooks'
 

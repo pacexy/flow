@@ -1,7 +1,7 @@
 import clsx from 'clsx'
-import { range } from 'packages/internal/src'
 import { ComponentProps } from 'react'
 
+import { range } from '@ink/internal'
 import {
   useBackground,
   useColorScheme,

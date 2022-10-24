@@ -14,7 +14,12 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "strict": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@ink/reader/*": ["apps/reader/src/*"],
+      "@ink/internal": ["packages/internal/src/index.ts"],
+      "@ink/epubjs/*": ["packages/epub.js/*"]
+    }
   },
   "exclude": ["node_modules"]
 }

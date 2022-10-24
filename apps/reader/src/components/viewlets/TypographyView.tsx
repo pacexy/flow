@@ -1,9 +1,9 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
+import { RenditionSpread } from '@ink/epubjs/types/rendition'
 import { useSettings } from '@ink/reader/state'
 
 import { Select, TextField, TextFieldProps } from '../Form'

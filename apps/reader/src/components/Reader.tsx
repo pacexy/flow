@@ -1,6 +1,5 @@
 import { useEventListener } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { RenditionSpread } from 'packages/epub.js/types/rendition'
 import React, {
   ComponentProps,
   useCallback,
@@ -15,6 +14,7 @@ import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
+import { RenditionSpread } from '@ink/epubjs/types/rendition'
 import { navbarState, useSettings } from '@ink/reader/state'
 
 import { db } from '../db'
