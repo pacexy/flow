@@ -135,6 +135,12 @@ function ReaderGroup({ index }: ReaderGroupProps) {
             if (fromTab) {
               const indexes = text.split(',')
               const groupIdx = Number(indexes[0])
+
+              if (index === groupIdx) {
+                if (group.tabs.length === 1) return
+                if (position === 'universe') return
+              }
+
               const tabIdx = Number(indexes[1])
               const tab = reader.removeTab(tabIdx, groupIdx)
               if (tab) tabs.push(tab)
