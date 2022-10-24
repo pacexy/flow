@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react'
 
-import { useSettings } from '../state'
+import { useSettings } from '@ink/reader/state'
 
 import { useColorScheme } from './useColorScheme'
 
 export function useBackground() {
-  const [{ theme }] = useSettings()
-  const [, setSettings] = useSettings()
+  const [{ theme }, setSettings] = useSettings()
   const { dark } = useColorScheme()
 
   const setBackground = useCallback(

@@ -2,15 +2,18 @@ import clsx from 'clsx'
 import { range } from 'packages/internal/src'
 import { ComponentProps } from 'react'
 
-import { useBackground, useColorScheme } from '@ink/reader/hooks'
-import { useSettings } from '@ink/reader/state'
+import {
+  useBackground,
+  useColorScheme,
+  useSourceColor,
+} from '@ink/reader/hooks'
 
 import { ColorPicker, Label } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const ThemeView: React.FC<PaneViewProps> = (props) => {
-  const [{ theme }, setSettings] = useSettings()
   const { setScheme } = useColorScheme()
+  const { sourceColor, setSourceColor } = useSourceColor()
 
   const [, setBackground] = useBackground()
 
@@ -20,15 +23,9 @@ export const ThemeView: React.FC<PaneViewProps> = (props) => {
         <div>
           <ColorPicker
             name="Source Color"
-            defaultValue={theme?.source ?? '#fff'}
+            defaultValue={sourceColor}
             onChange={(e) => {
-              setSettings((prev) => ({
-                ...prev,
-                theme: {
-                  ...prev.theme,
-                  source: e.target.value,
-                },
-              }))
+              setSourceColor(e.target.value)
             }}
           />
         </div>

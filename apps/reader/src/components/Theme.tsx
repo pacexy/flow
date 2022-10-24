@@ -8,7 +8,7 @@ import {
 import Head from 'next/head'
 import { range } from 'packages/internal/src'
 
-import { useSettings } from '../state'
+import { useSourceColor } from '../hooks'
 
 // let `tailwindcss` generate classes
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,12 +72,12 @@ function generateCss(source = '#fff') {
 }
 
 export function Theme() {
-  const [{ theme }] = useSettings()
+  const { sourceColor } = useSourceColor()
   return (
     <Head>
       <style
         id="theme"
-        dangerouslySetInnerHTML={{ __html: generateCss(theme?.source) }}
+        dangerouslySetInnerHTML={{ __html: generateCss(sourceColor) }}
       ></style>
     </Head>
   )
