@@ -16,6 +16,17 @@ function makeLinearGradient(color) {
   return `linear-gradient(${color},${color})`
 }
 
+const colorKeys = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'error',
+  'neutral',
+  'neutral-variant',
+]
+const tones = [50, 60, 70, 80]
+exports.tones = tones
+
 const names = [
   'primary',
   'on-primary',
@@ -47,17 +58,24 @@ const names = [
   'inverse-primary',
 ]
 
-exports.map = names.reduce(
-  (acc, name) => {
-    acc[name] = withOpacity(`--md-sys-color-${name}`)
-    return acc
-  },
-  {
-    // Derived colors
-    disabled: makeColorString('--md-sys-color-on-surface', 0.12),
-    'on-disabled': makeColorString('--md-sys-color-on-surface', 0.38),
-  },
-)
+const theme = {
+  // Derived colors
+  disabled: makeColorString('--md-sys-color-on-surface', 0.12),
+  'on-disabled': makeColorString('--md-sys-color-on-surface', 0.38),
+}
+
+colorKeys.forEach((colorKey) => {
+  tones.forEach((t) => {
+    const key = `${colorKey}${t}`
+    theme[`${colorKey}${t}`] = withOpacity(`--md-ref-palette-${key}`)
+  })
+})
+
+names.forEach((name) => {
+  theme[name] = withOpacity(`--md-sys-color-${name}`)
+})
+
+exports.theme = theme
 
 const utilities = {}
 

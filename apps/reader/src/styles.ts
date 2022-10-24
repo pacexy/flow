@@ -13,7 +13,7 @@ export function bg(level?: number) {
   return 'bg-default'
 }
 
-export const activeClass = 'bg-primary'
+export const activeClass = 'bg-primary70'
 export const defaultStyle = {
   html: {
     padding: '0 !important',

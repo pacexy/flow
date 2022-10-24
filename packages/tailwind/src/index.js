@@ -26,7 +26,7 @@ module.exports = plugin.withOptions(
     return {
       theme: {
         extend: {
-          colors: colors.map,
+          colors: colors.theme,
           opacity: state.map,
           boxShadow: elevation.map,
         },

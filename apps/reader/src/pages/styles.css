@@ -20,7 +20,7 @@ select:focus-visible,
 button:focus-visible,
 a:focus-visible {
   outline: none;
-  @apply ring-primary ring-1 ring-inset;
+  @apply ring-primary70 ring-1 ring-inset;
 }
 
 input:focus-visible,

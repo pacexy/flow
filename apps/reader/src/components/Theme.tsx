@@ -6,6 +6,7 @@ import {
   blueFromArgb,
 } from '@material/material-color-utilities'
 import Head from 'next/head'
+import { range } from 'packages/internal/src'
 
 import { useSettings } from '../state'
 
@@ -26,25 +27,47 @@ const classNamesToGenerate = [
   'hover:bg-surface5',
 ]
 
+function camelToSnake(s: string) {
+  return s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+}
+
+function rgbFromArgb(argb: number) {
+  return [redFromArgb, greenFromArgb, blueFromArgb]
+    .map((f) => f(argb))
+    .join(' ')
+}
+
 function generateCss(source = '#fff') {
   const theme = themeFromSourceColor(argbFromHex(source))
 
-  const generateScheme = (schemeName: 'light' | 'dark') => {
-    const scheme = theme.schemes[schemeName]
+  const tones = range(4).map((i) => (i + 5) * 10)
+  const generateRef = () => {
+    return Object.entries(theme.palettes)
+      .flatMap(([k, palette]) =>
+        tones.map((i) => {
+          const argb = palette.tone(i)
+          const rgb = rgbFromArgb(argb)
+          return `--md-ref-palette-${camelToSnake(k)}${i}:${rgb};`
+        }),
+      )
+      .join('')
+  }
+
+  const generateSys = (schemeName: 'light' | 'dark') => {
     let css = `color-scheme: ${schemeName};`
-    Object.entries(scheme.toJSON()).forEach(([key, value]) => {
-      const token = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-      const color = [redFromArgb, greenFromArgb, blueFromArgb]
-        .map((f) => f(value))
-        .join(' ')
-      css += `--md-sys-color-${token}:${color};`
+    const scheme = theme.schemes[schemeName]
+    Object.entries(scheme.toJSON()).forEach(([key, argb]) => {
+      const token = camelToSnake(key)
+      const rgb = rgbFromArgb(argb)
+      css += `--md-sys-color-${token}:${rgb};`
     })
     return css
   }
 
   return (
-    `:root, .light {${generateScheme('light')}}` +
-    `:root.dark {${generateScheme('dark')}}`
+    `:root {${generateRef()}}` +
+    `:root, .light {${generateSys('light')}}` +
+    `:root.dark {${generateSys('dark')}}`
   )
 }
 
