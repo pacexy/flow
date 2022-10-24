@@ -3,8 +3,8 @@ import { ComponentProps } from 'react'
 import { IconType } from 'react-icons'
 import { MdClose } from 'react-icons/md'
 
-import { useSettings } from '../state'
-import { activeClass, bg } from '../styles'
+import { useBackground } from '../hooks'
+import { activeClass } from '../styles'
 
 import { IconButton } from './Button'
 
@@ -24,7 +24,7 @@ export function Tab({
   onDelete,
   ...props
 }: TabProps) {
-  const [{ theme }] = useSettings()
+  const [bg] = useBackground()
 
   if (!children) return null
   return (
@@ -32,9 +32,7 @@ export function Tab({
       role="tab"
       className={clsx(
         ' typescale-body-small relative flex cursor-pointer items-center gap-1 p-2 pr-1',
-        selected
-          ? `text-outline ${bg(theme?.background)}`
-          : `text-outline/60 hover:${bg(theme?.background)}`,
+        selected ? `text-outline ${bg}` : `text-outline/60 hover:${bg}`,
         focused && '!text-on-surface',
         className,
       )}

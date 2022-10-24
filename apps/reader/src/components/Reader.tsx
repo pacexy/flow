@@ -21,7 +21,7 @@ import { db } from '../db'
 import { handleFiles } from '../file'
 import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
-import { bg, updateCustomStyle } from '../styles'
+import { updateCustomStyle } from '../styles'
 
 import {
   getClickedAnnotation,
@@ -56,13 +56,12 @@ function handleKeyDown(tab?: BookTab) {
 
 export function ReaderGridView() {
   const { groups } = useReaderSnapshot()
-  const [{ theme }] = useSettings()
 
   useEventListener('keydown', handleKeyDown(reader.focusedBookTab))
 
   if (!groups.length) return null
   return (
-    <SplitView className={clsx('ReaderGridView', bg(theme?.background))}>
+    <SplitView className={clsx('ReaderGridView')}>
       {groups.map(({ id }, i) => (
         <ReaderGroup key={id} index={i} />
       ))}

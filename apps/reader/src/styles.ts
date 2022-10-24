@@ -5,14 +5,6 @@ import { Contents } from '@ink/epubjs'
 import { Settings } from './state'
 import { keys } from './utils'
 
-export function bg(level?: number) {
-  if (!level) return 'bg-surface'
-
-  if (level > 0) return `bg-surface${level}`
-
-  return 'bg-default'
-}
-
 export const activeClass = 'bg-primary70'
 export const defaultStyle = {
   html: {

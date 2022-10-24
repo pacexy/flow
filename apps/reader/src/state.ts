@@ -28,6 +28,7 @@ export type Action =
   | 'Typography'
   | 'Image'
   | 'Timeline'
+  | 'Theme'
 export const actionState = atom<Action | undefined>({
   key: 'action',
   default: undefined,

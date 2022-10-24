@@ -1,66 +1,20 @@
 import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { RenditionSpread } from 'packages/epub.js/types/rendition'
-import { range } from 'packages/internal/src'
 import { useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { useSettings } from '@ink/reader/state'
-import { bg } from '@ink/reader/styles'
 
-import { ColorPicker, Select, TextField, TextFieldProps, Label } from '../Form'
+import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
-  const [
-    { fontSize, fontWeight, lineHeight, zoom, spread, theme },
-    setSettings,
-  ] = useSettings()
+  const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
+    useSettings()
+
   return (
     <PaneView {...props}>
-      <Pane headline="Theme" className="space-y-3 px-5 pt-2 pb-4">
-        <div>
-          <ColorPicker
-            name="Source Color"
-            defaultValue={theme?.source ?? '#fff'}
-            onChange={(e) => {
-              setSettings((prev) => ({
-                ...prev,
-                theme: {
-                  ...prev.theme,
-                  source: e.target.value,
-                },
-              }))
-            }}
-          />
-        </div>
-        <div>
-          <Label name="Background Color"></Label>
-          <div className="flex gap-2">
-            {range(7)
-              .filter((i) => !(i % 2))
-              .map((i) => i - 1)
-              .map((i) => (
-                <div
-                  key={i}
-                  className={clsx(
-                    'border-surface-variant light h-6 w-6 border',
-                    bg(i),
-                  )}
-                  onClick={() => {
-                    setSettings((prev) => ({
-                      ...prev,
-                      theme: {
-                        ...prev.theme,
-                        background: i,
-                      },
-                    }))
-                  }}
-                ></div>
-              ))}
-          </div>
-        </div>
-      </Pane>
       <Pane headline="Typography" className="space-y-3 px-5 pt-2 pb-4">
         <Select
           name="Page View"
