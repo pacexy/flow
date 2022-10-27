@@ -28,7 +28,7 @@ export function useTextSelection(win?: Window) {
   const [selection, setSelection] = useState<Selection | undefined>()
   const render = useForceRender()
 
-  useEventListener(win, 'mouseup', () => {
+  useEventListener(win, 'pointerup', () => {
     const s = win?.getSelection()
 
     if (hasSelection(s)) {
