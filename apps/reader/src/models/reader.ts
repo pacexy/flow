@@ -1,6 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
 import React from 'react'
-import { ReadonlyDeep } from 'type-fest'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot, subscribe, useSnapshot } from 'valtio'
 
@@ -12,6 +11,8 @@ import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
 import { defaultStyle, updateCustomStyle } from '../styles'
+
+import { dfs, find, INode } from './tree'
 
 function updateIndex(array: any[], deletedItemIndex: number) {
   const last = array.length - 1
@@ -33,17 +34,11 @@ export function compareHref(
   }
 }
 
-interface Node {
-  id: string
-  depth?: number
-  expanded?: boolean
-  subitems?: Node[]
-}
-export interface INavItem extends NavItem, Node {
+export interface INavItem extends NavItem, INode {
   subitems?: INavItem[]
 }
 
-export interface Match extends Node {
+export interface Match extends INode {
   excerpt: string
   description?: string
   cfi?: string
@@ -54,32 +49,6 @@ export interface ISection extends Section {
   length: number
   images: string[]
   navitem?: INavItem
-}
-
-export function flatTree<T extends ReadonlyDeep<Node>>(
-  node: T,
-  depth = 1,
-): T[] {
-  if (!node.subitems || !node.subitems.length || !node.expanded) {
-    return [{ ...node, depth }]
-  }
-  const children = node.subitems.flatMap((i) => flatTree(i, depth + 1)) as T[]
-  return [{ ...node, depth }, ...children]
-}
-
-function find<T extends Node>(nodes: T[] = [], id: string): T | undefined {
-  const node = nodes.find((n) => n.id === id)
-  if (node) return node
-  for (const child of nodes) {
-    const node = find(child.subitems, id)
-    if (node) return node as T
-  }
-  return undefined
-}
-
-export function dfs<T extends Node>(node: T, fn: (node: T) => void) {
-  fn(node)
-  node.subitems?.forEach((child) => dfs(child as T, fn))
 }
 
 interface TimelineItem {

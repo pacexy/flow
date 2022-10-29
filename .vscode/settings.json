@@ -9,6 +9,7 @@
     "/apps/reader/src/hooks/remote",
     "/apps/reader/src/components/pages",
     "/apps/website/src/components",
-    "/apps/reader/src/hooks/theme"
+    "/apps/reader/src/hooks/theme",
+    "/apps/reader/src/models"
   ]
 }
