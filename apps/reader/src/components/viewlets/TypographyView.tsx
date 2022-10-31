@@ -1,4 +1,3 @@
-import { useMounted } from '@literal-ui/hooks'
 import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
@@ -20,12 +19,14 @@ enum TypographyScope {
   Global,
 }
 
+const typefaces = ['default', 'sans-serif', 'serif']
+
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const [settings, setSettings] = useSettings()
   const [scope, setScope] = useState(TypographyScope.Book)
 
-  const { fontSize, fontWeight, lineHeight, zoom, spread } =
+  const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
       ? focusedBookTab?.book.configuration?.typography ?? defaultSettings
       : settings
@@ -89,6 +90,19 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           <option value={RenditionSpread.Auto}>Double Page</option>
           <option value={RenditionSpread.None}>Single Page</option>
         </Select>
+        <Select
+          name="Font Family"
+          value={fontFamily}
+          onChange={(e) => {
+            setTypography('fontFamily', e.target.value)
+          }}
+        >
+          {typefaces.map((t) => (
+            <option key={t} value={t} style={{ fontFamily: t }}>
+              {t}
+            </option>
+          ))}
+        </Select>
         <NumberField
           name="Font Size"
           min={14}
@@ -127,7 +141,6 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
       </Pane>
-      <TypeFacePane />
     </PaneView>
   )
 }
@@ -173,60 +186,5 @@ const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
       }}
       {...props}
     />
-  )
-}
-
-const typefaces = ['sans-serif', 'serif']
-
-const TypeFacePane: React.FC = () => {
-  const [sentence, setSentence] = useState(
-    'The quick brown fox jumps over the lazy dog.',
-  )
-  return (
-    <Pane headline="Typeface" className="px-5">
-      <TextField
-        as="textarea"
-        name="Sentence"
-        defaultValue={sentence}
-        onChange={(e) => setSentence(e.target.value)}
-        className="mt-2 mb-4"
-      />
-      <div className="flex flex-col gap-4">
-        {typefaces.map((t) => (
-          <Typeface key={t} fontFamily={t} sentence={sentence} />
-        ))}
-      </div>
-    </Pane>
-  )
-}
-
-interface TypefaceProps {
-  fontFamily: string
-  sentence: string
-}
-const Typeface: React.FC<TypefaceProps> = ({ fontFamily, sentence }) => {
-  const [settings, setSettings] = useSettings()
-
-  // avoid hydration mismatching
-  if (!useMounted()) return null
-
-  const active = settings.fontFamily === fontFamily
-
-  return (
-    <button
-      className={clsx(
-        'typescale-body-medium space-y-1 text-left',
-        active ? 'text-on-surface-variant' : 'text-outline/60',
-      )}
-      onClick={() => {
-        setSettings((prev) => ({
-          ...prev,
-          fontFamily: active ? undefined : fontFamily,
-        }))
-      }}
-    >
-      <div>{fontFamily}</div>
-      <div style={{ fontFamily }}>{sentence}</div>
-    </button>
   )
 }
