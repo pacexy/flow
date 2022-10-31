@@ -22,11 +22,10 @@ export function useBackground() {
   )
 
   const background = useMemo(() => {
-    const level = theme?.background
+    // [-1, 1, 3, 5]
+    const level = theme?.background ?? -1
 
     if (dark) return 'bg-default'
-
-    if (!level) return 'bg-surface'
 
     if (level > 0) return `bg-surface${level}`
 

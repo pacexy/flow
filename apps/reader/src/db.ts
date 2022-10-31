@@ -5,6 +5,7 @@ import { PackagingMetadataObject } from '@ink/epubjs/types/packaging'
 
 import { Annotation } from './annotation'
 import { fileToEpub } from './file'
+import { TypographyConfiguration } from './state'
 
 export interface FileRecord {
   id: string
@@ -28,6 +29,9 @@ export interface BookRecord {
   percentage?: number
   definitions: string[]
   annotations: Annotation[]
+  configuration?: {
+    typography?: TypographyConfiguration
+  }
 }
 
 export class DB extends Dexie {

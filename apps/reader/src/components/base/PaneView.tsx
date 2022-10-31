@@ -29,7 +29,11 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
         height: expanded ? size : 24,
       }}
     >
-      <div role="button" className="flex h-6 items-center" onClick={toggle}>
+      <div
+        role="button"
+        className="flex h-6 shrink-0 items-center"
+        onClick={toggle}
+      >
         <Icon size={18} className="text-outline mx-px" />
         <div className="typescale-label-small text-on-surface">
           {headline.toUpperCase()}
