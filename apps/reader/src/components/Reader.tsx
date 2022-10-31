@@ -199,8 +199,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const [settings] = useSettings()
   const { dark } = useColorScheme()
 
-  const { iframe, rendition, locationToReturn, location, rendered, book } =
-    useSnapshot(tab)
+  const { iframe, rendition, rendered } = useSnapshot(tab)
 
   useTilg()
 
@@ -381,33 +380,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         <TextSelectionMenu tab={tab} />
         <Annotations tab={tab} />
       </div>
-      <Bar>
-        {locationToReturn ? (
-          <button
-            className={clsx(locationToReturn || 'invisible')}
-            onClick={() => {
-              tab.hidePrevLocation()
-              tab.display(locationToReturn?.end.cfi, false)
-            }}
-          >
-            Return to {locationToReturn?.end.cfi}
-          </button>
-        ) : (
-          <div>{location?.start.href}</div>
-        )}
-
-        {locationToReturn ? (
-          <button
-            onClick={() => {
-              tab.hidePrevLocation()
-            }}
-          >
-            Stay
-          </button>
-        ) : (
-          <div>{((book.percentage ?? 0) * 100).toFixed()}%</div>
-        )}
-      </Bar>
+      <ReaderPaneFooter tab={tab} />
     </div>
   )
 }
@@ -440,6 +413,43 @@ const ReaderPaneHeader: React.FC<ReaderPaneHeaderProps> = ({ tab }) => {
         <div className="shrink-0">
           {location.start.displayed.page} / {location.start.displayed.total}
         </div>
+      )}
+    </Bar>
+  )
+}
+
+interface FooterProps {
+  tab: BookTab
+}
+const ReaderPaneFooter: React.FC<FooterProps> = ({ tab }) => {
+  const { locationToReturn, location, book } = useSnapshot(tab)
+
+  return (
+    <Bar>
+      {locationToReturn ? (
+        <>
+          <button
+            className={clsx(locationToReturn || 'invisible')}
+            onClick={() => {
+              tab.hidePrevLocation()
+              tab.display(locationToReturn.end.cfi, false)
+            }}
+          >
+            Return to {locationToReturn.end.cfi}
+          </button>
+          <button
+            onClick={() => {
+              tab.hidePrevLocation()
+            }}
+          >
+            Stay
+          </button>
+        </>
+      ) : (
+        <>
+          <div>{location?.start.href}</div>
+          <div>{((book.percentage ?? 0) * 100).toFixed()}%</div>
+        </>
       )}
     </Bar>
   )
