@@ -40,20 +40,25 @@ export const navbarState = atom<boolean>({
   default: false,
 })
 
-export type Settings = {
+export interface Settings extends TypographyConfiguration {
+  theme?: ThemeConfiguration
+}
+
+export interface TypographyConfiguration {
   fontSize?: string
   fontWeight?: number
   fontFamily?: string
   lineHeight?: number
   spread?: RenditionSpread
   zoom?: number
-  theme?: Partial<{
-    source: string
-    background: number
-  }>
 }
 
-const defaultSettings: Settings = {}
+interface ThemeConfiguration {
+  source?: string
+  background?: number
+}
+
+export const defaultSettings: Settings = {}
 
 const settingsState = atom<Settings>({
   key: 'settings',

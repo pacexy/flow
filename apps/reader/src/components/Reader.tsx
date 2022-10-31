@@ -15,11 +15,18 @@ import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
 import { RenditionSpread } from '@ink/epubjs/types/rendition'
-import { navbarState, useSettings } from '@ink/reader/state'
+import { navbarState } from '@ink/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
-import { hasSelection, useColorScheme, useMobile, useSync } from '../hooks'
+import {
+  hasSelection,
+  useBackground,
+  useColorScheme,
+  useMobile,
+  useSync,
+  useTypography,
+} from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
 import { updateCustomStyle } from '../styles'
 
@@ -196,8 +203,9 @@ interface BookPaneProps {
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const prevSize = useRef(0)
-  const [settings] = useSettings()
+  const typography = useTypography()
   const { dark } = useColorScheme()
+  const [background] = useBackground()
 
   const { iframe, rendition, rendered } = useSnapshot(tab)
 
@@ -228,6 +236,15 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const setNavbar = useSetRecoilState(navbarState)
   const mobile = useMobile()
 
+  const applyCustomStyle = useCallback(() => {
+    const contents = rendition?.getContents()[0]
+    updateCustomStyle(contents, typography)
+  }, [rendition, typography])
+
+  useEffect(() => {
+    tab.onRender = applyCustomStyle
+  }, [applyCustomStyle, tab])
+
   useEffect(() => {
     if (ref.current) tab.render(ref.current)
   }, [tab])
@@ -238,13 +255,10 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
      * then call {@link updateCustomStyle} to update custom style
      * according to the latest layout
      */
-    rendition?.spread(settings.spread ?? RenditionSpread.Auto)
-  }, [settings.spread, rendition])
+    rendition?.spread(typography.spread ?? RenditionSpread.Auto)
+  }, [typography.spread, rendition])
 
-  useEffect(() => {
-    const [contents] = rendition?.getContents() ?? []
-    updateCustomStyle(contents, settings)
-  }, [rendition, settings])
+  useEffect(() => applyCustomStyle(), [applyCustomStyle])
 
   useEffect(() => {
     if (dark === undefined) return
@@ -374,7 +388,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
             // do not cover `sash`
             'z-20',
             rendered && 'hidden',
-            `bg-surface${settings.theme?.background || ''}`,
+            background,
           )}
         />
         <TextSelectionMenu tab={tab} />

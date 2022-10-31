@@ -10,7 +10,7 @@ import Section from '@ink/epubjs/types/section'
 import { AnnotationColor, AnnotationType } from '../annotation'
 import { BookRecord, db } from '../db'
 import { fileToEpub } from '../file'
-import { defaultStyle, updateCustomStyle } from '../styles'
+import { defaultStyle } from '../styles'
 
 import { dfs, find, INode } from './tree'
 
@@ -313,6 +313,7 @@ export class BookTab extends BaseTab {
   }
 
   private _el?: HTMLDivElement
+  onRender?: () => void
   async render(el: HTMLDivElement) {
     if (el === this._el) return
     this._el = ref(el)
@@ -358,9 +359,7 @@ export class BookTab extends BaseTab {
     this.rendition.themes.default(defaultStyle)
     this.rendition.hooks.render.register((view: any) => {
       console.log('hooks.render', view)
-      const str = localStorage.getItem('settings')
-      const settings = str && JSON.parse(str)
-      updateCustomStyle(view.contents, settings)
+      this.onRender?.()
     })
 
     this.rendition.on('relocated', (loc: Location) => {
