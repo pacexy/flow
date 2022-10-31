@@ -78,7 +78,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
       <Pane
         headline="Typography"
         className="space-y-3 px-5 pt-2 pb-4"
-        key={scope}
+        key={`${scope}${focusedBookTab?.id}`}
       >
         <Select
           name="Page View"

@@ -203,7 +203,7 @@ interface BookPaneProps {
 function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const ref = useRef<HTMLDivElement>(null)
   const prevSize = useRef(0)
-  const typography = useTypography()
+  const typography = useTypography(tab)
   const { dark } = useColorScheme()
   const [background] = useBackground()
 

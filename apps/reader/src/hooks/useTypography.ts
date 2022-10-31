@@ -1,17 +1,30 @@
 import { useMemo } from 'react'
+import { useSnapshot } from 'valtio'
 
-import { useReaderSnapshot } from '../models'
-import { useSettings, defaultSettings } from '../state'
+import { BookTab } from '../models'
+import { useSettings } from '../state'
 
-export function useTypography() {
-  const { focusedBookTab } = useReaderSnapshot()
+function removeUndefinedProperty<T extends Record<string, any>>(obj: T) {
+  const newObj: Partial<T> = {}
+
+  Object.entries(obj).forEach(([k, v]) => {
+    if (v !== undefined) {
+      newObj[k as keyof T] = v
+    }
+  })
+
+  return newObj
+}
+
+export function useTypography(tab: BookTab) {
+  const { book } = useSnapshot(tab)
   const [settings] = useSettings()
 
   return useMemo(
     () => ({
       ...settings,
-      ...(focusedBookTab?.book.configuration?.typography ?? defaultSettings),
+      ...removeUndefinedProperty(book.configuration?.typography ?? {}),
     }),
-    [focusedBookTab?.book.configuration?.typography, settings],
+    [book.configuration?.typography, settings],
   )
 }
