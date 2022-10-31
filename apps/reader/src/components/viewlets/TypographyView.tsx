@@ -5,16 +5,40 @@ import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { RenditionSpread } from '@ink/epubjs/types/rendition'
 import { useSettings } from '@ink/reader/state'
+import { keys } from '@ink/reader/utils'
 
 import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
+enum TypographyScope {
+  Book,
+  Global,
+}
+
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const [{ fontSize, fontWeight, lineHeight, zoom, spread }, setSettings] =
     useSettings()
+  const [scope, setScope] = useState(TypographyScope.Book)
 
   return (
     <PaneView {...props}>
+      <div className="typescale-body-medium flex gap-2 px-5 pb-2 !text-[13px]">
+        {keys(TypographyScope)
+          .filter((k) => isNaN(Number(k)))
+          .map((scopeName) => (
+            <button
+              key={scopeName}
+              className={clsx(
+                TypographyScope[scopeName] === scope
+                  ? 'text-on-surface-variant'
+                  : 'text-outline/60',
+              )}
+              onClick={() => setScope(TypographyScope[scopeName])}
+            >
+              {scopeName}
+            </button>
+          ))}
+      </div>
       <Pane headline="Typography" className="space-y-3 px-5 pt-2 pb-4">
         <Select
           name="Page View"
