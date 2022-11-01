@@ -13,6 +13,7 @@ import { useSnapshot } from 'valtio'
 import { typeMap, colorMap } from '../annotation'
 import { isForwardSelection, useTextSelection, useTypography } from '../hooks'
 import { BookTab } from '../models'
+import { isTouchScreen } from '../platform'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
@@ -44,7 +45,13 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const range = selection?.getRangeAt(0) ?? annotationRange
   if (!range) return null
 
-  const forward = selection ? isForwardSelection(selection) : true
+  // prefer to display above the selection to avoid text selection helpers
+  // https://stackoverflow.com/questions/68081757/hide-the-two-text-selection-helpers-in-mobile-browsers
+  const forward = isTouchScreen
+    ? false
+    : selection
+    ? isForwardSelection(selection)
+    : true
 
   const rects = [...range.getClientRects()].filter((r) => Math.round(r.width))
   const anchorRect = rects && (forward ? last(rects) : rects[0])
