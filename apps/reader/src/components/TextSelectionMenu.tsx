@@ -11,7 +11,7 @@ import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { typeMap, colorMap } from '../annotation'
-import { isForwardSelection, useTextSelection } from '../hooks'
+import { isForwardSelection, useTextSelection, useTypography } from '../hooks'
 import { BookTab } from '../models'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
@@ -46,7 +46,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 
   const forward = selection ? isForwardSelection(selection) : true
 
-  const rects = [...range.getClientRects()].filter((r) => r.width)
+  const rects = [...range.getClientRects()].filter((r) => Math.round(r.width))
   const anchorRect = rects && (forward ? last(rects) : rects[0])
   if (!anchorRect) return null
 
@@ -113,6 +113,12 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
     ? LayoutAnchorPosition.Before
     : LayoutAnchorPosition.After
 
+  const { zoom } = useTypography(tab)
+  const endContainer = forward ? range.endContainer : range.startContainer
+  const lineHeight =
+    parseFloat(getComputedStyle(endContainer.parentElement!).lineHeight) *
+    (zoom ?? 1)
+
   return (
     <>
       <Overlay
@@ -137,8 +143,8 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             position,
           }),
           top: layout(containerRect.height, height, {
-            offset: anchorRect.top,
-            size: anchorRect.height,
+            offset: anchorRect.top - (lineHeight - anchorRect.height) / 2,
+            size: lineHeight,
             position,
           }),
         }}

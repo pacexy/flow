@@ -50,7 +50,7 @@ export function updateCustomStyle(
   if (zoom) {
     const body = contents.content as HTMLBodyElement
     const scale = (p: keyof CSSStyleDeclaration) => ({
-      [p]: `${Math.floor(parseInt(body.style[p] as string) / zoom)}px`,
+      [p]: `${parseInt(body.style[p] as string) / zoom}px`,
     })
     css += `body {
       ${mapToCss({

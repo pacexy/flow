@@ -3,6 +3,8 @@
 import { useEventListener } from '@literal-ui/hooks'
 import { useState } from 'react'
 
+import { isTouchScreen } from '../platform'
+
 import { useForceRender } from './useForceRender'
 
 export function hasSelection(
@@ -28,16 +30,21 @@ export function useTextSelection(win?: Window) {
   const [selection, setSelection] = useState<Selection | undefined>()
   const render = useForceRender()
 
-  useEventListener(win, 'mouseup', () => {
-    const s = win?.getSelection()
+  // On touch screen device, mouse/touch/pointer events not working when selection is created.
+  useEventListener(
+    isTouchScreen ? win?.document : win,
+    isTouchScreen ? 'selectionchange' : 'mouseup',
+    () => {
+      const s = win?.getSelection()
 
-    if (hasSelection(s)) {
-      // sometime `getSelection` will return the same `selection`
-      // when select text by clicking empty space
-      render()
-      setSelection(s)
-    }
-  })
+      if (hasSelection(s)) {
+        // sometime `getSelection` will return the same `selection`
+        // when select text by clicking empty space
+        render()
+        setSelection(s)
+      }
+    },
+  )
 
   return [selection, setSelection] as const
 }
