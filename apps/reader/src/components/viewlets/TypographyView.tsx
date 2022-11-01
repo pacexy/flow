@@ -137,7 +137,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           step={0.1}
           defaultValue={zoom}
           onChange={(v) => {
-            setTypography('zoom', v ?? 1)
+            setTypography('zoom', v || undefined)
           }}
         />
       </Pane>
