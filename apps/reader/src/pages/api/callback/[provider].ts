@@ -13,7 +13,7 @@ export default async function handler(
     typeof req.query.state !== 'string' ||
     typeof req.query.code !== 'string'
   ) {
-    return res.status(400)
+    return res.status(400).end()
   }
 
   const state = JSON.parse(req.query.state)
