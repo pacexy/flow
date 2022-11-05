@@ -13,7 +13,7 @@ import { useSnapshot } from 'valtio'
 import { typeMap, colorMap } from '../annotation'
 import { isForwardSelection, useTextSelection, useTypography } from '../hooks'
 import { BookTab } from '../models'
-import { isTouchScreen } from '../platform'
+import { isTouchScreen, scale } from '../platform'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
@@ -86,6 +86,9 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     />
   )
 }
+
+const ICON_SIZE = scale(22, 28)
+const ANNOTATION_SIZE = scale(24, 30)
 
 interface TextSelectionMenuRendererProps {
   tab: BookTab
@@ -172,11 +175,11 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             />
           </div>
         ) : (
-          <div className="-m-1 mb-3 flex gap-1">
+          <div className="text-on-surface-variant -mx- mb-3 flex gap-1">
             <IconButton
               title="Search in book"
               Icon={MdSearch}
-              size={20}
+              size={ICON_SIZE}
               onClick={() => {
                 hide()
                 setAction('Search')
@@ -186,7 +189,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             <IconButton
               title="Annotate"
               Icon={MdOutlineEdit}
-              size={20}
+              size={ICON_SIZE}
               onClick={() => {
                 setAnnotate(true)
               }}
@@ -195,7 +198,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               <IconButton
                 title="Undefine"
                 Icon={MdOutlineIndeterminateCheckBox}
-                size={20}
+                size={ICON_SIZE}
                 onClick={() => {
                   hide()
                   tab.undefine(text)
@@ -205,7 +208,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               <IconButton
                 title="Define"
                 Icon={MdOutlineAddBox}
-                size={20}
+                size={ICON_SIZE}
                 onClick={() => {
                   hide()
                   tab.define(text)
@@ -220,9 +223,14 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               {keys(colorMap).map((color) => (
                 <div
                   key={color}
-                  style={{ [typeMap[type].style]: colorMap[color] }}
+                  style={{
+                    [typeMap[type].style]: colorMap[color],
+                    width: ANNOTATION_SIZE,
+                    height: ANNOTATION_SIZE,
+                    fontSize: scale(16, 20),
+                  }}
                   className={clsx(
-                    'typescale-body-large text-on-surface-variant h-6 w-6 cursor-pointer text-center',
+                    'typescale-body-large text-on-surface-variant flex cursor-pointer items-center justify-center',
                     typeMap[type].class,
                   )}
                   onClick={() => {

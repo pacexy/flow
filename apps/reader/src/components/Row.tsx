@@ -1,7 +1,11 @@
 import { StateLayer } from '@literal-ui/core'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useRef } from 'react'
-import { MdExpandMore, MdChevronRight, MdClose } from 'react-icons/md'
+import { MdClose } from 'react-icons/md'
+import { VscChevronDown, VscChevronRight } from 'react-icons/vsc'
+
+import { LIST_ITEM_SIZE } from '../hooks'
+import { scale } from '../platform'
 
 import { IconButton } from './Button'
 
@@ -40,7 +44,6 @@ export const Row: React.FC<RowProps> = ({
   onActivateRef.current = onActivate
 
   const childCount = subitems?.length
-  const Icon = expanded ? MdExpandMore : MdChevronRight
   const t = children || label || title
 
   useEffect(() => {
@@ -50,19 +53,23 @@ export const Row: React.FC<RowProps> = ({
   return (
     <div
       className={clsx(
-        'list-row relative flex cursor-pointer items-center py-0.5 pr-3 text-left',
+        'list-row relative flex cursor-pointer items-center text-left',
         active && 'bg-outline/20',
         className,
       )}
-      style={{ paddingLeft: depth * 8 }}
+      style={{
+        paddingLeft: depth * 8,
+        paddingRight: 12,
+        height: LIST_ITEM_SIZE,
+      }}
       title={title}
       onClick={onClick ?? toggle}
       {...props}
     >
       <StateLayer />
-      <Icon
-        size={20}
-        className={clsx('text-outline shrink-0', !childCount && 'invisible')}
+      <Twisty
+        expanded={expanded}
+        className={clsx(!childCount && 'invisible')}
         onClick={(e) => {
           e.stopPropagation()
           toggle?.()
@@ -73,15 +80,32 @@ export const Row: React.FC<RowProps> = ({
           'typescale-body-small truncate',
           t ? 'text-on-surface-variant' : 'text-outline/60',
         )}
+        style={{
+          fontSize: scale(12, 14),
+          marginLeft: scale(0, 2),
+        }}
       >
         {t || 'Untitled'}
         {description && (
-          <span className="text-outline ml-1 text-[11px]">{description}</span>
+          <span
+            className="text-outline"
+            style={{
+              fontSize: scale(11, 12),
+              marginLeft: scale(4, 6),
+            }}
+          >
+            {description}
+          </span>
         )}
       </div>
       <div className="ml-auto">
         {badge && childCount && (
-          <div className="bg-tertiary-container text-on-tertiary-container rounded-full px-1.5 py-px text-[11px]">
+          <div
+            className="bg-tertiary-container text-on-tertiary-container rounded-full px-1.5 py-px"
+            style={{
+              fontSize: scale(11, 12),
+            }}
+          >
             {childCount}
           </div>
         )}
@@ -98,5 +122,24 @@ export const Row: React.FC<RowProps> = ({
         <span className="text-outline">{info}</span>
       </div>
     </div>
+  )
+}
+
+interface TwistyProps extends ComponentProps<'svg'> {
+  expanded: boolean
+}
+export const Twisty: React.FC<TwistyProps> = ({
+  expanded,
+  className,
+  ...props
+}) => {
+  const Icon = expanded ? VscChevronDown : VscChevronRight
+  return (
+    <Icon
+      size={20}
+      className={clsx('text-outline shrink-0', className)}
+      style={{ padding: scale(2, 1) }}
+      {...props}
+    />
   )
 }
