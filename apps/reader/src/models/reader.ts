@@ -68,9 +68,12 @@ class BaseTab {
   }
 }
 
+// https://github.com/pmndrs/valtio/blob/92f3311f7f1a9fe2a22096cd30f9174b860488ed/src/vanilla.ts#L6
+type AsRef = { $$valtioRef: true }
+
 export class BookTab extends BaseTab {
   epub?: Book
-  iframe?: Window
+  iframe?: Window & AsRef
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
   locationToReturn?: Location

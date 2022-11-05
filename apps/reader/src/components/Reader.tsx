@@ -337,8 +337,13 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     const y0 = e.targetTouches[0]?.clientY ?? 0
     const t0 = Date.now()
 
-    iframe?.addEventListener('touchend', function handleTouchEnd(e) {
-      iframe.removeEventListener('touchend', handleTouchEnd)
+    if (!iframe) return
+
+    // When selecting text with long tap, `touchend` is not fired,
+    // so instead of use `addEventlistener`, we should use `on*`
+    // to remove the previous listener.
+    iframe.ontouchend = function handleTouchEnd(e: TouchEvent) {
+      iframe.ontouchend = undefined
       const selection = iframe.getSelection()
       if (hasSelection(selection)) return
 
@@ -361,9 +366,14 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         }
       }
 
-      if (deltaX > 0) tab.prev()
-      if (deltaX < 0) tab.next()
-    })
+      if (deltaX > 0) {
+        tab.prev()
+      }
+
+      if (deltaX < 0) {
+        tab.next()
+      }
+    }
   })
 
   return (
