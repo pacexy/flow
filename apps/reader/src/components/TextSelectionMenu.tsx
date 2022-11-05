@@ -122,9 +122,13 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
 
   const { zoom } = useTypography(tab)
   const endContainer = forward ? range.endContainer : range.startContainer
-  const lineHeight =
-    parseFloat(getComputedStyle(endContainer.parentElement!).lineHeight) *
-    (zoom ?? 1)
+  const _lineHeight = parseFloat(
+    getComputedStyle(endContainer.parentElement!).lineHeight,
+  )
+  // no custom line height and the origin is keyword, e.g. 'normal'.
+  const lineHeight = isNaN(_lineHeight)
+    ? anchorRect.height
+    : _lineHeight * (zoom ?? 1)
 
   return (
     <>
