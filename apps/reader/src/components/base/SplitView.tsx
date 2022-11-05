@@ -177,7 +177,7 @@ const Sash: React.FC<SashProps> = ({ vertical, views }) => {
     >
       <div
         className={clsx(
-          'border-outline/20 pointer-events-none absolute inset-0 transition-[background-color]',
+          'pointer-events-none absolute inset-0 border-black/10 transition-[background-color]',
           vertical
             ? 'top-1/2 -translate-y-1/2 border-b'
             : 'left-1/2 -translate-x-1/2 border-r',
