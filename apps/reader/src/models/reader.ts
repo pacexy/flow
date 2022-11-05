@@ -34,6 +34,10 @@ export function compareHref(
   }
 }
 
+function compareDefinition(d1: string, d2: string) {
+  return d1.toLowerCase() === d2.toLowerCase()
+}
+
 export interface INavItem extends NavItem, INode {
   subitems?: INavItem[]
 }
@@ -132,11 +136,13 @@ export class BookTab extends BaseTab {
   }
   undefine(def: string) {
     this.updateBook({
-      definitions: this.book.definitions.filter((d) => d !== def),
+      definitions: this.book.definitions.filter(
+        (d) => !compareDefinition(d, def),
+      ),
     })
   }
   isDefined(def: string) {
-    return this.book.definitions.includes(def)
+    return this.book.definitions.some((d) => compareDefinition(d, def))
   }
 
   rangeToCfi(range: Range) {
