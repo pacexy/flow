@@ -310,7 +310,7 @@ const SideBar: React.FC = () => {
           !action && '!hidden',
           mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
-        style={{ width: size }}
+        style={{ width: mobile ? '75%' : size }}
       >
         {viewActions.map(({ name, title, View }) => (
           <View
