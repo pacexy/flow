@@ -14,6 +14,7 @@ export function useRemoteFiles() {
   return useSWR(
     isSubscriptionActive(subscription) ? '/files' : null,
     dropboxFilesFetcher,
+    { shouldRetryOnError: false },
   )
 }
 
@@ -23,5 +24,6 @@ export function useRemoteBooks() {
   return useSWR(
     isSubscriptionActive(subscription) ? `/${DATA_FILENAME}` : null,
     dropboxBooksFetcher,
+    { shouldRetryOnError: false },
   )
 }

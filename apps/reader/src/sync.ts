@@ -1,6 +1,7 @@
 import { Dropbox } from 'dropbox'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
+import { parseCookies } from 'nookies'
 
 import { BookRecord, db } from './db'
 import { readBlob } from './file'
@@ -17,6 +18,12 @@ export const dbx = new Dropbox({
 })
 let _req: Promise<void> | undefined
 dbx.auth.refreshAccessToken = () => {
+  const cookies = parseCookies()
+  const refreshToken = cookies[mapToToken['dropbox']]
+  if (!refreshToken) {
+    // `reject` to skip subsequent api requests
+    return Promise.reject()
+  }
   _req ??= fetch(`/api/refresh`)
     .then((res) => res.json())
     .then((data) => {

@@ -95,7 +95,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
   return (
     <div
-      className="ReaderGroup flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
+      className="ReaderGroup flex flex-1 flex-col overflow-hidden focus:outline-none"
       onMouseDown={handleMouseDown}
       style={{ width: size }}
     >
