@@ -59,8 +59,7 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <div id="layout" className="select-none">
       <SplitView>
-        <ActivityBar />
-        {mobile && <NavigationBar />}
+        {mobile ? <NavigationBar /> : <ActivityBar />}
         {ready && <SideBar />}
         {ready && <Reader>{children}</Reader>}
       </SplitView>
@@ -138,7 +137,7 @@ const ActivityBar: React.FC = () => {
     maxSize: 48,
   })
   return (
-    <div className="ActivityBar hidden flex-col justify-between sm:flex">
+    <div className="ActivityBar flex flex-col justify-between">
       <ViewActionBar />
       <PageActionBar />
     </div>
@@ -310,7 +309,7 @@ const SideBar: React.FC = () => {
           !action && '!hidden',
           mobile ? 'absolute inset-y-0 right-0 z-10' : '',
         )}
-        style={{ width: size }}
+        style={{ width: mobile ? '75%' : size }}
       >
         {viewActions.map(({ name, title, View }) => (
           <View

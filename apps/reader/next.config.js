@@ -2,7 +2,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 const { withSentryConfig } = require('@sentry/nextjs')
-const withPWA = require('next-pwa')
+const withPWA = require('next-pwa')({
+  dest: 'public',
+})
 const withTM = require('next-transpile-modules')([
   '@ink/internal',
   '@ink/epubjs',
@@ -33,9 +35,6 @@ const config = {
   pageExtensions: ['ts', 'tsx'],
   webpack(config) {
     return config
-  },
-  pwa: {
-    dest: 'public',
   },
 }
 

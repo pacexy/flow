@@ -10,7 +10,7 @@ export default async function handler(
 ) {
   const token = req.cookies[mapToToken['dropbox']]
   if (typeof token !== 'string') {
-    return res.status(401)
+    return res.status(401).end()
   }
 
   dbx.auth.setRefreshToken(token)

@@ -4,7 +4,7 @@ import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
 
 import { useList } from '@ink/reader/hooks'
-import { flatTree, Match, useReaderSnapshot, reader } from '@ink/reader/models'
+import { flatTree, IMatch, useReaderSnapshot, reader } from '@ink/reader/models'
 import { actionState } from '@ink/reader/state'
 
 import { TextField } from '../Form'
@@ -70,7 +70,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
           />
         </div>
         {keyword && results && (
-          <ResultList results={results as Match[]} keyword={keyword} />
+          <ResultList results={results as IMatch[]} keyword={keyword} />
         )}
       </div>
     </PaneView>
@@ -78,7 +78,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
 }
 
 interface ResultListProps {
-  results: Match[]
+  results: IMatch[]
   keyword: string
 }
 const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
@@ -105,7 +105,7 @@ const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
 }
 
 interface ResultRowProps {
-  result?: Match
+  result?: IMatch
   keyword: string
 }
 const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {

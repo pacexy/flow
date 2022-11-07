@@ -34,15 +34,19 @@ export function compareHref(
   }
 }
 
+function compareDefinition(d1: string, d2: string) {
+  return d1.toLowerCase() === d2.toLowerCase()
+}
+
 export interface INavItem extends NavItem, INode {
   subitems?: INavItem[]
 }
 
-export interface Match extends INode {
+export interface IMatch extends INode {
   excerpt: string
   description?: string
   cfi?: string
-  subitems?: Match[]
+  subitems?: IMatch[]
 }
 
 export interface ISection extends Section {
@@ -68,15 +72,18 @@ class BaseTab {
   }
 }
 
+// https://github.com/pmndrs/valtio/blob/92f3311f7f1a9fe2a22096cd30f9174b860488ed/src/vanilla.ts#L6
+type AsRef = { $$valtioRef: true }
+
 export class BookTab extends BaseTab {
   epub?: Book
-  iframe?: Window
+  iframe?: Window & AsRef
   rendition?: Rendition & { manager?: any }
   nav?: Navigation
   locationToReturn?: Location
   section?: ISection
   sections?: ISection[]
-  results?: Match[]
+  results?: IMatch[]
   activeResultID?: string
   rendered = false
 
@@ -129,11 +136,13 @@ export class BookTab extends BaseTab {
   }
   undefine(def: string) {
     this.updateBook({
-      definitions: this.book.definitions.filter((d) => d !== def),
+      definitions: this.book.definitions.filter(
+        (d) => !compareDefinition(d, def),
+      ),
     })
   }
   isDefined(def: string) {
-    return this.book.definitions.includes(def)
+    return this.book.definitions.some((d) => compareDefinition(d, def))
   }
 
   rangeToCfi(range: Range) {
@@ -274,7 +283,7 @@ export class BookTab extends BaseTab {
   searchInSection(keyword = this.keyword, section = this.section) {
     if (!section) return
 
-    const subitems = section.find(keyword) as unknown as Match[]
+    const subitems = section.find(keyword) as unknown as IMatch[]
     if (!subitems.length) return
 
     const navItem = section.navitem
@@ -293,14 +302,14 @@ export class BookTab extends BaseTab {
 
   search(keyword = this.keyword) {
     // avoid blocking input
-    return new Promise<Match[] | undefined>((resolve) => {
+    return new Promise<IMatch[] | undefined>((resolve) => {
       requestIdleCallback(() => {
         if (!keyword) {
           resolve(undefined)
           return
         }
 
-        const results: Match[] = []
+        const results: IMatch[] = []
 
         this.sections?.forEach((s) => {
           const result = this.searchInSection(keyword, s)

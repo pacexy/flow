@@ -46,5 +46,10 @@ export function useTextSelection(win?: Window) {
     },
   )
 
+  // https://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+  useEventListener(win, 'contextmenu', (e) => {
+    e.preventDefault()
+  })
+
   return [selection, setSelection] as const
 }

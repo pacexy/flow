@@ -13,6 +13,7 @@ import { useSnapshot } from 'valtio'
 import { typeMap, colorMap } from '../annotation'
 import { isForwardSelection, useTextSelection, useTypography } from '../hooks'
 import { BookTab } from '../models'
+import { isTouchScreen, scale } from '../platform'
 import { actionState } from '../state'
 import { keys, last } from '../utils'
 
@@ -44,7 +45,13 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const range = selection?.getRangeAt(0) ?? annotationRange
   if (!range) return null
 
-  const forward = selection ? isForwardSelection(selection) : true
+  // prefer to display above the selection to avoid text selection helpers
+  // https://stackoverflow.com/questions/68081757/hide-the-two-text-selection-helpers-in-mobile-browsers
+  const forward = isTouchScreen
+    ? false
+    : selection
+    ? isForwardSelection(selection)
+    : true
 
   const rects = [...range.getClientRects()].filter((r) => Math.round(r.width))
   const anchorRect = rects && (forward ? last(rects) : rects[0])
@@ -79,6 +86,9 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
     />
   )
 }
+
+const ICON_SIZE = scale(22, 28)
+const ANNOTATION_SIZE = scale(24, 30)
 
 interface TextSelectionMenuRendererProps {
   tab: BookTab
@@ -115,9 +125,13 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
 
   const { zoom } = useTypography(tab)
   const endContainer = forward ? range.endContainer : range.startContainer
-  const lineHeight =
-    parseFloat(getComputedStyle(endContainer.parentElement!).lineHeight) *
-    (zoom ?? 1)
+  const _lineHeight = parseFloat(
+    getComputedStyle(endContainer.parentElement!).lineHeight,
+  )
+  // no custom line height and the origin is keyword, e.g. 'normal'.
+  const lineHeight = isNaN(_lineHeight)
+    ? anchorRect.height
+    : _lineHeight * (zoom ?? 1)
 
   return (
     <>
@@ -161,11 +175,11 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             />
           </div>
         ) : (
-          <div className="-m-1 mb-3 flex gap-1">
+          <div className="text-on-surface-variant -mx- mb-3 flex gap-1">
             <IconButton
               title="Search in book"
               Icon={MdSearch}
-              size={20}
+              size={ICON_SIZE}
               onClick={() => {
                 hide()
                 setAction('Search')
@@ -175,7 +189,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             <IconButton
               title="Annotate"
               Icon={MdOutlineEdit}
-              size={20}
+              size={ICON_SIZE}
               onClick={() => {
                 setAnnotate(true)
               }}
@@ -184,7 +198,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               <IconButton
                 title="Undefine"
                 Icon={MdOutlineIndeterminateCheckBox}
-                size={20}
+                size={ICON_SIZE}
                 onClick={() => {
                   hide()
                   tab.undefine(text)
@@ -194,7 +208,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               <IconButton
                 title="Define"
                 Icon={MdOutlineAddBox}
-                size={20}
+                size={ICON_SIZE}
                 onClick={() => {
                   hide()
                   tab.define(text)
@@ -209,9 +223,14 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               {keys(colorMap).map((color) => (
                 <div
                   key={color}
-                  style={{ [typeMap[type].style]: colorMap[color] }}
+                  style={{
+                    [typeMap[type].style]: colorMap[color],
+                    width: ANNOTATION_SIZE,
+                    height: ANNOTATION_SIZE,
+                    fontSize: scale(16, 20),
+                  }}
                   className={clsx(
-                    'typescale-body-large text-on-surface-variant h-6 w-6 cursor-pointer text-center',
+                    'typescale-body-large text-on-surface-variant flex cursor-pointer items-center justify-center',
                     typeMap[type].class,
                   )}
                   onClick={() => {

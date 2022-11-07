@@ -1,8 +1,9 @@
-import { useBoolean } from '@literal-ui/hooks'
 import clsx from 'clsx'
-import { ComponentProps, forwardRef } from 'react'
-import { MdExpandMore, MdChevronRight } from 'react-icons/md'
+import { ComponentProps, forwardRef, useState } from 'react'
 
+import { scale } from '@ink/reader/platform'
+
+import { Twisty } from '../Row'
 import { Action, ActionBar } from '../base'
 
 import { SplitView, useSplitViewItem } from './SplitView'
@@ -16,12 +17,11 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
   { className, headline, preferredSize, children, actions, ...props },
   ref,
 ) {
-  const [expanded, toggle] = useBoolean(true)
+  const [expanded, setExpanded] = useState(true)
   const { size } = useSplitViewItem(headline, {
     preferredSize,
     visible: expanded,
   })
-  const Icon = expanded ? MdExpandMore : MdChevronRight
   return (
     <div
       className={clsx('Pane scroll-parent group', size && 'shrink-0')}
@@ -32,10 +32,13 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
       <div
         role="button"
         className="flex h-6 shrink-0 items-center"
-        onClick={toggle}
+        onClick={() => setExpanded((e) => !e)}
       >
-        <Icon size={18} className="text-outline mx-px" />
-        <div className="typescale-label-small text-on-surface">
+        <Twisty expanded={expanded} />
+        <div
+          className="typescale-label-small text-on-surface"
+          style={{ fontSize: scale(11, 12) }}
+        >
           {headline.toUpperCase()}
         </div>
         {actions && (
@@ -80,7 +83,11 @@ export function PaneView({
           className,
         )}
       >
-        <h2 title={title} className="text-on-surface text-[11px]">
+        <h2
+          title={title}
+          className="text-on-surface"
+          style={{ fontSize: scale(11, 12) }}
+        >
           {name?.toUpperCase()}
         </h2>
         {actions && <ActionBar actions={actions} className="-mr-1" />}

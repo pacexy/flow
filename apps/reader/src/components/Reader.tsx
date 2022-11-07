@@ -28,6 +28,7 @@ import {
   useTypography,
 } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
+import { isTouchScreen } from '../platform'
 import { updateCustomStyle } from '../styles'
 
 import {
@@ -95,7 +96,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
 
   return (
     <div
-      className="ReaderGroup flex h-full flex-1 flex-col overflow-hidden focus:outline-none"
+      className="ReaderGroup flex flex-1 flex-col overflow-hidden focus:outline-none"
       onMouseDown={handleMouseDown}
       style={{ width: size }}
     >
@@ -126,7 +127,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       </Tab.List>
 
       <DropZone
-        className="flex-1"
+        className={clsx('flex-1', isTouchScreen || 'h-0')}
         split
         onDrop={async (e, position) => {
           // read `e.dataTransfer` first to avoid get empty value after `await`
@@ -337,8 +338,13 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
     const y0 = e.targetTouches[0]?.clientY ?? 0
     const t0 = Date.now()
 
-    iframe?.addEventListener('touchend', function handleTouchEnd(e) {
-      iframe.removeEventListener('touchend', handleTouchEnd)
+    if (!iframe) return
+
+    // When selecting text with long tap, `touchend` is not fired,
+    // so instead of use `addEventlistener`, we should use `on*`
+    // to remove the previous listener.
+    iframe.ontouchend = function handleTouchEnd(e: TouchEvent) {
+      iframe.ontouchend = undefined
       const selection = iframe.getSelection()
       if (hasSelection(selection)) return
 
@@ -361,9 +367,14 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         }
       }
 
-      if (deltaX > 0) tab.prev()
-      if (deltaX < 0) tab.next()
-    })
+      if (deltaX > 0) {
+        tab.prev()
+      }
+
+      if (deltaX < 0) {
+        tab.next()
+      }
+    }
   })
 
   return (
@@ -378,7 +389,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       <ReaderPaneHeader tab={tab} />
       <div
         ref={ref}
-        className={clsx('relative flex-1')}
+        className={clsx('relative flex-1', isTouchScreen || 'h-0')}
         // `color-scheme: dark` will make iframe background white
         style={{ colorScheme: 'auto' }}
       >
