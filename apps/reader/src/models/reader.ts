@@ -42,11 +42,11 @@ export interface INavItem extends NavItem, INode {
   subitems?: INavItem[]
 }
 
-export interface Match extends INode {
+export interface IMatch extends INode {
   excerpt: string
   description?: string
   cfi?: string
-  subitems?: Match[]
+  subitems?: IMatch[]
 }
 
 export interface ISection extends Section {
@@ -83,7 +83,7 @@ export class BookTab extends BaseTab {
   locationToReturn?: Location
   section?: ISection
   sections?: ISection[]
-  results?: Match[]
+  results?: IMatch[]
   activeResultID?: string
   rendered = false
 
@@ -283,7 +283,7 @@ export class BookTab extends BaseTab {
   searchInSection(keyword = this.keyword, section = this.section) {
     if (!section) return
 
-    const subitems = section.find(keyword) as unknown as Match[]
+    const subitems = section.find(keyword) as unknown as IMatch[]
     if (!subitems.length) return
 
     const navItem = section.navitem
@@ -302,14 +302,14 @@ export class BookTab extends BaseTab {
 
   search(keyword = this.keyword) {
     // avoid blocking input
-    return new Promise<Match[] | undefined>((resolve) => {
+    return new Promise<IMatch[] | undefined>((resolve) => {
       requestIdleCallback(() => {
         if (!keyword) {
           resolve(undefined)
           return
         }
 
-        const results: Match[] = []
+        const results: IMatch[] = []
 
         this.sections?.forEach((s) => {
           const result = this.searchInSection(keyword, s)
