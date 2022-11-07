@@ -97,10 +97,6 @@ const Library: React.FC = () => {
 
   const [select, toggleSelect] = useBoolean(false)
   const [selectedBookIds, { add, has, toggle, reset }] = useSet<string>()
-  const selectedBooks = [...selectedBookIds].map((id) =>
-    books?.find((b) => b.id === id),
-  ) as BookRecord[]
-  const allSelected = selectedBookIds.size === books?.length
 
   const [loading, setLoading] = useState<string | undefined>()
   const [readyToSync, setReadyToSync] = useState(false)
@@ -160,12 +156,19 @@ const Library: React.FC = () => {
   }, [reset, select])
 
   if (groups.length) return null
+  if (!books) return null
+
+  const selectedBooks = [...selectedBookIds].map(
+    (id) => books.find((b) => b.id === id)!,
+  )
+  const allSelected = selectedBookIds.size === books.length
+
   return (
     <DropZone
       className="scroll-parent h-full p-4"
       onDrop={(e) => {
         const bookId = e.dataTransfer.getData('text/plain')
-        const book = books?.find((b) => b.id === bookId)
+        const book = books.find((b) => b.id === bookId)
         if (book) reader.addTab(book)
 
         handleFiles(e.dataTransfer.files)
@@ -202,7 +205,7 @@ const Library: React.FC = () => {
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="space-x-2">
-            {books?.length ? (
+            {books.length ? (
               <Button variant="secondary" onClick={toggleSelect}>
                 {select ? 'Cancel' : 'Select'}
               </Button>
@@ -227,7 +230,7 @@ const Library: React.FC = () => {
               ) : (
                 <Button
                   variant="secondary"
-                  onClick={() => books?.forEach((b) => add(b.id))}
+                  onClick={() => books.forEach((b) => add(b.id))}
                 >
                   Select all
                 </Button>
@@ -296,7 +299,7 @@ const Library: React.FC = () => {
               <>
                 <Button
                   variant="secondary"
-                  disabled={!books?.length}
+                  disabled={!books.length}
                   onClick={pack}
                 >
                   Export
@@ -328,7 +331,7 @@ const Library: React.FC = () => {
             rowGap: lock(24, 40),
           }}
         >
-          {books?.map((book) => (
+          {books.map((book) => (
             <Book
               key={book.id}
               book={book}

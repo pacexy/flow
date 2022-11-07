@@ -102,6 +102,9 @@ export const SplitView = ({
     })
   }, [])
 
+  const childList = Children.toArray(children)
+  if (!childList.length) return null
+
   return (
     <div className={clsx('SplitView relative h-full', className)}>
       <SplitViewContext.Provider value={{ registerView }}>
@@ -111,15 +114,13 @@ export const SplitView = ({
             vertical && 'flex-col',
           )}
         >
-          {Children.toArray(children).reduce((a, c, i) => {
-            return (
-              <>
-                {a}
-                <Sash vertical={vertical} views={[views[i - 1], views[i]]} />
-                {c}
-              </>
-            )
-          })}
+          {childList.reduce((a, c, i) => (
+            <>
+              {a}
+              <Sash vertical={vertical} views={[views[i - 1], views[i]]} />
+              {c}
+            </>
+          ))}
         </div>
       </SplitViewContext.Provider>
     </div>

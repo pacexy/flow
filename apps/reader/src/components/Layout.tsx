@@ -21,10 +21,9 @@ import {
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import {
-  ENV,
+  Env,
   useBackground,
   useColorScheme,
-  useEnv,
   useInitSubscription,
   useMobile,
 } from '../hooks'
@@ -59,7 +58,8 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <div id="layout" className="select-none">
       <SplitView>
-        {mobile ? <NavigationBar /> : <ActivityBar />}
+        {mobile === false && <ActivityBar />}
+        {mobile === true && <NavigationBar />}
         {ready && <SideBar />}
         {ready && <Reader>{children}</Reader>}
       </SplitView>
@@ -84,49 +84,49 @@ const viewActions: IViewAction[] = [
     title: 'Table of Content',
     Icon: MdToc,
     View: TocView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: Env.Desktop | Env.Mobile,
   },
   {
     name: 'Search',
     title: 'Search',
     Icon: MdSearch,
     View: SearchView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: Env.Desktop | Env.Mobile,
   },
   {
     name: 'Annotation',
     title: 'Annotation',
     Icon: MdFormatUnderlined,
     View: AnnotationView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: Env.Desktop | Env.Mobile,
   },
   {
     name: 'Image',
     title: 'Image',
     Icon: MdOutlineImage,
     View: ImageView,
-    env: ENV.Desktop,
+    env: Env.Desktop,
   },
   {
     name: 'Timeline',
     title: 'Timeline',
     Icon: MdTimeline,
     View: TimelineView,
-    env: ENV.Desktop,
+    env: Env.Desktop,
   },
   {
     name: 'Typography',
     title: 'Typography',
     Icon: RiFontSize,
     View: TypographyView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: Env.Desktop | Env.Mobile,
   },
   {
     name: 'Theme',
     title: 'Theme',
     Icon: MdOutlineLightMode,
     View: ThemeView,
-    env: ENV.Desktop | ENV.MOBILE,
+    env: Env.Desktop | Env.Mobile,
   },
 ]
 
@@ -138,15 +138,18 @@ const ActivityBar: React.FC = () => {
   })
   return (
     <div className="ActivityBar flex flex-col justify-between">
-      <ViewActionBar />
-      <PageActionBar />
+      <ViewActionBar env={Env.Desktop} />
+      <PageActionBar env={Env.Desktop} />
     </div>
   )
 }
 
-function ViewActionBar({ className }: ComponentProps<'div'>) {
+interface EnvActionBarProps extends ComponentProps<'div'> {
+  env: Env
+}
+
+function ViewActionBar({ className, env }: EnvActionBarProps) {
   const [action, setAction] = useRecoilState(actionState)
-  const env = useEnv()
 
   return (
     <ActionBar className={className}>
@@ -168,9 +171,8 @@ function ViewActionBar({ className }: ComponentProps<'div'>) {
   )
 }
 
-function PageActionBar() {
+function PageActionBar({ env }: EnvActionBarProps) {
   const mobile = useMobile()
-  const env = useEnv()
   const { user, isLoading } = useUser()
   const [action, setAction] = useState('Home')
 
@@ -185,14 +187,14 @@ function PageActionBar() {
         name: 'Home',
         title: 'Home',
         Icon: RiHome6Line,
-        env: ENV.MOBILE,
+        env: Env.Mobile,
       },
       {
         name: 'Account',
         title: 'Account',
         Icon: RiAccountCircleLine,
         Component: user ? Account : Auth,
-        env: ENV.Desktop | ENV.MOBILE,
+        env: Env.Desktop | Env.Mobile,
         disabled: isLoading,
       },
       {
@@ -200,7 +202,7 @@ function PageActionBar() {
         title: 'Settings',
         Icon: RiSettingsLine,
         Component: Settings,
-        env: ENV.Desktop | ENV.MOBILE,
+        env: Env.Desktop | Env.Mobile,
       },
     ],
     [isLoading, user],
@@ -242,9 +244,12 @@ function NavigationBar() {
       )}
       <div className="NavigationBar bg-surface border-surface-variant fixed inset-x-0 bottom-0 z-10 border-t">
         {readMode ? (
-          <ViewActionBar className={clsx(visible || 'hidden')} />
+          <ViewActionBar
+            env={Env.Mobile}
+            className={clsx(visible || 'hidden')}
+          />
         ) : (
-          <PageActionBar />
+          <PageActionBar env={Env.Mobile} />
         )}
       </div>
     </>
