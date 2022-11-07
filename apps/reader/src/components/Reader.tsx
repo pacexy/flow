@@ -126,7 +126,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       </Tab.List>
 
       <DropZone
-        className="flex-1"
+        className="h-0 flex-1"
         split
         onDrop={async (e, position) => {
           // read `e.dataTransfer` first to avoid get empty value after `await`
@@ -388,7 +388,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       <ReaderPaneHeader tab={tab} />
       <div
         ref={ref}
-        className={clsx('relative flex-1')}
+        className={clsx('relative h-0 flex-1')}
         // `color-scheme: dark` will make iframe background white
         style={{ colorScheme: 'auto' }}
       >
