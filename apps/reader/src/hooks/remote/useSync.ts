@@ -57,4 +57,10 @@ export function useSync(tab: BookTab) {
       annotations: book.annotations as Annotation[],
     })
   }, [book.annotations, sync])
+
+  useEffect(() => {
+    sync({
+      configuration: book.configuration,
+    })
+  }, [book.configuration, sync])
 }
