@@ -1,6 +1,7 @@
 import { Overlay } from '@literal-ui/core'
 import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
+import FocusLock from 'react-focus-lock'
 import {
   MdOutlineAddBox,
   MdOutlineEdit,
@@ -11,7 +12,12 @@ import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { typeMap, colorMap } from '../annotation'
-import { isForwardSelection, useTextSelection, useTypography } from '../hooks'
+import {
+  isForwardSelection,
+  useMobile,
+  useTextSelection,
+  useTypography,
+} from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
 import { actionState } from '../state'
@@ -114,6 +120,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   const ref = useRef<HTMLInputElement>(null)
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
+  const mobile = useMobile()
 
   const cfi = tab.rangeToCfi(range)
   const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
@@ -134,7 +141,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
     : _lineHeight * (zoom ?? 1)
 
   return (
-    <>
+    <FocusLock disabled={mobile}>
       <Overlay
         // cover `sash`
         className="!z-50 !bg-transparent"
@@ -145,9 +152,12 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           if (!el) return
           setWidth(el.clientWidth)
           setHeight(el.clientHeight)
+          if (!mobile) {
+            el.focus()
+          }
         }}
         className={clsx(
-          'bg-surface text-on-surface-variant shadow-1 absolute z-50 p-2',
+          'bg-surface text-on-surface-variant shadow-1 absolute z-50 p-2 focus:outline-none',
         )}
         style={{
           left: layout(containerRect.width, width, {
@@ -162,6 +172,8 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             position,
           }),
         }}
+        tabIndex={-1}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         {annotate ? (
           <div className="mb-3">
@@ -172,6 +184,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               defaultValue={annotation?.notes}
               hideLabel
               className="h-40 w-72"
+              autoFocus
             />
           </div>
         ) : (
@@ -283,6 +296,6 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           </div>
         )}
       </div>
-    </>
+    </FocusLock>
   )
 }
