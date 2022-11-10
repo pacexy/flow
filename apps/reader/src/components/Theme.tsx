@@ -1,15 +1,15 @@
 import {
   themeFromSourceColor,
   argbFromHex,
-  redFromArgb,
-  greenFromArgb,
-  blueFromArgb,
+  Theme,
 } from '@material/material-color-utilities'
 import Head from 'next/head'
+import { useEffect, useMemo } from 'react'
 
 import { range } from '@ink/internal'
 
-import { useSourceColor } from '../hooks'
+import { rgbFromArgb } from '../color'
+import { useSetTheme, useSourceColor } from '../hooks'
 
 // let `tailwindcss` generate classes
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -32,22 +32,14 @@ function camelToSnake(s: string) {
   return s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 }
 
-function rgbFromArgb(argb: number) {
-  return [redFromArgb, greenFromArgb, blueFromArgb]
-    .map((f) => f(argb))
-    .join(' ')
-}
-
-function generateCss(source = '#fff') {
-  const theme = themeFromSourceColor(argbFromHex(source))
-
+function generateCss(theme: Theme) {
   const tones = range(4).map((i) => (i + 5) * 10)
   const generateRef = () => {
     return Object.entries(theme.palettes)
       .flatMap(([k, palette]) =>
         tones.map((i) => {
           const argb = palette.tone(i)
-          const rgb = rgbFromArgb(argb)
+          const rgb = rgbFromArgb(argb).join(' ')
           return `--md-ref-palette-${camelToSnake(k)}${i}:${rgb};`
         }),
       )
@@ -59,7 +51,7 @@ function generateCss(source = '#fff') {
     const scheme = theme.schemes[schemeName]
     Object.entries(scheme.toJSON()).forEach(([key, argb]) => {
       const token = camelToSnake(key)
-      const rgb = rgbFromArgb(argb)
+      const rgb = rgbFromArgb(argb).join(' ')
       css += `--md-sys-color-${token}:${rgb};`
     })
     return css
@@ -74,11 +66,22 @@ function generateCss(source = '#fff') {
 
 export function Theme() {
   const { sourceColor } = useSourceColor()
+  const setTheme = useSetTheme()
+
+  const theme = useMemo(
+    () => themeFromSourceColor(argbFromHex(sourceColor)),
+    [sourceColor],
+  )
+
+  useEffect(() => {
+    setTheme(theme)
+  }, [setTheme, theme])
+
   return (
     <Head>
       <style
         id="theme"
-        dangerouslySetInnerHTML={{ __html: generateCss(sourceColor) }}
+        dangerouslySetInnerHTML={{ __html: generateCss(theme) }}
       ></style>
     </Head>
   )

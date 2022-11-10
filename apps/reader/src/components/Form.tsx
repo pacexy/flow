@@ -61,7 +61,11 @@ export function TextField<T extends ElementType = 'input'>({
   }
 
   useEffect(() => {
-    if (mobile === false && autoFocus) ref.current?.focus()
+    if (mobile === false && autoFocus) {
+      setTimeout(() => {
+        ref.current?.focus()
+      })
+    }
   }, [autoFocus, mobile, ref])
 
   return (
