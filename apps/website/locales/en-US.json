@@ -4,9 +4,6 @@
     "home": {
       "title": "Lota - Online EPUB reader"
     },
-    "pricing": {
-      "title": "Pricing"
-    },
     "faq": {
       "title": "Frequently asked questions"
     }
@@ -17,30 +14,24 @@
   "privacy": "Privacy",
   "contact": "Contact",
   "feedback": "Feedback",
-  "pricing": "Pricing",
   "faq": "FAQ",
   "roadmap": "Roadmap",
 
   "redefine": "Redefine",
   "reader": "reader",
-  "next_generation": "Next-generation",
-  "pwa": "Progressive web app",
-  "supports": "supports",
-  "f0": "Cross-platform",
-  "f1": "Installable",
-  "f2": "Use browser extensions",
+  "description": "Free. Open source. Browser-based.",
   "feature": {
     "0": {
-      "title": "Free",
-      "desc": "All of Lota's features are free except for cloud storage."
+      "title": "Progressive web app",
+      "desc": "Lota is progressive web app (PWA), which means it is cross-platform and installable."
     },
     "1": {
       "title": "Grid layout",
       "desc": "Lota supports (horizontal) grid layout, which allows you to read multiple books at the same time."
     },
     "2": {
-      "title": "Cloud storage",
-      "desc": "Store your books, notes, reading progress and even other data in the cloud. Lota will sync them between your devices."
+      "title": "Custom cloud storage",
+      "desc": "Store your books, notes, reading progress and even other data in the cloud you specified."
     }
   },
 

@@ -14,19 +14,16 @@ export default function Home() {
         <div className="container py-16">
           <div className="flex flex-col items-center">
             <h1 className="typescale-display-large text-center">
-              {t('redefine')}
+              <span className="">{t('redefine')}</span>
               <br />
-              <span className="text-outline">EPUB {t('reader')}</span>
+              <span className="text-on-surface font-light">
+                ePub {t('reader')}
+              </span>
             </h1>
-            <div className="mt-8 mb-10 text-center">
-              <div className="text-outline typescale-body-large mb-4">
-                {t('pwa')}, {t('supports')}
+            <div className="mt-8 mb-4 text-center">
+              <div className="text-on-surface-variant/80 typescale-title-large mb-4">
+                {t('description')}
               </div>
-              <ul className="typescale-title-large space-y-2">
-                {range(3).map((i) => (
-                  <li key={i}>{t(`f${i}`)}</li>
-                ))}
-              </ul>
             </div>
             <OpenApp />
           </div>
@@ -37,7 +34,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="bg-gray-100 py-16">
+        <div className="py-16">
           <div className="container">
             {range(3).map((i) => (
               <Feature
@@ -47,13 +44,6 @@ export default function Home() {
               />
             ))}
           </div>
-        </div>
-
-        <div className="container flex flex-col items-center gap-8 py-16">
-          <div className="typescale-display-small text-center">
-            {t('next_generation')} EPUB {t('reader')}
-          </div>
-          <OpenApp />
         </div>
       </div>
     </>
@@ -66,9 +56,11 @@ interface FeatureProps {
 }
 export const Feature: React.FC<FeatureProps> = ({ title, description }) => {
   return (
-    <div className="py-8">
+    <div className="py-8 ">
       <h2 className="typescale-headline-medium mb-4">{title}</h2>
-      <p className="typescale-title-large text-outline">{description}</p>
+      <p className="typescale-title-large text-on-surface-variant/80">
+        {description}
+      </p>
     </div>
   )
 }

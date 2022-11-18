@@ -3,7 +3,14 @@ import clsx from 'clsx'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
+import { FaDiscord } from 'react-icons/fa'
 import { MdLanguage } from 'react-icons/md'
+import { RiGithubFill, RiQqFill } from 'react-icons/ri'
+
+function useIsDefaultLocale() {
+  const { locale, defaultLocale } = useRouter()
+  return locale === defaultLocale
+}
 
 export const Layout: React.FC = ({ children }) => {
   return (
@@ -65,7 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
 }
 
 const Header: React.FC = () => {
-  const { locale, defaultLocale, asPath } = useRouter()
+  const { asPath } = useRouter()
+  const isDefaultLocale = useIsDefaultLocale()
 
   return (
     <header className="typescale-body-large text-on-surface container py-3">
@@ -76,14 +84,25 @@ const Header: React.FC = () => {
         </Link>
         <Navbar className="hidden sm:flex" />
 
-        <div className="ml-auto gap-8">
+        <div className="text-on-surface-variant ml-auto flex gap-3">
+          <Link href="https://github.com/pacexy/lotareader">
+            <RiGithubFill size={22} />
+          </Link>
+          {isDefaultLocale ? (
+            <Link href="https://discord.gg/ZVzyVRfmxe">
+              <FaDiscord size={22} />
+            </Link>
+          ) : (
+            <Link href="https://jq.qq.com/?_wv=1027&k=s9dQVmwc">
+              <RiQqFill size={22} />
+            </Link>
+          )}
           <Link
             href={asPath}
-            locale={locale === defaultLocale ? 'zh-CN' : 'en-US'}
+            locale={isDefaultLocale ? 'zh-CN' : 'en-US'}
             className="flex items-center gap-2"
           >
-            <MdLanguage size={22} className="text-outline" />
-            <span>{locale === defaultLocale ? '简体中文' : 'English'}</span>
+            <MdLanguage size={22} />
           </Link>
         </div>
       </div>
