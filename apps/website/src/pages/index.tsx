@@ -1,10 +1,12 @@
 import useTranslation from 'next-translate/useTranslation'
+import { useRouter } from 'next/router'
 
 import { range } from '@ink/internal'
 
 import { OpenApp, Seo } from '../components'
 
 export default function Home() {
+  const { locale } = useRouter()
   const { t } = useTranslation()
 
   return (
@@ -28,7 +30,7 @@ export default function Home() {
             <OpenApp />
           </div>
           <img
-            src="/screenshot.png"
+            src={`/screenshots/${locale}.png`}
             alt="Screenshot"
             className="shadow-1 mt-16"
           />

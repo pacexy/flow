@@ -38,7 +38,7 @@ export const Auth: React.FC = () => {
             })
         }}
       >
-        <TextField mRef={ref} name="email" type="email" required />
+        <TextField mRef={ref} name="Email" type="email" required />
         <Button type="submit" className="w-full" disabled={!!countdown}>
           {countdown || 'Continue'}
         </Button>
