@@ -56,7 +56,6 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
         className,
       )}
     >
-      <Link href="/pricing">{t('pricing')}</Link>
       <Link href="/faq">{t('faq')}</Link>
       <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
         {t('roadmap')}

@@ -44,47 +44,7 @@
     }
   },
 
-  "pricing_plans": "Pricing Plans",
-  "pricing_tips": "<b>Premium is free</b> until we figure out our pricing",
-  "month": "month",
-  "year": "year",
-  "yearly": "Yearly",
-  "currency": "$",
-  "free_includes": "Free includes",
-  "everything_in_free_plus": "Everything in Free, plus",
-  "free": {
-    "title": "Free",
-    "price": "0",
-    "0": "Grid layout",
-    "1": "In-book search",
-    "2": "Image preview",
-    "3": "Custom typography",
-    "4": "Annotation (soon)",
-    "5": "Data export"
-  },
-  "premium": {
-    "title": "Premium",
-    "price": "1",
-    "0": "Cloud storage",
-    "1": "Data synchronization"
-  },
-  "get_started": "Get Started",
-  "qa": {
-    "0": {
-      "q": "Can I get refund?",
-      "a": "Sorry, we do not support refunds."
-    },
-    "1": {
-      "q": "Can I cancel my subscription?",
-      "a": "Yes, you can cancel your subscription at any time, after which we will not charge you again until you resume your subscription manually."
-    },
-    "2": {
-      "q": "What cloud storage do you support?",
-      "a": "Only Dropbox for now."
-    }
-  },
   "frequently_asked_questions": "Frequently asked questions",
-
   "qa2": {
     "0": {
       "q": "Where are my data stored?",
