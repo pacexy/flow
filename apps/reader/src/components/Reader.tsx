@@ -23,6 +23,7 @@ import {
   hasSelection,
   useBackground,
   useColorScheme,
+  useDisablePinchZooming,
   useMobile,
   useSync,
   useTypography,
@@ -376,6 +377,8 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       }
     }
   })
+
+  useDisablePinchZooming(iframe)
 
   return (
     <div className={clsx('flex h-full flex-col', mobile && 'py-[3vw]')}>
