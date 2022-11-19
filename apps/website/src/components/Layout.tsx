@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
           <Link href="/terms">{t('terms')}</Link>
           <Link href="/privacy">{t('privacy')}</Link>
           <a href="mailto:service@lotareader.com">{t('contact')}</a>
-          <Link href="https://github.com/pacexy/lota/issues/new/choose">
+          <Link href="https://github.com/pacexy/lotareader/issues/new">
             {t('feedback')}
           </Link>
         </div>
