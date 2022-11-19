@@ -38,7 +38,7 @@ export default function Home() {
 
         <div className="py-16">
           <div className="container">
-            {range(3).map((i) => (
+            {range(4).map((i) => (
               <Feature
                 key={i}
                 title={t(`feature.${i}.title`)}

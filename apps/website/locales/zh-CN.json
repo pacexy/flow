@@ -26,10 +26,14 @@
       "desc": "Lota 是渐进式网页应用（PWA），这让它拥有跨平台的能力，并且支持安装。"
     },
     "1": {
+      "title": "离线优先",
+      "desc": "Lota 可以离线运行（在安装后），而非离线时，Lota 会自动更新。"
+    },
+    "2": {
       "title": "网格布局",
       "desc": "Lota 支持（水平）网格布局，允许您同时阅读多本书。"
     },
-    "2": {
+    "3": {
       "title": "自定义云端存储",
       "desc": "存储您的书籍、笔记、阅读进度甚至其他数据在您指定的云端。"
     }
@@ -38,12 +42,24 @@
   "frequently_asked_questions": "常见问题",
   "qa2": {
     "0": {
-      "q": "我的数据存储在哪里？",
-      "a": "在本地，您的浏览器中。如果您上传一本书，在云端会有一个远程拷贝。"
+      "q": "如何安装或卸载 Lota？",
+      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=zh-Hans'>使用渐进式 Web 应用</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/zh-cn/microsoft-edge/progressive-web-apps-chromium/ux'>PWA 的用户体验</a>"
     },
     "1": {
+      "q": "如何将 Lota 设置为默认 ePub 阅读器?",
+      "a": "Google Chrome:  <a target='_blank' href='https://www.bilibili.com/read/cv19698386'>如何将 Lota 设置为默认 ePub 阅读器?</a><br/>"
+    },
+    "2": {
+      "q": "我的数据存储在哪里？",
+      "a": "我们使用 <a target='_blank' href='https://developer.mozilla.org/zh-CN/docs/Web/API/IndexedDB_API'>IndexedDB</a> 将你的数据存储在浏览器中。如果您上传一本书，在云端会有一个远程拷贝。"
+    },
+    "3": {
       "q": "如何清除我的数据？",
-      "a": "对于本地数据，清除浏览器缓存。对于远程数据，选择并删除您要清除的书籍（这也将清除本地的对应书籍）。"
+      "a": "本地数据：清除浏览器缓存。<br/>远程数据：选择并删除您要清除的书籍（这也会清除本地的对应书籍）。"
+    },
+    "4": {
+      "q": "支持什么云端存储？",
+      "a": "目前仅支持 Dropbox。"
     }
   }
 }

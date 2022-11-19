@@ -15,7 +15,7 @@ export default function Pricing() {
           {t('frequently_asked_questions')}
         </h2>
         <div className="space-y-8">
-          {range(2).map((i) => (
+          {range(5).map((i) => (
             <QA key={i} q={t(`qa2.${i}.q`)} a={t(`qa2.${i}.a`)} />
           ))}
         </div>

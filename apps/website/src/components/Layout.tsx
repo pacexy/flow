@@ -42,13 +42,13 @@ export const OpenApp: React.FC<ComponentProps<'a'>> = ({
 
 interface QAProps {
   q: string
-  a: React.ReactNode
+  a: string
 }
 export const QA: React.FC<QAProps> = ({ q, a }) => {
   return (
     <div className="typescale-body-large">
       <h2 className="typescale-title-large mb-2">{q}</h2>
-      <p className="text-outline">{a}</p>
+      <p className="text-outline" dangerouslySetInnerHTML={{ __html: a }}></p>
     </div>
   )
 }

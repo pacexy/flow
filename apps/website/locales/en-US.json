@@ -26,10 +26,14 @@
       "desc": "Lota is progressive web app (PWA), which means it is cross-platform and installable."
     },
     "1": {
+      "title": "Offline first",
+      "desc": "Lota can be run offline (after installation), and when not offline, Lota will update automatically."
+    },
+    "2": {
       "title": "Grid layout",
       "desc": "Lota supports (horizontal) grid layout, which allows you to read multiple books at the same time."
     },
-    "2": {
+    "3": {
       "title": "Custom cloud storage",
       "desc": "Store your books, notes, reading progress and even other data in the cloud you specified."
     }
@@ -38,12 +42,24 @@
   "frequently_asked_questions": "Frequently asked questions",
   "qa2": {
     "0": {
-      "q": "Where are my data stored?",
-      "a": "Your data is stored locally in your browser. If you upload a book, there will be a remote copy in the cloud."
+      "q": "How to install or uninstall Lota?",
+      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=en'>Use Progressive Web Apps</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux'>The user experience of PWAs</a>"
     },
     "1": {
+      "q": "How to set Lota as the default ePub reader?",
+      "a": "Google Chrome: <a target='_blank' href='https://pacexy.notion.site/How-to-set-Lota-as-the-default-ePub-reader-35e44bd24aef4d63a3c55f054929f064'>How to set Lota as the default ePub reader?</a><br/>"
+    },
+    "2": {
+      "q": "Where are my data stored?",
+      "a": "Your data is stored locally in your browser, using <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API'>IndexedDB</a>. If you upload a book, there will be a remote copy in the cloud."
+    },
+    "3": {
       "q": "How to clear my data?",
-      "a": "For local data, clear the browser cache. For remote data, select and delete the book you want to clear (this will also clear the local one)."
+      "a": "Local data: clear the browser cache.<br/>Remote data: select and delete the book you want to clear (this will also clear the local one)."
+    },
+    "4": {
+      "q": "What cloud storage do you support?",
+      "a": "Only Dropbox for now."
     }
   }
 }
