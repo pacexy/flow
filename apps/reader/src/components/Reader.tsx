@@ -208,7 +208,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   const { dark } = useColorScheme()
   const [background] = useBackground()
 
-  const { iframe, rendition, rendered } = useSnapshot(tab)
+  const { iframe, rendition, rendered, container } = useSnapshot(tab)
 
   useTilg()
 
@@ -302,13 +302,13 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       }
     }
 
-    if (mobile) {
+    if (isTouchScreen && container) {
       if (getClickedAnnotation()) {
         setClickedAnnotation(false)
         return
       }
 
-      const w = window.innerWidth
+      const w = container.clientWidth
       const x = e.clientX % w
       const threshold = 0.3
       const side = w * threshold
@@ -317,7 +317,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         tab.prev()
       } else if (w - x < side) {
         tab.next()
-      } else {
+      } else if (mobile) {
         setNavbar((a) => !a)
       }
     }
