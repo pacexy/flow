@@ -29,6 +29,18 @@ export default function Home() {
             </div>
             <OpenApp />
           </div>
+          <div className="mt-12">
+            <h2 className="typescale-title-large mb-4 text-center">
+              {t('features.title')}
+            </h2>
+            <ul className="typescale-body-large mx-auto w-fit list-disc !text-[16px] sm:columns-2">
+              {range(8).map((i) => (
+                <li key={i} className="py-0.5">
+                  {t(`features.list.${i}`)}
+                </li>
+              ))}
+            </ul>
+          </div>
           <img
             src={`/screenshots/${locale}.png`}
             alt="Screenshot"
@@ -69,7 +81,7 @@ interface FeatureProps {
 }
 export const Feature: React.FC<FeatureProps> = ({ title, description }) => {
   return (
-    <div className="py-8 ">
+    <div className="py-8">
       <h2 className="typescale-headline-medium mb-4">{title}</h2>
       <p className="typescale-title-large text-on-surface-variant/80">
         {description}

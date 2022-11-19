@@ -20,6 +20,19 @@
   "redefine": "Redefine",
   "reader": "reader",
   "description": "Free. Open source. Browser-based.",
+  "features": {
+    "title": "Features",
+    "list": {
+      "0": "Search in book",
+      "1": "Image preview",
+      "2": "Custom typography",
+      "3": "Highlight and Annotation",
+      "4": "Theme",
+      "5": "Share/Download book with link",
+      "6": "Data export",
+      "7": "Cloud storage"
+    }
+  },
   "feature": {
     "0": {
       "title": "Progressive web app",
