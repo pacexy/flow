@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
         className,
       )}
     >
-      <Link href="/faq">{t('faq')}</Link>
+      <Link href="#faq">{t('faq')}</Link>
       <Link href="https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5">
         {t('roadmap')}
       </Link>
@@ -76,8 +76,8 @@ const Header: React.FC = () => {
   const isDefaultLocale = useIsDefaultLocale()
 
   return (
-    <header className="typescale-body-large text-on-surface container py-3">
-      <div className="flex items-center">
+    <header className="typescale-body-large text-on-surface sticky top-0 border-b bg-white py-3">
+      <div className="container flex items-center">
         <Link className="mr-8 flex items-center gap-3" href="/">
           <img src="/icons/512.png" alt="Logo" className="w-7" />
           <span className="typescale-title-large">Lota</span>
@@ -106,7 +106,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Navbar className="mt-3 flex justify-end sm:hidden" />
+      <Navbar className="container mt-3 flex justify-end sm:hidden" />
     </header>
   )
 }

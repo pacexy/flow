@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { range } from '@ink/internal'
 
-import { OpenApp, Seo } from '../components'
+import { OpenApp, QA, Seo } from '../components'
 
 export default function Home() {
   const { locale } = useRouter()
@@ -36,7 +36,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="py-16">
+        <div className="bg-gray-100 py-16">
           <div className="container">
             {range(4).map((i) => (
               <Feature
@@ -44,6 +44,17 @@ export default function Home() {
                 title={t(`feature.${i}.title`)}
                 description={t(`feature.${i}.desc`)}
               />
+            ))}
+          </div>
+        </div>
+
+        <div className="container py-16">
+          <h2 className="typescale-headline-medium mb-8 text-center" id="faq">
+            {t('frequently_asked_questions')}
+          </h2>
+          <div className="space-y-8">
+            {range(5).map((i) => (
+              <QA key={i} q={t(`qa2.${i}.q`)} a={t(`qa2.${i}.a`)} />
             ))}
           </div>
         </div>
