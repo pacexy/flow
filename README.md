@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://flowoss.com">Flow</a></h1>
+<h1 align="center"><a href="https://flowoss.com">Flow - Open Source Software (OSS)</a></h1>
 
 <h2 align="center">Redefine ePub reader</h2>
 
