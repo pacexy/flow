@@ -19,6 +19,7 @@ import { BookRecord, CoverRecord, db } from '../db'
 import { addFile, fetchBook, handleFiles } from '../file'
 import {
   isSubscriptionActive,
+  useDisablePinchZooming,
   useLibrary,
   useMobile,
   useRemoteBooks,
@@ -38,6 +39,8 @@ export default function Index() {
   const router = useRouter()
   const src = new URL(window.location.href).searchParams.get(SOURCE)
   const [loading, setLoading] = useState(!!src)
+
+  useDisablePinchZooming()
 
   useEffect(() => {
     let src = router.query[SOURCE]
@@ -78,7 +81,13 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>{focusedTab?.title ?? 'Lota'}</title>
+        {/* https://github.com/microsoft/vscode/blob/36fdf6b697cba431beb6e391b5a8c5f3606975a1/src/vs/code/browser/workbench/workbench.html#L16 */}
+        {/* Disable pinch zooming */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+        />
+        <title>{focusedTab?.title ?? 'Flow'}</title>
       </Head>
       <ReaderGridView />
       {loading || <Library />}

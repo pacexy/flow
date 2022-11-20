@@ -15,8 +15,8 @@ import {
 import {
   RiFontSize,
   RiAccountCircleLine,
-  RiSettingsLine,
   RiHome6Line,
+  RiSettings5Line,
 } from 'react-icons/ri'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
@@ -200,7 +200,7 @@ function PageActionBar({ env }: EnvActionBarProps) {
       {
         name: 'Settings',
         title: 'Settings',
-        Icon: RiSettingsLine,
+        Icon: RiSettings5Line,
         Component: Settings,
         env: Env.Desktop | Env.Mobile,
       },

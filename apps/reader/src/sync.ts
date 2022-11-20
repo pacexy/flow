@@ -104,7 +104,7 @@ export async function pack() {
   const date = new Intl.DateTimeFormat('fr-CA').format().replaceAll('-', '')
 
   return zip.generateAsync({ type: 'blob' }).then((content) => {
-    saveAs(content, `lota_backup_${date}.zip`)
+    saveAs(content, `flow_backup_${date}.zip`)
   })
 }
 

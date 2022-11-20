@@ -1,77 +1,64 @@
-# Turborepo starter with pnpm
+<h1 align="center"><a href="https://flowoss.com">Flow - Open Source Software (OSS)</a></h1>
 
-This is an official starter turborepo.
+<h2 align="center">Redefine ePub reader</h2>
 
-## What's inside?
+<p align="center">Free. Open source. Browser-based.</p>
 
-This turborepo uses [pnpm](https://pnpm.io) as a packages manager. It includes the following packages/apps:
+<p align="center"><img src="apps/website/public/screenshots/en-US.png"/>
+</p>
 
-### Apps and Packages
+## Features
 
-- `docs`: a [Next.js](https://nextjs.org) app
-- `web`: another [Next.js](https://nextjs.org) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+- Grid layout
+- Search in book
+- Image preview
+- Custom typography
+- Highlight and Annotation
+- Theme
+- Share/Download book with link
+- Data export
+- Cloud storage
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+For planed features, see our [roadmap](https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5).
 
-### Utilities
+## Development
 
-This turborepo has some additional tools already setup for you:
+### Prerequisites
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- [Node.js](https://nodejs.org)
+- [pnpm](https://pnpm.io/installation)
+- [Git](https://git-scm.com/downloads)
 
-## Setup
+### Clone the repo
 
-This repository is used in the `npx create-turbo@latest` command, and selected when choosing which package manager you wish to use with your monorepo (PNPM).
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run build
+```bash
+git clone https://github.com/pacexy/flow
 ```
 
-### Develop
+### Install the dependencies
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run dev
+```bash
+pnpm i
 ```
 
-### Remote Caching
+### Run the apps
 
-Turborepo can use a technique known as [Remote Caching (Beta)](https://turborepo.org/docs/features/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching (Beta) you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpx turbo login
+```bash
+pnpm dev
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Contributing
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
+There are many ways in which you can participate in this project, for example:
 
-```
-pnpx turbo link
-```
+- [Submit bugs and feature requests](https://github.com/pacexy/flow/issues/new), and help us verify as they are checked in
+- [Submit pull requests](https://github.com/pacexy/flow/pulls)
 
-## Useful Links
+## Credits
 
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turborepo.org/docs/features/pipelines)
-- [Caching](https://turborepo.org/docs/features/caching)
-- [Remote Caching (Beta)](https://turborepo.org/docs/features/remote-caching)
-- [Scoped Tasks](https://turborepo.org/docs/features/scopes)
-- [Configuration Options](https://turborepo.org/docs/reference/configuration)
-- [CLI Usage](https://turborepo.org/docs/reference/command-line-reference)
+- [Epub.js](https://github.com/futurepress/epub.js/)
+- [React](https://github.com/facebook/react)
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org)
+- [Vercel](https://vercel.com)
+- [Turborepo](https://turbo.build/repo)
