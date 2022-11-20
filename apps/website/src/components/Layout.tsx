@@ -3,9 +3,8 @@ import clsx from 'clsx'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
-import { FaDiscord } from 'react-icons/fa'
 import { MdLanguage } from 'react-icons/md'
-import { RiGithubFill, RiQqFill } from 'react-icons/ri'
+import { RiGithubFill } from 'react-icons/ri'
 
 function useIsDefaultLocale() {
   const { locale, defaultLocale } = useRouter()
@@ -88,15 +87,6 @@ const Header: React.FC = () => {
           <Link href="https://github.com/pacexy/flow">
             <RiGithubFill size={22} />
           </Link>
-          {isDefaultLocale ? (
-            <Link href="https://discord.gg/ZVzyVRfmxe">
-              <FaDiscord size={22} />
-            </Link>
-          ) : (
-            <Link href="https://jq.qq.com/?_wv=1027&k=s9dQVmwc">
-              <RiQqFill size={22} />
-            </Link>
-          )}
           <Link
             href={asPath}
             locale={isDefaultLocale ? 'zh-CN' : 'en-US'}
