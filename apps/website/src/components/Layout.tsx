@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
         <div className="text-inverse-on-surface typescale-body-small mb-4 flex gap-6">
           <Link href="/terms">{t('terms')}</Link>
           <Link href="/privacy">{t('privacy')}</Link>
-          <a href="mailto:service@lotareader.com">{t('contact')}</a>
+          <a href="mailto:service@flowoss.com">{t('contact')}</a>
           <Link href="https://github.com/pacexy/lotareader/issues/new">
             {t('feedback')}
           </Link>
