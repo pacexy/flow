@@ -85,7 +85,7 @@ const Header: React.FC = () => {
         <Navbar className="hidden sm:flex" />
 
         <div className="text-on-surface-variant ml-auto flex gap-3">
-          <Link href="https://github.com/pacexy/lotareader">
+          <Link href="https://github.com/pacexy/flow">
             <RiGithubFill size={22} />
           </Link>
           {isDefaultLocale ? (
@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
           <Link href="/terms">{t('terms')}</Link>
           <Link href="/privacy">{t('privacy')}</Link>
           <a href="mailto:service@flowoss.com">{t('contact')}</a>
-          <Link href="https://github.com/pacexy/lotareader/issues/new">
+          <Link href="https://github.com/pacexy/flow/issues/new">
             {t('feedback')}
           </Link>
         </div>

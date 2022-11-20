@@ -32,7 +32,7 @@ For planed features, see our [roadmap](https://pacexy.notion.site/283696d0071c43
 ### Clone the repo
 
 ```bash
-git clone https://github.com/pacexy/lotareader
+git clone https://github.com/pacexy/flow
 ```
 
 ### Install the dependencies
@@ -51,8 +51,8 @@ pnpm dev
 
 There are many ways in which you can participate in this project, for example:
 
-- [Submit bugs and feature requests](https://github.com/pacexy/lotareader/issues/new), and help us verify as they are checked in
-- [Submit pull requests](https://github.com/pacexy/lotareader/pulls)
+- [Submit bugs and feature requests](https://github.com/pacexy/flow/issues/new), and help us verify as they are checked in
+- [Submit pull requests](https://github.com/pacexy/flow/pulls)
 
 ## Credits
 
