@@ -1,8 +1,8 @@
 {
-  "desc": "Lota is a free online EPUB reader, support all platforms (Web, Windows, Linux, MacOS, Android, iOS). Read multiple books at the same time. Read seamlessly between different devices.",
+  "desc": "Flow is a free online EPUB reader, support all platforms (Web, Windows, Linux, MacOS, Android, iOS). Read multiple books at the same time. Read seamlessly between different devices.",
   "page": {
     "home": {
-      "title": "Lota - Online EPUB reader"
+      "title": "Flow - Online EPUB reader"
     },
     "faq": {
       "title": "Frequently asked questions"
@@ -36,15 +36,15 @@
   "feature": {
     "0": {
       "title": "Progressive web app",
-      "desc": "Lota is progressive web app (PWA), which means it is cross-platform and installable."
+      "desc": "Flow is progressive web app (PWA), which means it is cross-platform and installable."
     },
     "1": {
       "title": "Offline first",
-      "desc": "Lota can be run offline (after installation), and when not offline, Lota will update automatically."
+      "desc": "Flow can be run offline (after installation), and when not offline, Flow will update automatically."
     },
     "2": {
       "title": "Grid layout",
-      "desc": "Lota supports (horizontal) grid layout, which allows you to read multiple books at the same time."
+      "desc": "Flow supports (horizontal) grid layout, which allows you to read multiple books at the same time."
     },
     "3": {
       "title": "Custom cloud storage",
@@ -55,12 +55,12 @@
   "frequently_asked_questions": "Frequently asked questions",
   "qa2": {
     "0": {
-      "q": "How to install or uninstall Lota?",
+      "q": "How to install or uninstall Flow?",
       "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=en'>Use Progressive Web Apps</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux'>The user experience of PWAs</a>"
     },
     "1": {
-      "q": "How to set Lota as the default ePub reader?",
-      "a": "Google Chrome: <a target='_blank' href='https://pacexy.notion.site/How-to-set-Lota-as-the-default-ePub-reader-35e44bd24aef4d63a3c55f054929f064'>How to set Lota as the default ePub reader?</a><br/>"
+      "q": "How to set Flow as the default ePub reader?",
+      "a": "Google Chrome: <a target='_blank' href='https://pacexy.notion.site/How-to-set-Flow-as-the-default-ePub-reader-35e44bd24aef4d63a3c55f054929f064'>How to set Flow as the default ePub reader?</a><br/>"
     },
     "2": {
       "q": "Where are my data stored?",

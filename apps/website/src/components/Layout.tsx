@@ -80,7 +80,7 @@ const Header: React.FC = () => {
       <div className="container flex items-center">
         <Link className="mr-8 flex items-center gap-3" href="/">
           <img src="/icons/512.png" alt="Logo" className="w-7" />
-          <span className="typescale-title-large">Lota</span>
+          <span className="typescale-title-large">Flow</span>
         </Link>
         <Navbar className="hidden sm:flex" />
 
@@ -127,7 +127,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="typescale-body-small text-white">
-          © {new Date().getFullYear()} Lota
+          © {new Date().getFullYear()} Flow
         </div>
       </div>
     </footer>

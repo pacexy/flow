@@ -1,8 +1,8 @@
 {
-  "desc": "Lota 是一款免费在线 EPUB 阅读器，支持所有平台（Web, Windows, Linux, MacOS, Android, iOS）。同时阅读多本书籍。在不同设备间无缝阅读。",
+  "desc": "Flow 是一款免费在线 EPUB 阅读器，支持所有平台（Web, Windows, Linux, MacOS, Android, iOS）。同时阅读多本书籍。在不同设备间无缝阅读。",
   "page": {
     "home": {
-      "title": "Lota - 在线 EPUB 阅读器"
+      "title": "Flow - 在线 EPUB 阅读器"
     },
     "faq": {
       "title": "常见问题"
@@ -36,15 +36,15 @@
   "feature": {
     "0": {
       "title": "渐进式网页应用",
-      "desc": "Lota 是渐进式网页应用（PWA），这让它拥有跨平台的能力，并且支持安装。"
+      "desc": "Flow 是渐进式网页应用（PWA），这让它拥有跨平台的能力，并且支持安装。"
     },
     "1": {
       "title": "离线优先",
-      "desc": "Lota 可以离线运行（在安装后），而非离线时，Lota 会自动更新。"
+      "desc": "Flow 可以离线运行（在安装后），而非离线时，Flow 会自动更新。"
     },
     "2": {
       "title": "网格布局",
-      "desc": "Lota 支持（水平）网格布局，允许您同时阅读多本书。"
+      "desc": "Flow 支持（水平）网格布局，允许您同时阅读多本书。"
     },
     "3": {
       "title": "自定义云端存储",
@@ -55,12 +55,12 @@
   "frequently_asked_questions": "常见问题",
   "qa2": {
     "0": {
-      "q": "如何安装或卸载 Lota？",
+      "q": "如何安装或卸载 Flow？",
       "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=zh-Hans'>使用渐进式 Web 应用</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/zh-cn/microsoft-edge/progressive-web-apps-chromium/ux'>PWA 的用户体验</a>"
     },
     "1": {
-      "q": "如何将 Lota 设置为默认 ePub 阅读器?",
-      "a": "Google Chrome:  <a target='_blank' href='https://www.bilibili.com/read/cv19698386'>如何将 Lota 设置为默认 ePub 阅读器?</a><br/>"
+      "q": "如何将 Flow 设置为默认 ePub 阅读器?",
+      "a": "Google Chrome:  <a target='_blank' href='https://www.bilibili.com/read/cv19698386'>如何将 Flow 设置为默认 ePub 阅读器?</a><br/>"
     },
     "2": {
       "q": "我的数据存储在哪里？",
