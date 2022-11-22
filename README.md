@@ -41,6 +41,10 @@ git clone https://github.com/pacexy/flow
 pnpm i
 ```
 
+### Setup the environment variables
+
+Rename all `.env.local.example`s to `.env.local` and setup the environment variables.
+
 ### Run the apps
 
 ```bash
