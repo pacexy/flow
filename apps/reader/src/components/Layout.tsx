@@ -1,5 +1,4 @@
 import { Overlay } from '@literal-ui/core'
-import { useUser } from '@supabase/auth-helpers-react'
 import clsx from 'clsx'
 import { ComponentProps, useEffect, useState } from 'react'
 import { useMemo } from 'react'
@@ -12,12 +11,7 @@ import {
   MdTimeline,
   MdOutlineLightMode,
 } from 'react-icons/md'
-import {
-  RiFontSize,
-  RiAccountCircleLine,
-  RiHome6Line,
-  RiSettings5Line,
-} from 'react-icons/ri'
+import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
 import {
@@ -32,7 +26,7 @@ import { Action, actionState, navbarState } from '../state'
 import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
-import { Account, Auth, Settings } from './pages'
+import { Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -173,7 +167,6 @@ function ViewActionBar({ className, env }: EnvActionBarProps) {
 
 function PageActionBar({ env }: EnvActionBarProps) {
   const mobile = useMobile()
-  const { user, isLoading } = useUser()
   const [action, setAction] = useState('Home')
 
   interface IPageAction extends IAction {
@@ -190,14 +183,6 @@ function PageActionBar({ env }: EnvActionBarProps) {
         env: Env.Mobile,
       },
       {
-        name: 'Account',
-        title: 'Account',
-        Icon: RiAccountCircleLine,
-        Component: user ? Account : Auth,
-        env: Env.Desktop | Env.Mobile,
-        disabled: isLoading,
-      },
-      {
         name: 'Settings',
         title: 'Settings',
         Icon: RiSettings5Line,
@@ -205,7 +190,7 @@ function PageActionBar({ env }: EnvActionBarProps) {
         env: Env.Desktop | Env.Mobile,
       },
     ],
-    [isLoading, user],
+    [],
   )
 
   return (
