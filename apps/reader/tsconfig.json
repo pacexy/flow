@@ -3,12 +3,6 @@
   "compilerOptions": {
     "experimentalDecorators": true
   },
-  "include": [
-    "next-env.d.ts",
-    "web.d.ts",
-    "src/paddle.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["next-env.d.ts", "web.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

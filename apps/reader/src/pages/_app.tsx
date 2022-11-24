@@ -3,8 +3,6 @@ import 'react-photo-view/dist/react-photo-view.css'
 
 import { LiteralProvider } from '@literal-ui/core'
 import { ErrorBoundary } from '@sentry/nextjs'
-import { supabaseClient } from '@supabase/auth-helpers-nextjs'
-import { UserProvider } from '@supabase/auth-helpers-react'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { RecoilRoot } from 'recoil'
@@ -18,16 +16,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ErrorBoundary fallback={<Fallback />}>
-      <UserProvider supabaseClient={supabaseClient}>
-        <LiteralProvider>
-          <RecoilRoot>
-            <Theme />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </RecoilRoot>
-        </LiteralProvider>
-      </UserProvider>
+      <LiteralProvider>
+        <RecoilRoot>
+          <Theme />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </RecoilRoot>
+      </LiteralProvider>
     </ErrorBoundary>
   )
 }

@@ -18,13 +18,11 @@ import { ReaderGridView, Button, TextField, DropZone } from '../components'
 import { BookRecord, CoverRecord, db } from '../db'
 import { addFile, fetchBook, handleFiles } from '../file'
 import {
-  isSubscriptionActive,
   useDisablePinchZooming,
   useLibrary,
   useMobile,
   useRemoteBooks,
   useRemoteFiles,
-  useSubscription,
 } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { lock } from '../styles'
@@ -111,7 +109,6 @@ const Library: React.FC = () => {
   const [readyToSync, setReadyToSync] = useState(false)
 
   const { groups } = useReaderSnapshot()
-  const subscription = useSubscription()
 
   useEffect(() => {
     if (previousRemoteFiles && remoteFiles) {
@@ -250,7 +247,6 @@ const Library: React.FC = () => {
             {select ? (
               <>
                 <Button
-                  disabled={!isSubscriptionActive(subscription)}
                   onClick={async () => {
                     toggleSelect()
 
