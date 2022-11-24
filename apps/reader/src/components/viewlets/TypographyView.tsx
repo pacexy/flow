@@ -2,14 +2,14 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
-import { RenditionSpread } from '@ink/epubjs/types/rendition'
-import { reader, useReaderSnapshot } from '@ink/reader/models'
+import { RenditionSpread } from '@flow/epubjs/types/rendition'
+import { reader, useReaderSnapshot } from '@flow/reader/models'
 import {
   defaultSettings,
   TypographyConfiguration,
   useSettings,
-} from '@ink/reader/state'
-import { keys } from '@ink/reader/utils'
+} from '@flow/reader/state'
+import { keys } from '@flow/reader/utils'
 
 import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'

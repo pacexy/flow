@@ -3,7 +3,7 @@ import { useUser } from '@supabase/auth-helpers-react'
 import clsx from 'clsx'
 import Script from 'next/script'
 
-import { useSubscription } from '@ink/reader/hooks'
+import { useSubscription } from '@flow/reader/hooks'
 
 import { Button, ButtonProps } from '../Button'
 import { Page } from '../Page'

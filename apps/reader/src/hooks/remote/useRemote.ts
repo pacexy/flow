@@ -4,7 +4,7 @@ import {
   DATA_FILENAME,
   dropboxBooksFetcher,
   dropboxFilesFetcher,
-} from '@ink/reader/sync'
+} from '@flow/reader/sync'
 
 import { isSubscriptionActive, useSubscription } from './useSubscription'
 

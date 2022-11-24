@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { mapToToken } from '@ink/reader/sync'
+import { mapToToken } from '@flow/reader/sync'
 
 import { dbx } from './utils'
 

@@ -1,5 +1,5 @@
 {
-  "name": "@ink/monorepo",
+  "name": "@flow/monorepo",
   "private": true,
   "packageManager": "pnpm@7.10.0",
   "scripts": {

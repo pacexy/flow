@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 
-import { compositeColors } from '@ink/reader/color'
-import { useSettings } from '@ink/reader/state'
+import { compositeColors } from '@flow/reader/color'
+import { useSettings } from '@flow/reader/state'
 
 import { useColorScheme } from './useColorScheme'
 import { useTheme } from './useTheme'

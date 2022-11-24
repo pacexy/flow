@@ -1,5 +1,5 @@
 {
-  "name": "@ink/website",
+  "name": "@flow/website",
   "private": true,
   "scripts": {
     "dev": "next dev -p 7117",
@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ink/internal": "workspace:*",
+    "@flow/internal": "workspace:*",
     "@literal-ui/core": "0.0.13",
     "@literal-ui/hooks": "0.0.8",
     "@literal-ui/next": "0.0.3",

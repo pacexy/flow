@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 
-import { range } from '@ink/internal'
+import { range } from '@flow/internal'
 
 import { OpenApp, QA, Seo } from '../components'
 

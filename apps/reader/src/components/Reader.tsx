@@ -14,8 +14,8 @@ import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
-import { RenditionSpread } from '@ink/epubjs/types/rendition'
-import { navbarState } from '@ink/reader/state'
+import { RenditionSpread } from '@flow/epubjs/types/rendition'
+import { navbarState } from '@flow/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'

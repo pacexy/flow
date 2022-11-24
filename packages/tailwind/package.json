@@ -1,5 +1,5 @@
 {
-  "name": "@ink/tailwind",
+  "name": "@flow/tailwind",
   "version": "0.0.0",
   "license": "MIT",
   "main": "./src/index.js",

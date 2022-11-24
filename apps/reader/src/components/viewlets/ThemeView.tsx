@@ -1,12 +1,12 @@
 import clsx from 'clsx'
 import { ComponentProps } from 'react'
 
-import { range } from '@ink/internal'
+import { range } from '@flow/internal'
 import {
   useBackground,
   useColorScheme,
   useSourceColor,
-} from '@ink/reader/hooks'
+} from '@flow/reader/hooks'
 
 import { ColorPicker, Label } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'

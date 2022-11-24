@@ -1,5 +1,5 @@
 {
-  "name": "@ink/epubjs",
+  "name": "@flow/epubjs",
   "version": "0.3.93",
   "description": "Parse and Render Epubs",
   "main": "src/index.js",

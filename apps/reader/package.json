@@ -1,5 +1,5 @@
 {
-  "name": "@ink/reader",
+  "name": "@flow/reader",
   "private": true,
   "scripts": {
     "dev": "next dev -p 7127",
@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@github/mini-throttle": "^2.1.0",
-    "@ink/epubjs": "workspace:*",
-    "@ink/internal": "workspace:*",
+    "@flow/epubjs": "workspace:*",
+    "@flow/internal": "workspace:*",
     "@invertase/node-paddle-sdk": "^0.3.1",
     "@literal-ui/core": "0.0.13",
     "@literal-ui/hooks": "0.0.8",
@@ -54,7 +54,7 @@
     "valtio": "1.6.0"
   },
   "devDependencies": {
-    "@ink/tailwind": "workspace:*",
+    "@flow/tailwind": "workspace:*",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/line-clamp": "0.4.2",
     "@types/file-saver": "^2.0.5",

@@ -6,8 +6,8 @@ const withPWA = require('next-pwa')({
   dest: 'public',
 })
 const withTM = require('next-transpile-modules')([
-  '@ink/internal',
-  '@ink/epubjs',
+  '@flow/internal',
+  '@flow/epubjs',
   '@material/material-color-utilities',
 ])
 

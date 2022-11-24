@@ -47,7 +47,7 @@ module.exports = {
           'sibling',
           'index',
         ],
-        pathGroups: [{ pattern: '@ink/**', group: 'internal' }],
+        pathGroups: [{ pattern: '@flow/**', group: 'internal' }],
         pathGroupsExcludedImportTypes: ['builtin'],
       },
     ],
