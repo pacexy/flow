@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { ComponentProps, forwardRef, useState } from 'react'
 
-import { scale } from '@ink/reader/platform'
+import { scale } from '@flow/reader/platform'
 
 import { Twisty } from '../Row'
 import { Action, ActionBar } from '../base'

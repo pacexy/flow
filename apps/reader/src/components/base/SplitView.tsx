@@ -12,8 +12,8 @@ import {
   useState,
 } from 'react'
 
-import { useMobile } from '@ink/reader/hooks'
-import { clamp } from '@ink/reader/utils'
+import { useMobile } from '@flow/reader/hooks'
+import { clamp } from '@flow/reader/utils'
 
 interface ISplitViewItem {
   key: string

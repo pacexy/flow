@@ -1,7 +1,7 @@
 import { StateLayer } from '@literal-ui/core'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
-import { useLibrary, useList, useMobile } from '@ink/reader/hooks'
+import { useLibrary, useList, useMobile } from '@flow/reader/hooks'
 import {
   compareHref,
   dfs,
@@ -9,7 +9,7 @@ import {
   INavItem,
   reader,
   useReaderSnapshot,
-} from '@ink/reader/models'
+} from '@flow/reader/models'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'

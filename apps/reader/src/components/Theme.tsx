@@ -6,7 +6,7 @@ import {
 import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 
-import { range } from '@ink/internal'
+import { range } from '@flow/internal'
 
 import { rgbFromArgb } from '../color'
 import { useSetTheme, useSourceColor } from '../hooks'

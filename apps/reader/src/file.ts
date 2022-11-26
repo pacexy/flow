@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import ePub, { Book } from '@ink/epubjs'
+import ePub, { Book } from '@flow/epubjs'
 
 import { BookRecord, db } from './db'
 import { mapExtToMimes } from './mime'

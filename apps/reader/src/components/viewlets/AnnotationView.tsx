@@ -2,9 +2,9 @@ import { useBoolean } from '@literal-ui/hooks'
 import React, { Fragment } from 'react'
 import { useMemo } from 'react'
 
-import { Annotation } from '@ink/reader/annotation'
-import { reader, useReaderSnapshot } from '@ink/reader/models'
-import { group, keys } from '@ink/reader/utils'
+import { Annotation } from '@flow/reader/annotation'
+import { reader, useReaderSnapshot } from '@flow/reader/models'
+import { group, keys } from '@flow/reader/utils'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'

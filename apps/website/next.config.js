@@ -2,7 +2,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 const nextTranslate = require('next-translate')
-const withTM = require('next-transpile-modules')(['@ink/internal'])
+const withTM = require('next-transpile-modules')(['@flow/internal'])
 
 /**
  * @type {import('rehype-pretty-code').Options}

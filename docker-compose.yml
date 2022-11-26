@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  reader:
+    container_name: reader
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    env_file:
+      - ./apps/reader/.env.local

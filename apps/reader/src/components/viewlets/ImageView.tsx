@@ -1,6 +1,6 @@
 import { useBoolean } from '@literal-ui/hooks'
 
-import { ISection, reader, useReaderSnapshot } from '@ink/reader/models'
+import { ISection, reader, useReaderSnapshot } from '@flow/reader/models'
 
 import { Row } from '../Row'
 import { PaneView, PaneViewProps } from '../base'

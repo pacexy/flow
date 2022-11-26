@@ -16,9 +16,9 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@ink/reader/*": ["apps/reader/src/*"],
-      "@ink/internal": ["packages/internal/src/index.ts"],
-      "@ink/epubjs/*": ["packages/epubjs/*"]
+      "@flow/reader/*": ["apps/reader/src/*"],
+      "@flow/internal": ["packages/internal/src/index.ts"],
+      "@flow/epubjs/*": ["packages/epubjs/*"]
     }
   },
   "exclude": ["node_modules"]

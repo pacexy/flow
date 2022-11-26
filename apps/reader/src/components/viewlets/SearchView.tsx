@@ -3,9 +3,14 @@ import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
 
-import { useList } from '@ink/reader/hooks'
-import { flatTree, IMatch, useReaderSnapshot, reader } from '@ink/reader/models'
-import { actionState } from '@ink/reader/state'
+import { useList } from '@flow/reader/hooks'
+import {
+  flatTree,
+  IMatch,
+  useReaderSnapshot,
+  reader,
+} from '@flow/reader/models'
+import { actionState } from '@flow/reader/state'
 
 import { TextField } from '../Form'
 import { Row } from '../Row'
@@ -143,6 +148,7 @@ const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
           highlightClassName="match-highlight"
           searchWords={[keyword]}
           textToHighlight={excerpt}
+          autoEscape
         />
       )}
     </Row>

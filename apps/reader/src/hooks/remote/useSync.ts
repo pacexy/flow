@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react'
 import { useSnapshot } from 'valtio'
 
-import { Annotation } from '@ink/reader/annotation'
-import { BookRecord } from '@ink/reader/db'
-import { BookTab } from '@ink/reader/models'
-import { uploadData } from '@ink/reader/sync'
+import { Annotation } from '@flow/reader/annotation'
+import { BookRecord } from '@flow/reader/db'
+import { BookTab } from '@flow/reader/models'
+import { uploadData } from '@flow/reader/sync'
 
 import { useRemoteBooks } from './useRemote'
 

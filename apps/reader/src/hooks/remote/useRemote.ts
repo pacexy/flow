@@ -4,26 +4,14 @@ import {
   DATA_FILENAME,
   dropboxBooksFetcher,
   dropboxFilesFetcher,
-} from '@ink/reader/sync'
-
-import { isSubscriptionActive, useSubscription } from './useSubscription'
+} from '@flow/reader/sync'
 
 export function useRemoteFiles() {
-  const subscription = useSubscription()
-
-  return useSWR(
-    isSubscriptionActive(subscription) ? '/files' : null,
-    dropboxFilesFetcher,
-    { shouldRetryOnError: false },
-  )
+  return useSWR('/files', dropboxFilesFetcher, { shouldRetryOnError: false })
 }
 
 export function useRemoteBooks() {
-  const subscription = useSubscription()
-
-  return useSWR(
-    isSubscriptionActive(subscription) ? `/${DATA_FILENAME}` : null,
-    dropboxBooksFetcher,
-    { shouldRetryOnError: false },
-  )
+  return useSWR(`/${DATA_FILENAME}`, dropboxBooksFetcher, {
+    shouldRetryOnError: false,
+  })
 }

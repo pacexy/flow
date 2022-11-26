@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import nookies from 'nookies'
 
-import { mapToToken } from '@ink/reader/sync'
+import { mapToToken } from '@flow/reader/sync'
 
 import { dbx } from '../utils'
 

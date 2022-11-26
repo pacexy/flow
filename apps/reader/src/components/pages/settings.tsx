@@ -2,8 +2,8 @@ import { useEventListener } from '@literal-ui/hooks'
 import Dexie from 'dexie'
 import { parseCookies, destroyCookie } from 'nookies'
 
-import { ColorScheme, useColorScheme, useForceRender } from '@ink/reader/hooks'
-import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@ink/reader/sync'
+import { ColorScheme, useColorScheme, useForceRender } from '@flow/reader/hooks'
+import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@flow/reader/sync'
 
 import { Button } from '../Button'
 import { Select } from '../Form'

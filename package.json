@@ -1,5 +1,5 @@
 {
-  "name": "@ink/monorepo",
+  "name": "@flow/monorepo",
   "private": true,
   "packageManager": "pnpm@7.10.0",
   "scripts": {
@@ -13,9 +13,6 @@
     "*.{js,json,css,ts,tsx,md,mdx}": "prettier --write",
     "!(pnpm-lock).{yml,yaml}": "prettier --write",
     "*.{js,ts,tsx}": "eslint --fix"
-  },
-  "dependencies": {
-    "@prisma/client": "^4.1.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "0.4.4",
@@ -31,7 +28,6 @@
     "lint-staged": "12.3.7",
     "prettier": "2.6.2",
     "prettier-plugin-tailwindcss": "0.1.8",
-    "prisma": "^4.1.0",
     "rimraf": "3.0.2",
     "rollup": "2.72.1",
     "rollup-plugin-dts": "4.2.1",

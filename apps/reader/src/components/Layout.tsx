@@ -14,13 +14,7 @@ import {
 import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
 import { useRecoilState, useSetRecoilState } from 'recoil'
 
-import {
-  Env,
-  useBackground,
-  useColorScheme,
-  useInitSubscription,
-  useMobile,
-} from '../hooks'
+import { Env, useBackground, useColorScheme, useMobile } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { Action, actionState, navbarState } from '../state'
 import { activeClass } from '../styles'
@@ -37,7 +31,6 @@ import { TypographyView } from './viewlets/TypographyView'
 
 export const Layout: React.FC = ({ children }) => {
   useColorScheme()
-  useInitSubscription()
 
   const [ready, setReady] = useState(false)
   const setAction = useSetRecoilState(actionState)
