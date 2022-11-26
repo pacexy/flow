@@ -148,6 +148,7 @@ const ResultRow: React.FC<ResultRowProps> = ({ result, keyword }) => {
           highlightClassName="match-highlight"
           searchWords={[keyword]}
           textToHighlight={excerpt}
+          autoEscape
         />
       )}
     </Row>
