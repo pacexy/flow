@@ -51,6 +51,25 @@ Rename all `.env.local.example`s to `.env.local` and setup the environment varia
 pnpm dev
 ```
 
+## Self-hosting
+
+Before self-hosting, you should [setup the environment variables](#setup-the-environment-variables).
+
+### Docker
+
+You can use docker-compose:
+
+```sh
+docker compose up -d
+```
+
+Or build the image and run it manually:
+
+```sh
+docker build -t flow .
+docker run -p 3000:3000 --env-file apps/reader/.env.local flow
+```
+
 ## Contributing
 
 There are many ways in which you can participate in this project, for example:
