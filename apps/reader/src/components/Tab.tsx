@@ -3,7 +3,7 @@ import { ComponentProps } from 'react'
 import { IconType } from 'react-icons'
 import { MdClose } from 'react-icons/md'
 
-import { useBackground } from '../hooks'
+import { useBackground, useTranslation } from '../hooks'
 import { activeClass } from '../styles'
 
 import { IconButton } from './Button'
@@ -25,6 +25,7 @@ export function Tab({
   ...props
 }: TabProps) {
   const [bg] = useBackground()
+  const t = useTranslation()
 
   if (!children) return null
   return (
@@ -45,6 +46,7 @@ export function Tab({
       <Icon size={16} className="text-outline" />
       <span className="max-w-[200px] truncate">{children}</span>
       <IconButton
+        title={t('action.close')}
         Icon={MdClose}
         onClick={(e) => {
           e.stopPropagation()
@@ -59,6 +61,8 @@ interface ListProps extends ComponentProps<'ul'> {
   onDelete?: () => void
 }
 const List: React.FC<ListProps> = ({ className, onDelete, ...props }) => {
+  const t = useTranslation()
+
   return (
     <div
       className={clsx(
@@ -69,6 +73,7 @@ const List: React.FC<ListProps> = ({ className, onDelete, ...props }) => {
       <ul className={clsx('scroll-h flex')} {...props} />
       <IconButton
         className="mx-2"
+        title={t('action.close')}
         Icon={MdClose}
         onClick={(e) => {
           e.stopPropagation()

@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
-import { useRecoilValue } from 'recoil'
 
-import { useList } from '@flow/reader/hooks'
+import { useAction, useList, useTranslation } from '@flow/reader/hooks'
 import {
   flatTree,
   IMatch,
   useReaderSnapshot,
   reader,
 } from '@flow/reader/models'
-import { actionState } from '@flow/reader/state'
 
 import { TextField } from '../Form'
 import { Row } from '../Row'
@@ -37,8 +35,9 @@ function useIntermediateKeyword() {
 }
 
 export const SearchView: React.FC<PaneViewProps> = (props) => {
-  const action = useRecoilValue(actionState)
+  const [action] = useAction()
   const { focusedBookTab } = useReaderSnapshot()
+  const t = useTranslation()
 
   const [keyword, setKeyword] = useIntermediateKeyword()
 
@@ -50,7 +49,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
       actions={[
         {
           id: expanded ? 'collapse-all' : 'expand-all',
-          title: expanded ? 'Collapse All' : 'Expand All',
+          title: t(expanded ? 'action.collapse_all' : 'action.expand_all'),
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
             reader.focusedBookTab?.results?.forEach(
@@ -66,10 +65,10 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
           <TextField
             as="input"
             name="keyword"
-            autoFocus={action === 'Search'}
+            autoFocus={action === 'search'}
             hideLabel
             value={keyword}
-            placeholder="Search"
+            placeholder={t('search.title')}
             onChange={(e) => setKeyword(e.target.value)}
             onClear={() => setKeyword('')}
           />
@@ -89,6 +88,7 @@ interface ResultListProps {
 const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   const rows = results.flatMap((r) => flatTree(r)) ?? []
   const { outerRef, innerRef, items } = useList(rows)
+  const t = useTranslation('search')
 
   const sectionCount = results.length
   const resultCount = results.reduce((a, r) => r.subitems!.length + a, 0)
@@ -96,7 +96,9 @@ const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   return (
     <>
       <div className="typescale-body-small text-outline px-5  py-2">
-        {resultCount} results in {sectionCount} sections
+        {t('files.result')
+          .replace('{n}', '' + resultCount)
+          .replace('{m}', '' + sectionCount)}
       </div>
       <div ref={outerRef} className="scroll">
         <div ref={innerRef}>

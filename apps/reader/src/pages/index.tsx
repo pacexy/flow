@@ -23,6 +23,7 @@ import {
   useMobile,
   useRemoteBooks,
   useRemoteFiles,
+  useTranslation,
 } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { lock } from '../styles'
@@ -68,8 +69,8 @@ export default function Index() {
   }, [])
 
   useEffect(() => {
-    router.beforePopState(({ as }) => {
-      if (as === '/') {
+    router.beforePopState(({ url }) => {
+      if (url === '/') {
         reader.clear()
       }
       return true
@@ -96,6 +97,7 @@ export default function Index() {
 const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
+  const t = useTranslation('home')
 
   const { data: remoteBooks, mutate: mutateRemoteBooks } = useRemoteBooks()
   const { data: remoteFiles, mutate: mutateRemoteFiles } = useRemoteFiles()
@@ -189,7 +191,7 @@ const Library: React.FC = () => {
             hideLabel
             actions={[
               {
-                title: 'Share',
+                title: t('share'),
                 Icon: MdOutlineShare,
                 onClick(el) {
                   if (el?.reportValidity()) {
@@ -200,7 +202,7 @@ const Library: React.FC = () => {
                 },
               },
               {
-                title: 'Download',
+                title: t('download'),
                 Icon: MdOutlineFileDownload,
                 onClick(el) {
                   if (el?.reportValidity()) fetchBook(el.value)
@@ -213,7 +215,7 @@ const Library: React.FC = () => {
           <div className="space-x-2">
             {books.length ? (
               <Button variant="secondary" onClick={toggleSelect}>
-                {select ? 'Cancel' : 'Select'}
+                {t(select ? 'cancel' : 'select')}
               </Button>
             ) : (
               <Button
@@ -225,20 +227,20 @@ const Library: React.FC = () => {
                   )
                 }}
               >
-                Download sample book
+                {t('download_sample_book')}
               </Button>
             )}
             {select &&
               (allSelected ? (
                 <Button variant="secondary" onClick={reset}>
-                  Deselect all
+                  {t('deselect_all')}
                 </Button>
               ) : (
                 <Button
                   variant="secondary"
                   onClick={() => books.forEach((b) => add(b.id))}
                 >
-                  Select all
+                  {t('select_all')}
                 </Button>
               ))}
           </div>
@@ -270,7 +272,7 @@ const Library: React.FC = () => {
                     }
                   }}
                 >
-                  Upload
+                  {t('upload')}
                 </Button>
                 <Button
                   onClick={async () => {
@@ -297,7 +299,7 @@ const Library: React.FC = () => {
                     )
                   }}
                 >
-                  Delete
+                  {t('delete')}
                 </Button>
               </>
             ) : (
@@ -307,7 +309,7 @@ const Library: React.FC = () => {
                   disabled={!books.length}
                   onClick={pack}
                 >
-                  Export
+                  {t('export')}
                 </Button>
                 <Button className="relative">
                   <input
@@ -319,7 +321,7 @@ const Library: React.FC = () => {
                       if (files) handleFiles(files)
                     }}
                   />
-                  Import
+                  {t('import')}
                 </Button>
               </>
             )}

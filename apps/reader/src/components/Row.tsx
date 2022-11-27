@@ -4,7 +4,7 @@ import { ComponentProps, useEffect, useRef } from 'react'
 import { MdClose } from 'react-icons/md'
 import { VscChevronDown, VscChevronRight } from 'react-icons/vsc'
 
-import { LIST_ITEM_SIZE } from '../hooks'
+import { LIST_ITEM_SIZE, useTranslation } from '../hooks'
 import { scale } from '../platform'
 
 import { IconButton } from './Button'
@@ -40,6 +40,7 @@ export const Row: React.FC<RowProps> = ({
   onDelete,
   ...props
 }) => {
+  const trans = useTranslation()
   const onActivateRef = useRef(onActivate)
   onActivateRef.current = onActivate
 
@@ -85,7 +86,7 @@ export const Row: React.FC<RowProps> = ({
           marginLeft: scale(0, 2),
         }}
       >
-        {t || 'Untitled'}
+        {t || trans('untitled')}
         {description && (
           <span
             className="text-outline"

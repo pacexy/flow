@@ -433,7 +433,7 @@ export class BookTab extends BaseTab {
 
 class PageTab extends BaseTab {
   constructor(public readonly Component: React.FC<any>) {
-    super(Component.displayName ?? 'Untitled')
+    super(Component.displayName ?? 'untitled')
   }
 }
 

@@ -12,11 +12,20 @@ import {
   MdOutlineLightMode,
 } from 'react-icons/md'
 import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 
-import { Env, useBackground, useColorScheme, useMobile } from '../hooks'
+import {
+  Env,
+  Action,
+  useAction,
+  useBackground,
+  useColorScheme,
+  useMobile,
+  useSetAction,
+  useTranslation,
+} from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
-import { Action, actionState, navbarState } from '../state'
+import { navbarState } from '../state'
 import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
@@ -33,12 +42,12 @@ export const Layout: React.FC = ({ children }) => {
   useColorScheme()
 
   const [ready, setReady] = useState(false)
-  const setAction = useSetRecoilState(actionState)
+  const setAction = useSetAction()
   const mobile = useMobile()
 
   useEffect(() => {
     if (mobile === undefined) return
-    setAction(mobile ? undefined : 'TOC')
+    setAction(mobile ? undefined : 'toc')
     setReady(true)
   }, [mobile, setAction])
 
@@ -67,50 +76,50 @@ interface IViewAction extends IAction {
 
 const viewActions: IViewAction[] = [
   {
-    name: 'TOC',
-    title: 'Table of Content',
+    name: 'toc',
+    title: 'toc',
     Icon: MdToc,
     View: TocView,
     env: Env.Desktop | Env.Mobile,
   },
   {
-    name: 'Search',
-    title: 'Search',
+    name: 'search',
+    title: 'search',
     Icon: MdSearch,
     View: SearchView,
     env: Env.Desktop | Env.Mobile,
   },
   {
-    name: 'Annotation',
-    title: 'Annotation',
+    name: 'annotation',
+    title: 'annotation',
     Icon: MdFormatUnderlined,
     View: AnnotationView,
     env: Env.Desktop | Env.Mobile,
   },
   {
-    name: 'Image',
-    title: 'Image',
+    name: 'image',
+    title: 'image',
     Icon: MdOutlineImage,
     View: ImageView,
     env: Env.Desktop,
   },
   {
-    name: 'Timeline',
-    title: 'Timeline',
+    name: 'timeline',
+    title: 'timeline',
     Icon: MdTimeline,
     View: TimelineView,
     env: Env.Desktop,
   },
   {
-    name: 'Typography',
-    title: 'Typography',
+    name: 'typography',
+    title: 'typography',
     Icon: RiFontSize,
     View: TypographyView,
     env: Env.Desktop | Env.Mobile,
   },
   {
-    name: 'Theme',
-    title: 'Theme',
+    name: 'theme',
+    title: 'theme',
     Icon: MdOutlineLightMode,
     View: ThemeView,
     env: Env.Desktop | Env.Mobile,
@@ -136,7 +145,8 @@ interface EnvActionBarProps extends ComponentProps<'div'> {
 }
 
 function ViewActionBar({ className, env }: EnvActionBarProps) {
-  const [action, setAction] = useRecoilState(actionState)
+  const [action, setAction] = useAction()
+  const t = useTranslation()
 
   return (
     <ActionBar className={className}>
@@ -146,7 +156,7 @@ function ViewActionBar({ className, env }: EnvActionBarProps) {
           const active = action === name
           return (
             <Action
-              title={title}
+              title={t(`${title}.title`)}
               Icon={Icon}
               active={active}
               onClick={() => setAction(active ? undefined : name)}
@@ -161,6 +171,7 @@ function ViewActionBar({ className, env }: EnvActionBarProps) {
 function PageActionBar({ env }: EnvActionBarProps) {
   const mobile = useMobile()
   const [action, setAction] = useState('Home')
+  const t = useTranslation()
 
   interface IPageAction extends IAction {
     Component?: React.FC
@@ -170,14 +181,14 @@ function PageActionBar({ env }: EnvActionBarProps) {
   const pageActions: IPageAction[] = useMemo(
     () => [
       {
-        name: 'Home',
-        title: 'Home',
+        name: 'home',
+        title: 'home',
         Icon: RiHome6Line,
         env: Env.Mobile,
       },
       {
-        name: 'Settings',
-        title: 'Settings',
+        name: 'settings',
+        title: 'settings',
         Icon: RiSettings5Line,
         Component: Settings,
         env: Env.Desktop | Env.Mobile,
@@ -192,7 +203,7 @@ function PageActionBar({ env }: EnvActionBarProps) {
         .filter((a) => a.env & env)
         .map(({ name, title, Icon, Component, disabled }, i) => (
           <Action
-            title={title}
+            title={t(`${title}.title`)}
             Icon={Icon}
             active={mobile ? action === name : undefined}
             disabled={disabled}
@@ -274,8 +285,9 @@ const Action: React.FC<ActionProps> = ({
 }
 
 const SideBar: React.FC = () => {
-  const [action, setAction] = useRecoilState(actionState)
+  const [action, setAction] = useAction()
   const mobile = useMobile()
+  const t = useTranslation()
 
   const { size } = useSplitViewItem(SideBar, {
     preferredSize: 240,
@@ -297,8 +309,8 @@ const SideBar: React.FC = () => {
         {viewActions.map(({ name, title, View }) => (
           <View
             key={name}
-            name={name}
-            title={title}
+            name={t(`${name}.title`)}
+            title={t(`${title}.title`)}
             className={clsx(name !== action && '!hidden')}
           />
         ))}

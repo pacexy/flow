@@ -6,6 +6,7 @@ import {
   useBackground,
   useColorScheme,
   useSourceColor,
+  useTranslation,
 } from '@flow/reader/hooks'
 
 import { ColorPicker, Label } from '../Form'
@@ -14,15 +15,15 @@ import { PaneViewProps, PaneView, Pane } from '../base'
 export const ThemeView: React.FC<PaneViewProps> = (props) => {
   const { setScheme } = useColorScheme()
   const { sourceColor, setSourceColor } = useSourceColor()
-
   const [, setBackground] = useBackground()
+  const t = useTranslation('theme')
 
   return (
     <PaneView {...props}>
-      <Pane headline="Theme" className="space-y-3 px-5 pt-2 pb-4">
+      <Pane headline={t('title')} className="space-y-3 px-5 pt-2 pb-4">
         <div>
           <ColorPicker
-            name="Source Color"
+            name={t('source_color')}
             defaultValue={sourceColor}
             onChange={(e) => {
               setSourceColor(e.target.value)
@@ -30,7 +31,7 @@ export const ThemeView: React.FC<PaneViewProps> = (props) => {
           />
         </div>
         <div>
-          <Label name="Background Color"></Label>
+          <Label name={t('background_color')}></Label>
           <div className="flex gap-2">
             {range(7)
               .filter((i) => !(i % 2))
