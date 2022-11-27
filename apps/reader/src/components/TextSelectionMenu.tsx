@@ -8,20 +8,19 @@ import {
   MdOutlineIndeterminateCheckBox,
   MdSearch,
 } from 'react-icons/md'
-import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { typeMap, colorMap } from '../annotation'
 import {
   isForwardSelection,
   useMobile,
+  useSetAction,
   useTextSelection,
   useTranslation,
   useTypography,
 } from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
-import { actionState } from '../state'
 import { keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
@@ -117,7 +116,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   text,
   hide,
 }) => {
-  const setAction = useSetRecoilState(actionState)
+  const setAction = useSetAction()
   const ref = useRef<HTMLInputElement>(null)
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
@@ -197,7 +196,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               size={ICON_SIZE}
               onClick={() => {
                 hide()
-                setAction('Search')
+                setAction('search')
                 tab.setKeyword(text)
               }}
             />

@@ -97,7 +97,7 @@ export default function Index() {
 const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
-  const t = useTranslation('library')
+  const t = useTranslation('home')
 
   const { data: remoteBooks, mutate: mutateRemoteBooks } = useRemoteBooks()
   const { data: remoteFiles, mutate: mutateRemoteFiles } = useRemoteFiles()

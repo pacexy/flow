@@ -36,7 +36,7 @@ export const Pane = forwardRef<HTMLDivElement, PaneProps>(function Pane(
       >
         <Twisty expanded={expanded} />
         <div
-          className="typescale-label-small text-on-surface"
+          className="typescale-label-small text-on-surface-variant !font-bold"
           style={{ fontSize: scale(11, 12) }}
         >
           {headline.toUpperCase()}

@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
-import { useRecoilValue } from 'recoil'
 
-import { useList, useTranslation } from '@flow/reader/hooks'
+import { useAction, useList, useTranslation } from '@flow/reader/hooks'
 import {
   flatTree,
   IMatch,
   useReaderSnapshot,
   reader,
 } from '@flow/reader/models'
-import { actionState } from '@flow/reader/state'
 
 import { TextField } from '../Form'
 import { Row } from '../Row'
@@ -37,7 +35,7 @@ function useIntermediateKeyword() {
 }
 
 export const SearchView: React.FC<PaneViewProps> = (props) => {
-  const action = useRecoilValue(actionState)
+  const [action] = useAction()
   const { focusedBookTab } = useReaderSnapshot()
   const t = useTranslation('search')
 
@@ -67,7 +65,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
           <TextField
             as="input"
             name="keyword"
-            autoFocus={action === 'Search'}
+            autoFocus={action === 'search'}
             hideLabel
             value={keyword}
             placeholder={t('title')}

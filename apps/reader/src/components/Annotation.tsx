@@ -1,10 +1,9 @@
 import { useEffect } from 'react'
-import { useSetRecoilState } from 'recoil'
 import { useSnapshot } from 'valtio'
 
 import { colorMap, Annotation as IAnnotation } from '../annotation'
+import { useSetAction } from '../hooks'
 import { BookTab, compareHref } from '../models'
-import { actionState } from '../state'
 
 // avoid click penetration
 let clickedAnnotation = false
@@ -16,7 +15,7 @@ interface FindMatchProps {
   tab: BookTab
 }
 const FindMatches: React.FC<FindMatchProps> = ({ tab }) => {
-  const setAction = useSetRecoilState(actionState)
+  const setAction = useSetAction()
   const { rendition, results, currentHref } = useSnapshot(tab)
 
   useEffect(() => {
@@ -61,7 +60,7 @@ interface DefinitionProps {
   definition: string
 }
 const Definition: React.FC<DefinitionProps> = ({ tab, definition }) => {
-  const setAction = useSetRecoilState(actionState)
+  const setAction = useSetAction()
   const { rendition, currentHref } = useSnapshot(tab)
 
   useEffect(() => {

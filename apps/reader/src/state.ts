@@ -22,19 +22,6 @@ function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
   }
 }
 
-export type Action =
-  | 'TOC'
-  | 'Search'
-  | 'Annotation'
-  | 'Typography'
-  | 'Image'
-  | 'Timeline'
-  | 'Theme'
-export const actionState = atom<Action | undefined>({
-  key: 'action',
-  default: undefined,
-})
-
 export const navbarState = atom<boolean>({
   key: 'navbar',
   default: false,
