@@ -156,6 +156,8 @@ interface NumberFieldProps extends Omit<TextFieldProps<'input'>, 'onChange'> {
 }
 const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
   const ref = useRef<HTMLInputElement>(null)
+  const t = useTranslation('action')
+
   return (
     <TextField
       as="input"
@@ -163,7 +165,7 @@ const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
       placeholder="default"
       actions={[
         {
-          title: 'Step down',
+          title: t('step_down'),
           Icon: MdRemove,
           onClick: () => {
             if (!ref.current) return
@@ -172,7 +174,7 @@ const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
           },
         },
         {
-          title: 'Step up',
+          title: t('step_up'),
           Icon: MdAdd,
           onClick: () => {
             if (!ref.current) return

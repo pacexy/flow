@@ -10,7 +10,7 @@ import { IconType } from 'react-icons'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { PolymorphicPropsWithoutRef } from 'react-polymorphic-types'
 
-import { useMobile } from '../hooks'
+import { useMobile, useTranslation } from '../hooks'
 
 import { IconButton } from './Button'
 
@@ -48,12 +48,13 @@ export function TextField<T extends ElementType = 'input'>({
   const innerRef = useRef<HTMLInputElement>(null)
   const ref = outerRef || innerRef
   const mobile = useMobile()
+  const t = useTranslation()
 
   if (onClear) {
     actions = [
       ...actions,
       {
-        title: 'Clear',
+        title: t('action.clear'),
         Icon: MdClose,
         onClick: onClear,
       },

@@ -63,4 +63,8 @@ export default {
 
   'action.expand_all': '展开全部',
   'action.collapse_all': '折叠全部',
+  'action.close': '关闭',
+  'action.clear': '清除',
+  'action.step_down': '减少',
+  'action.step_up': '增加',
 } as const
