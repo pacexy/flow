@@ -3,7 +3,7 @@ import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import { useRecoilValue } from 'recoil'
 
-import { useList } from '@flow/reader/hooks'
+import { useList, useTranslation } from '@flow/reader/hooks'
 import {
   flatTree,
   IMatch,
@@ -39,6 +39,7 @@ function useIntermediateKeyword() {
 export const SearchView: React.FC<PaneViewProps> = (props) => {
   const action = useRecoilValue(actionState)
   const { focusedBookTab } = useReaderSnapshot()
+  const t = useTranslation('search')
 
   const [keyword, setKeyword] = useIntermediateKeyword()
 
@@ -69,7 +70,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
             autoFocus={action === 'Search'}
             hideLabel
             value={keyword}
-            placeholder="Search"
+            placeholder={t('title')}
             onChange={(e) => setKeyword(e.target.value)}
             onClear={() => setKeyword('')}
           />
@@ -89,6 +90,7 @@ interface ResultListProps {
 const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   const rows = results.flatMap((r) => flatTree(r)) ?? []
   const { outerRef, innerRef, items } = useList(rows)
+  const t = useTranslation('search')
 
   const sectionCount = results.length
   const resultCount = results.reduce((a, r) => r.subitems!.length + a, 0)
@@ -96,7 +98,9 @@ const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
   return (
     <>
       <div className="typescale-body-small text-outline px-5  py-2">
-        {resultCount} results in {sectionCount} sections
+        {t('files.result')
+          .replace('{n}', '' + resultCount)
+          .replace('{m}', '' + sectionCount)}
       </div>
       <div ref={outerRef} className="scroll">
         <div ref={innerRef}>

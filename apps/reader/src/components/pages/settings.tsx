@@ -1,8 +1,14 @@
 import { useEventListener } from '@literal-ui/hooks'
 import Dexie from 'dexie'
+import { useRouter } from 'next/router'
 import { parseCookies, destroyCookie } from 'nookies'
 
-import { ColorScheme, useColorScheme, useForceRender } from '@flow/reader/hooks'
+import {
+  ColorScheme,
+  useColorScheme,
+  useForceRender,
+  useTranslation,
+} from '@flow/reader/hooks'
 import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@flow/reader/sync'
 
 import { Button } from '../Button'
@@ -11,24 +17,37 @@ import { Page } from '../Page'
 
 export const Settings: React.FC = () => {
   const { scheme, setScheme } = useColorScheme()
+  const { asPath, push, locale } = useRouter()
+  const t = useTranslation('settings')
 
   return (
-    <Page headline="Settings">
+    <Page headline={t('title')}>
       <div className="space-y-6">
-        <Item title="Color Scheme">
+        <Item title={t('lanuage')}>
+          <Select
+            value={locale}
+            onChange={(e) => {
+              push(asPath, undefined, { locale: e.target.value })
+            }}
+          >
+            <option value="en-US">English</option>
+            <option value="zh-CN">简体中文</option>
+          </Select>
+        </Item>
+        <Item title={t('color_scheme')}>
           <Select
             value={scheme}
             onChange={(e) => {
               setScheme(e.target.value as ColorScheme)
             }}
           >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="system">{t('color_scheme.system')}</option>
+            <option value="light">{t('color_scheme.light')}</option>
+            <option value="dark">{t('color_scheme.dark')}</option>
           </Select>
         </Item>
         <Synchronization />
-        <Item title="Cache">
+        <Item title={t('cache')}>
           <Button
             variant="secondary"
             onClick={() => {
@@ -38,7 +57,7 @@ export const Settings: React.FC = () => {
               })
             }}
           >
-            Clear
+            {t('cache.clear')}
           </Button>
         </Item>
       </div>
@@ -50,6 +69,7 @@ const Synchronization: React.FC = () => {
   const cookies = parseCookies()
   const refreshToken = cookies[mapToToken['dropbox']]
   const render = useForceRender()
+  const t = useTranslation('settings.synchronization')
 
   useEventListener('message', (e) => {
     if (e.data === OAUTH_SUCCESS_MESSAGE) {
@@ -59,7 +79,7 @@ const Synchronization: React.FC = () => {
   })
 
   return (
-    <Item title="Synchronization">
+    <Item title={t('title')}>
       <Select>
         <option value="dropbox">Dropbox</option>
       </Select>
@@ -72,7 +92,7 @@ const Synchronization: React.FC = () => {
               render()
             }}
           >
-            Unauthorize
+            {t('unauthorize')}
           </Button>
         ) : (
           <Button
@@ -92,7 +112,7 @@ const Synchronization: React.FC = () => {
                 })
             }}
           >
-            Authorize
+            {t('authorize')}
           </Button>
         )}
       </div>

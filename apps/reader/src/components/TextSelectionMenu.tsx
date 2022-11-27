@@ -16,6 +16,7 @@ import {
   isForwardSelection,
   useMobile,
   useTextSelection,
+  useTranslation,
   useTypography,
 } from '../hooks'
 import { BookTab } from '../models'
@@ -121,6 +122,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
   const mobile = useMobile()
+  const t = useTranslation('menu')
 
   const cfi = tab.rangeToCfi(range)
   const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
@@ -190,7 +192,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
         ) : (
           <div className="text-on-surface-variant -mx- mb-3 flex gap-1">
             <IconButton
-              title="Search in book"
+              title={t('search_in_book')}
               Icon={MdSearch}
               size={ICON_SIZE}
               onClick={() => {
@@ -200,7 +202,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               }}
             />
             <IconButton
-              title="Annotate"
+              title={t('annotate')}
               Icon={MdOutlineEdit}
               size={ICON_SIZE}
               onClick={() => {
@@ -209,7 +211,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
             />
             {tab.isDefined(text) ? (
               <IconButton
-                title="Undefine"
+                title={t('undefine')}
                 Icon={MdOutlineIndeterminateCheckBox}
                 size={ICON_SIZE}
                 onClick={() => {
@@ -219,7 +221,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               />
             ) : (
               <IconButton
-                title="Define"
+                title={t('define')}
                 Icon={MdOutlineAddBox}
                 size={ICON_SIZE}
                 onClick={() => {
@@ -274,7 +276,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
                   hide()
                 }}
               >
-                Delete
+                {t('delete')}
               </Button>
             )}
             <Button
@@ -291,7 +293,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
                 hide()
               }}
             >
-              {annotation ? 'Update' : 'Create'}
+              {t(annotation ? 'update' : 'create')}
             </Button>
           </div>
         )}

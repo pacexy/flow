@@ -3,6 +3,7 @@ import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { RenditionSpread } from '@flow/epubjs/types/rendition'
+import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
 import {
   defaultSettings,
@@ -25,6 +26,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const [settings, setSettings] = useSettings()
   const [scope, setScope] = useState(TypographyScope.Book)
+  const t = useTranslation('typography')
 
   const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
@@ -71,27 +73,31 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
               )}
               onClick={() => setScope(TypographyScope[scopeName])}
             >
-              {scopeName}
+              {t(`scope.${scopeName.toLowerCase()}`)}
             </button>
           ))}
       </div>
       <Pane
-        headline="Typography"
+        headline={t('title')}
         className="space-y-3 px-5 pt-2 pb-4"
         key={`${scope}${focusedBookTab?.id}`}
       >
         <Select
-          name="Page View"
+          name={t('page_view')}
           value={spread ?? RenditionSpread.Auto}
           onChange={(e) => {
             setTypography('spread', e.target.value as RenditionSpread)
           }}
         >
-          <option value={RenditionSpread.Auto}>Double Page</option>
-          <option value={RenditionSpread.None}>Single Page</option>
+          <option value={RenditionSpread.Auto}>
+            {t('page_view.single_page')}
+          </option>
+          <option value={RenditionSpread.None}>
+            {t('page_view.double_page')}
+          </option>
         </Select>
         <Select
-          name="Font Family"
+          name={t('font_family')}
           value={fontFamily}
           onChange={(e) => {
             setTypography('fontFamily', e.target.value)
@@ -104,7 +110,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           ))}
         </Select>
         <NumberField
-          name="Font Size"
+          name={t('font_size')}
           min={14}
           max={28}
           defaultValue={fontSize && parseInt(fontSize)}
@@ -113,7 +119,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name="Font Weight"
+          name={t('font_weight')}
           min={100}
           max={900}
           step={100}
@@ -123,7 +129,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name="Line Height"
+          name={t('line_height')}
           min={1}
           step={0.1}
           defaultValue={lineHeight}
@@ -132,7 +138,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name="Zoom"
+          name={t('zoom')}
           min={1}
           step={0.1}
           defaultValue={zoom}

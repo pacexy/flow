@@ -1,7 +1,12 @@
 import { StateLayer } from '@literal-ui/core'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
-import { useLibrary, useList, useMobile } from '@flow/reader/hooks'
+import {
+  useLibrary,
+  useList,
+  useMobile,
+  useTranslation,
+} from '@flow/reader/hooks'
 import {
   compareHref,
   dfs,
@@ -26,8 +31,9 @@ export const TocView: React.FC<PaneViewProps> = (props) => {
 
 const LibraryPane: React.FC = () => {
   const books = useLibrary()
+  const t = useTranslation('toc')
   return (
-    <Pane headline="library" preferredSize={240}>
+    <Pane headline={t('library')} preferredSize={240}>
       {books?.map((book) => (
         <button
           key={book.id}
@@ -48,6 +54,7 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
+  const t = useTranslation('toc')
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
@@ -58,7 +65,7 @@ const TocPane: React.FC = () => {
 
   return (
     <Pane
-      headline="toc"
+      headline={t('title')}
       ref={outerRef}
       actions={[
         {

@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import { useMemo } from 'react'
 
 import { Annotation } from '@flow/reader/annotation'
+import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
 import { group, keys } from '@flow/reader/utils'
 
@@ -20,9 +21,10 @@ export const AnnotationView: React.FC<PaneViewProps> = (props) => {
 
 const DefinitionPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
+  const t = useTranslation('annotation')
 
   return (
-    <Pane headline="Definitions" preferredSize={120}>
+    <Pane headline={t('definitions')} preferredSize={120}>
       {focusedBookTab?.book.definitions.map((d) => {
         return (
           <Row
@@ -41,6 +43,7 @@ const DefinitionPane: React.FC = () => {
 
 const AnnotationPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
+  const t = useTranslation('annotation')
   const groupedAnnotation = useMemo(() => {
     return group(
       (focusedBookTab?.book.annotations as Annotation[]) ?? [],
@@ -49,7 +52,7 @@ const AnnotationPane: React.FC = () => {
   }, [focusedBookTab?.book.annotations])
 
   return (
-    <Pane headline="Annotations">
+    <Pane headline={t('annotations')}>
       {keys(groupedAnnotation).map((k) => (
         <AnnotationBlock key={k} annotations={groupedAnnotation[k]!} />
       ))}

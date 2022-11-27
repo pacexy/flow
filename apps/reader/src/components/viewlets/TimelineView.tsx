@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
-import { useList } from '@flow/reader/hooks'
+import { useList, useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
 
 import { Row } from '../Row'
@@ -12,10 +12,11 @@ export const TimelineView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const rows = focusedBookTab?.timeline
   const { outerRef, innerRef, items } = useList(rows)
+  const t = useTranslation('timeline')
 
   return (
     <PaneView {...props}>
-      <Pane headline="Timeline" ref={outerRef}>
+      <Pane headline={t('title')} ref={outerRef}>
         {rows && (
           <div ref={innerRef}>
             {items.map(({ index }) => {
