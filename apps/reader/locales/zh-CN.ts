@@ -2,6 +2,7 @@ export default {
   'home.title': '主页',
   'home.share': '分享',
   'home.download': '下载',
+  'home.download_sample_book': '下载样书',
   'home.select': '选择',
   'home.cancel': '取消',
   'home.select_all': '选择所有',

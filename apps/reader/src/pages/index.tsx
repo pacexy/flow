@@ -227,7 +227,7 @@ const Library: React.FC = () => {
                   )
                 }}
               >
-                Download sample book
+                {t('download_sample_book')}
               </Button>
             )}
             {select &&
