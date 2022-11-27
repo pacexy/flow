@@ -37,7 +37,7 @@ function useIntermediateKeyword() {
 export const SearchView: React.FC<PaneViewProps> = (props) => {
   const [action] = useAction()
   const { focusedBookTab } = useReaderSnapshot()
-  const t = useTranslation('search')
+  const t = useTranslation()
 
   const [keyword, setKeyword] = useIntermediateKeyword()
 
@@ -49,7 +49,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
       actions={[
         {
           id: expanded ? 'collapse-all' : 'expand-all',
-          title: expanded ? 'Collapse All' : 'Expand All',
+          title: t(expanded ? 'action.collapse_all' : 'action.expand_all'),
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
             reader.focusedBookTab?.results?.forEach(
@@ -68,7 +68,7 @@ export const SearchView: React.FC<PaneViewProps> = (props) => {
             autoFocus={action === 'search'}
             hideLabel
             value={keyword}
-            placeholder={t('title')}
+            placeholder={t('search.title')}
             onChange={(e) => setKeyword(e.target.value)}
             onClear={() => setKeyword('')}
           />

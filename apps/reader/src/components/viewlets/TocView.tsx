@@ -54,7 +54,7 @@ const LibraryPane: React.FC = () => {
 }
 
 const TocPane: React.FC = () => {
-  const t = useTranslation('toc')
+  const t = useTranslation()
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = toc?.flatMap((i) => flatTree(i))
@@ -65,12 +65,12 @@ const TocPane: React.FC = () => {
 
   return (
     <Pane
-      headline={t('title')}
+      headline={t('toc.title')}
       ref={outerRef}
       actions={[
         {
           id: expanded ? 'collapse-all' : 'expand-all',
-          title: expanded ? 'Collapse All' : 'Expand All',
+          title: t(expanded ? 'action.collapse_all' : 'action.expand_all'),
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
             reader.focusedBookTab?.nav?.toc?.forEach((r) =>
