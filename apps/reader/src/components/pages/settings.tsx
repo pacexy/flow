@@ -132,4 +132,4 @@ const Item: React.FC<PartProps> = ({ title, children }) => {
   )
 }
 
-Settings.displayName = 'Settings'
+Settings.displayName = 'settings'

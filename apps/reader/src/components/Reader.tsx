@@ -26,6 +26,7 @@ import {
   useDisablePinchZooming,
   useMobile,
   useSync,
+  useTranslation,
   useTypography,
 } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
@@ -85,6 +86,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
   const { focusedIndex } = useReaderSnapshot()
   const { tabs, selectedIndex } = useSnapshot(group)
+  const t = useTranslation()
 
   const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`, {
     // to disable sash resize
@@ -121,7 +123,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
                 e.dataTransfer.setData('text/plain', `${index},${i}`)
               }}
             >
-              {tab.title}
+              {tab.isBook ? tab.title : t(`${tab.title}.title`)}
             </Tab>
           )
         })}
