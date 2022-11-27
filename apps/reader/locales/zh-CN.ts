@@ -38,8 +38,8 @@ export default {
   'typography.line_height': '行高',
   'typography.zoom': '缩放',
 
-  'theme.title': '主题',
-  'theme.source_color': '源',
+  'theme.title': '颜色主题',
+  'theme.source_color': '源色',
   'theme.background_color': '背景色',
 
   'settings.title': '设置',
