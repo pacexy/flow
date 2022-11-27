@@ -12,7 +12,7 @@ export default {
   'home.delete': '删除',
 
   'toc.title': '目录',
-  'toc.home': '图书馆',
+  'toc.library': '图书馆',
 
   'search.title': '搜索',
   'search.files.result': '{n} 个结果在 {m} 个文件中',
@@ -67,4 +67,6 @@ export default {
   'action.clear': '清除',
   'action.step_down': '减少',
   'action.step_up': '增加',
+
+  untitled: '未标题',
 } as const

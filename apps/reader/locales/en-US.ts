@@ -12,7 +12,7 @@ export default {
   'home.delete': 'Delete',
 
   'toc.title': 'TOC',
-  'toc.home': 'Library',
+  'toc.library': 'Library',
 
   'search.title': 'Search',
   'search.files.result': '{n} results in {m} sections',
@@ -67,4 +67,6 @@ export default {
   'action.clear': 'Clear',
   'action.step_down': 'Step Down',
   'action.step_up': 'Step Up',
+
+  untitled: 'Untitled',
 } as const
