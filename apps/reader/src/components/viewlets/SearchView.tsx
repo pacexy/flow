@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Highlighter from 'react-highlight-words'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
@@ -86,7 +86,10 @@ interface ResultListProps {
   keyword: string
 }
 const ResultList: React.FC<ResultListProps> = ({ results, keyword }) => {
-  const rows = results.flatMap((r) => flatTree(r)) ?? []
+  const rows = useMemo(
+    () => results.flatMap((r) => flatTree(r)) ?? [],
+    [results],
+  )
   const { outerRef, innerRef, items } = useList(rows)
   const t = useTranslation('search')
 
