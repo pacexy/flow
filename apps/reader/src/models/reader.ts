@@ -101,8 +101,12 @@ export class BookTab extends BaseTab {
     if (returnable) this.showPrevLocation()
   }
   displayFromSelector(selector: string, section: ISection, returnable = true) {
-    const el = section.document.querySelector(selector)
-    if (el) this.display(section.cfiFromElement(el), returnable)
+    try {
+      const el = section.document.querySelector(selector)
+      if (el) this.display(section.cfiFromElement(el), returnable)
+    } catch (err) {
+      this.display(section.href, returnable)
+    }
   }
   prev() {
     this.rendition?.prev()
