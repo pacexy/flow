@@ -225,7 +225,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
                 size={ICON_SIZE}
                 onClick={() => {
                   hide()
-                  tab.define(text)
+                  tab.define([text])
                 }}
               />
             )}

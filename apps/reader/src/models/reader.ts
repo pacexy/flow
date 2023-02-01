@@ -1,4 +1,5 @@
 import { debounce } from '@github/mini-throttle/decorators'
+import { IS_SERVER } from '@literal-ui/hooks'
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { proxy, ref, snapshot, subscribe, useSnapshot } from 'valtio'
@@ -135,8 +136,8 @@ export class BookTab extends BaseTab {
     if (range) this.annotationRange = ref(range)
   }
 
-  define(def: string) {
-    this.updateBook({ definitions: [...this.book.definitions, def] })
+  define(def: string[]) {
+    this.updateBook({ definitions: [...this.book.definitions, ...def] })
   }
   undefine(def: string) {
     this.updateBook({
@@ -587,4 +588,14 @@ subscribe(reader, () => {
 
 export function useReaderSnapshot() {
   return useSnapshot(reader)
+}
+
+declare global {
+  interface Window {
+    reader: Reader
+  }
+}
+
+if (!IS_SERVER) {
+  window.reader = reader
 }
