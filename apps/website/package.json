@@ -34,7 +34,7 @@
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/line-clamp": "0.4.2",
     "@types/node": "17.0.22",
-    "@types/react": "17.0.43",
+    "@types/react": "18.0.28",
     "autoprefixer": "10.4.4",
     "m3-tokens": "0.0.3",
     "next-transpile-modules": "9.0.0",
