@@ -30,7 +30,7 @@
     "prettier-plugin-tailwindcss": "0.1.8",
     "rimraf": "3.0.2",
     "rollup": "2.72.1",
-    "rollup-plugin-dts": "4.2.1",
+    "rollup-plugin-dts": "4.2.3",
     "rollup-plugin-typescript2": "0.31.2",
     "tsup": "5.12.7",
     "turbo": "latest",
