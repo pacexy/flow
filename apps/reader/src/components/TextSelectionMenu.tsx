@@ -22,7 +22,7 @@ import {
 } from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
-import { keys, last } from '../utils'
+import { copy, keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
 import { TextField } from './Form'
@@ -175,7 +175,12 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           }),
         }}
         tabIndex={-1}
-        onKeyDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          e.stopPropagation()
+          if (e.key === 'c' && e.ctrlKey) {
+            copy(text)
+          }
+        }}
       >
         {annotate ? (
           <div className="mb-3">
@@ -197,7 +202,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               size={ICON_SIZE}
               onClick={() => {
                 hide()
-                navigator.clipboard.writeText(text)
+                copy(text)
               }}
             />
             <IconButton
