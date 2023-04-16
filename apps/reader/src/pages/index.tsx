@@ -28,6 +28,7 @@ import {
 import { reader, useReaderSnapshot } from '../models'
 import { lock } from '../styles'
 import { dbx, pack, uploadData } from '../sync'
+import { copy } from '../utils'
 
 const placeholder = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect fill="gray" fill-opacity="0" width="1" height="1"/></svg>`
 
@@ -195,9 +196,7 @@ const Library: React.FC = () => {
                 Icon: MdOutlineShare,
                 onClick(el) {
                   if (el?.reportValidity()) {
-                    navigator.clipboard.writeText(
-                      `${window.location.origin}/?${SOURCE}=${el.value}`,
-                    )
+                    copy(`${window.location.origin}/?${SOURCE}=${el.value}`)
                   }
                 },
               },

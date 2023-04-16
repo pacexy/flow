@@ -20,3 +20,7 @@ export function group<T>(array: T[], getKey: (item: T) => string | number) {
 
   return o
 }
+
+export function copy(text: string) {
+  return navigator.clipboard.writeText(text)
+}

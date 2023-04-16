@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import {
+  MdCopyAll,
   MdOutlineAddBox,
   MdOutlineEdit,
   MdOutlineIndeterminateCheckBox,
@@ -21,7 +22,7 @@ import {
 } from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
-import { keys, last } from '../utils'
+import { copy, keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
 import { TextField } from './Form'
@@ -174,7 +175,12 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           }),
         }}
         tabIndex={-1}
-        onKeyDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          e.stopPropagation()
+          if (e.key === 'c' && e.ctrlKey) {
+            copy(text)
+          }
+        }}
       >
         {annotate ? (
           <div className="mb-3">
@@ -190,6 +196,15 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           </div>
         ) : (
           <div className="text-on-surface-variant -mx- mb-3 flex gap-1">
+            <IconButton
+              title={t('copy')}
+              Icon={MdCopyAll}
+              size={ICON_SIZE}
+              onClick={() => {
+                hide()
+                copy(text)
+              }}
+            />
             <IconButton
               title={t('search_in_book')}
               Icon={MdSearch}
