@@ -54,6 +54,7 @@ export default {
   'settings.cache': '缓存',
   'settings.cache.clear': '清除',
 
+  'menu.copy': '复制',
   'menu.search_in_book': '书内搜索',
   'menu.annotate': '标注',
   'menu.define': '定义',

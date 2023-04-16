@@ -54,6 +54,7 @@ export default {
   'settings.cache': 'Cache',
   'settings.cache.clear': 'Clear',
 
+  'menu.copy': 'Copy',
   'menu.search_in_book': 'Search in book',
   'menu.annotate': 'Annotate',
   'menu.define': 'Define',

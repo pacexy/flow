@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import {
+  MdCopyAll,
   MdOutlineAddBox,
   MdOutlineEdit,
   MdOutlineIndeterminateCheckBox,
@@ -190,6 +191,15 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           </div>
         ) : (
           <div className="text-on-surface-variant -mx- mb-3 flex gap-1">
+            <IconButton
+              title={t('copy')}
+              Icon={MdCopyAll}
+              size={ICON_SIZE}
+              onClick={() => {
+                hide()
+                navigator.clipboard.writeText(text)
+              }}
+            />
             <IconButton
               title={t('search_in_book')}
               Icon={MdSearch}
