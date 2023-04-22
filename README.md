@@ -43,7 +43,7 @@ pnpm i
 
 ### Setup the environment variables
 
-Rename all `.env.local.example`s to `.env.local` and setup the environment variables.
+Copy and rename all `.env.local.example`s to `.env.local` and setup the environment variables.
 
 ### Run the apps
 
