@@ -89,10 +89,10 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             setTypography('spread', e.target.value as RenditionSpread)
           }}
         >
-          <option value={RenditionSpread.Auto}>
+          <option value={RenditionSpread.None}>
             {t('page_view.single_page')}
           </option>
-          <option value={RenditionSpread.None}>
+          <option value={RenditionSpread.Auto}>
             {t('page_view.double_page')}
           </option>
         </Select>
