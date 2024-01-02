@@ -58,7 +58,7 @@
   "qa2": {
     "0": {
       "q": "如何安装或卸载 Flow？",
-      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=zh-Hans'>使用渐进式 Web 应用</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/zh-cn/microsoft-edge/progressive-web-apps-chromium/ux'>PWA 的用户体验</a>"
+      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=zh-Hans'>使用渐进式 Web 应用</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/zh-cn/microsoft-edge/progressive-web-apps-chromium/ux'>PWA 的用户体验</a><br/>Safari: <a target='_blank' href='https://support.apple.com/zh-cn/104996'>在 Mac 上使用 Safari 浏览器网页 App</a>"
     },
     "1": {
       "q": "如何将 Flow 设置为默认 ePub 阅读器?",

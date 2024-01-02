@@ -58,7 +58,7 @@
   "qa2": {
     "0": {
       "q": "How to install or uninstall Flow?",
-      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=en'>Use Progressive Web Apps</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux'>The user experience of PWAs</a>"
+      "a": "Google Chrome: <a target='_blank' href='https://support.google.com/chrome/answer/9658361?hl=en'>Use Progressive Web Apps</a><br/>Microsoft Edge: <a target='_blank' href='https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/ux'>The user experience of PWAs</a><br/>Safari: <a target='_blank' href='https://support.apple.com/en-us/104996'>Use Safari web apps on Mac</a>"
     },
     "1": {
       "q": "How to set Flow as the default ePub reader?",
