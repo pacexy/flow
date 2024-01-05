@@ -27,7 +27,7 @@
     "husky": "7.0.4",
     "lint-staged": "12.3.7",
     "prettier": "2.6.2",
-    "prettier-plugin-tailwindcss": "0.1.8",
+    "prettier-plugin-tailwindcss": "0.5.11",
     "rimraf": "3.0.2",
     "rollup": "2.72.1",
     "rollup-plugin-dts": "4.2.1",
