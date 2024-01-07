@@ -2,7 +2,7 @@
   "name": "@flow/reader",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 7127",
+    "dev": "cross-env RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED=false next dev -p 7127",
     "build": "next build",
     "analyze": "cross-env ANALYZE=true next build",
     "start": "next start",
@@ -39,7 +39,7 @@
     "react-photo-view": "^1.1.2",
     "react-polymorphic-types": "2.0.0",
     "react-use": "^17.4.0",
-    "recoil": "0.7.2",
+    "recoil": "0.7.6",
     "swr": "^1.3.0",
     "tilg": "^0.1.1",
     "use-local-storage-state": "^18.1.1",
