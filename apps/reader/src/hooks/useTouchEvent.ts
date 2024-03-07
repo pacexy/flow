@@ -1,18 +1,18 @@
-import { useCallback, useRef } from 'react'
 import { useEventListener } from '@literal-ui/hooks'
-import {hasSelection} from './useTextSelection'
-import {AsRef, BookTab} from '../models/reader'
+import { useCallback, useRef } from 'react'
+import { AsRef, BookTab } from '../models/reader'
+import { hasSelection } from './useTextSelection'
 
-export function useTouchEvent(props: {iframe?: Window & AsRef; tab: BookTab}) {
-  const {iframe, tab} = props;
-  const params = useRef({x: -1, y: -1, t: 0, expired: false})
+export function useTouchEvent(props: { iframe?: Window & AsRef; tab: BookTab }) {
+  const { iframe, tab } = props;
+  const params = useRef({ x: -1, y: -1, t: 0, expired: false })
 
-  const handleTouchEnd = useCallback(function(e: TouchEvent) {
+  const handleTouchEnd = useCallback(function (e: TouchEvent) {
     if (!iframe) return
     iframe.ontouchend = undefined
     console.log('params:', params.current)
     const selection = iframe.getSelection()
-    
+
     if (hasSelection(selection)) return
     if (params.current.expired) return
 
@@ -22,7 +22,7 @@ export function useTouchEvent(props: {iframe?: Window & AsRef; tab: BookTab}) {
     const y1 = e.changedTouches[0]?.clientY ?? 0
     const t1 = Date.now()
 
-    const {x, y, t} = params.current;
+    const { x, y, t } = params.current;
 
     const deltaX = x1 - x
     const deltaY = y1 - y
@@ -54,7 +54,7 @@ export function useTouchEvent(props: {iframe?: Window & AsRef; tab: BookTab}) {
     const y0 = e.targetTouches[0]?.clientY ?? 0
     const t0 = Date.now()
 
-    params.current = {x: x0, y: y0, t: t0, expired: false}
+    params.current = { x: x0, y: y0, t: t0, expired: false }
 
     // When selecting text with long tap, `touchend` is not fired,
     // so instead of use `addEventlistener`, we should use `on*`
