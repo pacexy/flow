@@ -1,6 +1,8 @@
 import { useEventListener } from '@literal-ui/hooks'
 import { useCallback, useRef } from 'react'
+
 import { AsRef, BookTab } from '../models/reader'
+
 import { hasSelection } from './useTextSelection'
 
 export function useTouchEvent(props: { iframe?: Window & AsRef; tab: BookTab }) {
