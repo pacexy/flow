@@ -20,7 +20,6 @@ import { navbarState } from '@flow/reader/state'
 import { db } from '../db'
 import { handleFiles } from '../file'
 import {
-  hasSelection,
   useBackground,
   useColorScheme,
   useDisablePinchZooming,
