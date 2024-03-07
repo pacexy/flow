@@ -173,7 +173,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
               case 'right':
                 reader.addGroup(tabs, index + 1)
                 break
-              default:F
+              default:
                 tabs.forEach((t) => reader.addTab(t, index))
             }
           }
