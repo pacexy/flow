@@ -43,6 +43,14 @@ const config = {
     locales: ['en-US', 'zh-CN'],
     defaultLocale: 'en-US',
   },
+  async rewrites() {
+    return [
+      {
+        source: '/github/download/:path*',
+        destination: 'https://raw.githubusercontent.com/:path*', // The :path parameter is used here so will not be automatically passed in the query
+      },
+    ]
+  },
   ...(IS_DOCKER && {
     output: 'standalone',
     experimental: {
