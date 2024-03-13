@@ -86,18 +86,6 @@ async function toDataUrl(url: string) {
   return readBlob((r) => r.readAsDataURL(buffer))
 }
 
-function proxyGithubUrl(url: string) {
-  if (url.includes('github.com/')) {
-    return url.replace(/^http(s?):\/\/github\.com/, '/github/download').replace('/raw/', '/')
-  }
-
-  if (url.includes('raw.githubusercontent.com/')) {
-    return url.replace('https://raw.githubusercontent.com', '/github/download')
-  }
-
-  return url
-}
-
 export async function fetchBook(url: string) {
   const filename = decodeURIComponent(/\/([^/]*\.epub)$/i.exec(url)?.[1] ?? '')
   const books = await db?.books.toArray()
@@ -105,7 +93,7 @@ export async function fetchBook(url: string) {
 
   return (
     book ??
-    fetch(proxyGithubUrl(url))
+    fetch(url)
       .then((res) => res.blob())
       .then((blob) => addBook(new File([blob], filename)))
   )
