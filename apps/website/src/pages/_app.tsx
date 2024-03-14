@@ -1,5 +1,4 @@
 import './styles.css'
-import 'react-photo-view/dist/react-photo-view.css'
 
 import { LiteralProvider } from '@literal-ui/core'
 import { MDXProvider } from '@mdx-js/react'
