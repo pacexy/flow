@@ -299,7 +299,11 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         tab.showPrevLocation()
         return
       }
-      if (mobile === false && el.tagName === 'IMG') {
+      if (
+        mobile === false &&
+        el.tagName === 'IMG' &&
+        el.src.startsWith('blob:')
+      ) {
         setSrc(el.src)
         return
       }
