@@ -42,7 +42,7 @@ export default function Home() {
             </ul>
           </div>
           <img
-            src={`/screenshots/${locale}.png`}
+            src={`/screenshots/${locale}.webp`}
             alt="Screenshot"
             className="shadow-1 mt-16"
           />

@@ -4,7 +4,7 @@
 
 <p align="center">Free. Open source. Browser-based.</p>
 
-<p align="center"><img src="apps/website/public/screenshots/en-US.png"/>
+<p align="center"><img src="apps/website/public/screenshots/en-US.webp"/>
 </p>
 
 ## Features
