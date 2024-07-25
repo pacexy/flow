@@ -51,11 +51,45 @@ const AnnotationPane: React.FC = () => {
     )
   }, [focusedBookTab?.book.annotations])
 
+
+  const exportAnnotations = () => {
+    const annotations = (focusedBookTab?.book.annotations ?? []).map((a) => ({ ...a }))
+
+    // process annotations to be under each section
+    // group annotations by title
+    const grouped = group(annotations, (a) => a.spine.title)
+    const exported: Record<string, any[]> = {}
+    for (const chapter in grouped) {
+      const annotations = grouped[chapter]?.map((a) => {
+        const annotation: Record<string, any> = {}
+        if (a.notes !== undefined) annotation.notes = a.notes
+        if (a.text !== undefined) annotation.text = a.text
+        return annotation
+      }) ?? []
+      exported[chapter] = annotations
+    }
+
+    // Copy to clipboard as markdown
+    const exportedAnnotationsMd = Object.entries(exported).map(([chapter, annotations]) => {
+      return `## ${chapter}\n${annotations.map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`).join('\n')}`
+    }).join('\n\n')
+    navigator.clipboard.writeText(exportedAnnotationsMd)
+    const blob = new Blob([exportedAnnotationsMd], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'exported_annotations.md'
+    a.click()
+  }
+
   return (
     <Pane headline={t('annotations')}>
       {keys(groupedAnnotation).map((k) => (
         <AnnotationBlock key={k} annotations={groupedAnnotation[k]!} />
       ))}
+      <div className="text-center mt-2.5">
+        <button onClick={exportAnnotations}>Export all annotations</button>
+      </div>
     </Pane>
   )
 }
