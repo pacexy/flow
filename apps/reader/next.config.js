@@ -42,7 +42,7 @@ const config = {
   i18n: {
     locales: ['en-US', 'zh-CN'],
     defaultLocale: 'en-US',
-  }, 
+  },
   ...(IS_DOCKER && {
     output: 'standalone',
     experimental: {
