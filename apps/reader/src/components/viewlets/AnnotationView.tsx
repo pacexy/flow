@@ -9,6 +9,7 @@ import { group, keys } from '@flow/reader/utils'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
+import { VscCopy } from 'react-icons/vsc'
 
 export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   return (
@@ -54,7 +55,6 @@ const AnnotationPane: React.FC = () => {
 
   const exportAnnotations = () => {
     const annotations = (focusedBookTab?.book.annotations ?? []).map((a) => ({ ...a }))
-
     // process annotations to be under each section
     // group annotations by title
     const grouped = group(annotations, (a) => a.spine.title)
@@ -74,6 +74,8 @@ const AnnotationPane: React.FC = () => {
       return `## ${chapter}\n${annotations.map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`).join('\n')}`
     }).join('\n\n')
     navigator.clipboard.writeText(exportedAnnotationsMd)
+
+    // Download as markdown
     const blob = new Blob([exportedAnnotationsMd], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -83,13 +85,19 @@ const AnnotationPane: React.FC = () => {
   }
 
   return (
-    <Pane headline={t('annotations')}>
+    <Pane headline={t('annotations')} actions={Object.keys(groupedAnnotation).length > 0 ? [
+      {
+        id: 'copy-all',
+        title: t('export'),
+        Icon: VscCopy,
+        handle() {
+          exportAnnotations()
+        },
+      },
+    ] : []}>
       {keys(groupedAnnotation).map((k) => (
         <AnnotationBlock key={k} annotations={groupedAnnotation[k]!} />
       ))}
-      <div className="text-center mt-2.5">
-        <button onClick={exportAnnotations}>Export all annotations</button>
-      </div>
     </Pane>
   )
 }
