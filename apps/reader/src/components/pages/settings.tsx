@@ -23,7 +23,7 @@ export const Settings: React.FC = () => {
   return (
     <Page headline={t('title')}>
       <div className="space-y-6">
-        <Item title={t('lanuage')}>
+        <Item title={t('language')}>
           <Select
             value={locale}
             onChange={(e) => {

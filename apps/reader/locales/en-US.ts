@@ -43,7 +43,7 @@ export default {
   'theme.background_color': 'Background Color',
 
   'settings.title': 'Settings',
-  'settings.lanuage': 'Language',
+  'settings.language': 'Language',
   'settings.color_scheme': 'Color Scheme',
   'settings.color_scheme.system': 'System',
   'settings.color_scheme.light': 'Light',
