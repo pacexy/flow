@@ -43,7 +43,7 @@ export default {
   'theme.background_color': '背景色',
 
   'settings.title': '设置',
-  'settings.lanuage': '语言',
+  'settings.language': '语言',
   'settings.color_scheme': '颜色模式',
   'settings.color_scheme.system': '系统',
   'settings.color_scheme.light': '浅色',
