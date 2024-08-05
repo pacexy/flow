@@ -74,14 +74,6 @@ const AnnotationPane: React.FC = () => {
       return `## ${chapter}\n${annotations.map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`).join('\n')}`
     }).join('\n\n')
     navigator.clipboard.writeText(exportedAnnotationsMd)
-
-    // Download as markdown
-    const blob = new Blob([exportedAnnotationsMd], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'exported_annotations.md'
-    a.click()
   }
 
   return (
