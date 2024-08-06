@@ -1,11 +1,12 @@
 import { useBoolean } from '@literal-ui/hooks'
 import React, { Fragment } from 'react'
 import { useMemo } from 'react'
+import { VscCopy } from 'react-icons/vsc'
 
 import { Annotation } from '@flow/reader/annotation'
 import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
-import { group, keys } from '@flow/reader/utils'
+import { copy, group, keys } from '@flow/reader/utils'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
@@ -44,15 +45,61 @@ const DefinitionPane: React.FC = () => {
 const AnnotationPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
   const t = useTranslation('annotation')
+
+  const annotations = useMemo(
+    () => (focusedBookTab?.book.annotations as Annotation[]) ?? [],
+    [focusedBookTab?.book.annotations],
+  )
+
   const groupedAnnotation = useMemo(() => {
-    return group(
-      (focusedBookTab?.book.annotations as Annotation[]) ?? [],
-      (a) => a.spine.index,
-    )
-  }, [focusedBookTab?.book.annotations])
+    return group(annotations ?? [], (a) => a.spine.index)
+  }, [annotations])
+
+  const exportAnnotations = () => {
+    // process annotations to be under each section
+    // group annotations by title
+    const grouped = group(annotations, (a) => a.spine.title)
+    const exported: Record<string, any[]> = {}
+    for (const chapter in grouped) {
+      const annotations =
+        grouped[chapter]?.map((a) => {
+          const annotation: Record<string, any> = {}
+          if (a.notes !== undefined) annotation.notes = a.notes
+          if (a.text !== undefined) annotation.text = a.text
+          return annotation
+        }) ?? []
+      exported[chapter] = annotations
+    }
+
+    // Copy to clipboard as markdown
+    const exportedAnnotationsMd = Object.entries(exported)
+      .map(([chapter, annotations]) => {
+        return `## ${chapter}\n${annotations
+          .map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`)
+          .join('\n')}`
+      })
+      .join('\n\n')
+    copy(exportedAnnotationsMd)
+  }
 
   return (
-    <Pane headline={t('annotations')}>
+    <Pane
+      headline={t('annotations')}
+      actions={
+        annotations.length > 0
+          ? [
+              {
+                id: 'copy-all',
+                title: t('copy_as_markdown'),
+                Icon: VscCopy,
+                handle() {
+                  exportAnnotations()
+                },
+              },
+            ]
+          : undefined
+      }
+    >
       {keys(groupedAnnotation).map((k) => (
         <AnnotationBlock key={k} annotations={groupedAnnotation[k]!} />
       ))}

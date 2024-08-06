@@ -21,6 +21,7 @@ export default {
   'annotation.title': '标注',
   'annotation.definitions': '定义',
   'annotation.annotations': '标注',
+  'annotation.copy_as_markdown': '复制为 Markdown',
 
   'image.title': '图片',
 
