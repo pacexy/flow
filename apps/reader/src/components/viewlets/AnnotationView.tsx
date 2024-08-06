@@ -6,7 +6,7 @@ import { VscCopy } from 'react-icons/vsc'
 import { Annotation } from '@flow/reader/annotation'
 import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
-import { group, keys } from '@flow/reader/utils'
+import { copy, group, keys } from '@flow/reader/utils'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
@@ -79,7 +79,7 @@ const AnnotationPane: React.FC = () => {
           .join('\n')}`
       })
       .join('\n\n')
-    navigator.clipboard.writeText(exportedAnnotationsMd)
+    copy(exportedAnnotationsMd)
   }
 
   return (
