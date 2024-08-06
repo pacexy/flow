@@ -1,6 +1,7 @@
 import { useBoolean } from '@literal-ui/hooks'
 import React, { Fragment } from 'react'
 import { useMemo } from 'react'
+import { VscCopy } from 'react-icons/vsc'
 
 import { Annotation } from '@flow/reader/annotation'
 import { useTranslation } from '@flow/reader/hooks'
@@ -9,7 +10,6 @@ import { group, keys } from '@flow/reader/utils'
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
-import { VscCopy } from 'react-icons/vsc'
 
 export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   return (
@@ -52,41 +52,54 @@ const AnnotationPane: React.FC = () => {
     )
   }, [focusedBookTab?.book.annotations])
 
-
   const exportAnnotations = () => {
-    const annotations = (focusedBookTab?.book.annotations ?? []).map((a) => ({ ...a }))
+    const annotations = (focusedBookTab?.book.annotations ?? []).map((a) => ({
+      ...a,
+    }))
     // process annotations to be under each section
     // group annotations by title
     const grouped = group(annotations, (a) => a.spine.title)
     const exported: Record<string, any[]> = {}
     for (const chapter in grouped) {
-      const annotations = grouped[chapter]?.map((a) => {
-        const annotation: Record<string, any> = {}
-        if (a.notes !== undefined) annotation.notes = a.notes
-        if (a.text !== undefined) annotation.text = a.text
-        return annotation
-      }) ?? []
+      const annotations =
+        grouped[chapter]?.map((a) => {
+          const annotation: Record<string, any> = {}
+          if (a.notes !== undefined) annotation.notes = a.notes
+          if (a.text !== undefined) annotation.text = a.text
+          return annotation
+        }) ?? []
       exported[chapter] = annotations
     }
 
     // Copy to clipboard as markdown
-    const exportedAnnotationsMd = Object.entries(exported).map(([chapter, annotations]) => {
-      return `## ${chapter}\n${annotations.map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`).join('\n')}`
-    }).join('\n\n')
+    const exportedAnnotationsMd = Object.entries(exported)
+      .map(([chapter, annotations]) => {
+        return `## ${chapter}\n${annotations
+          .map((a) => `- ${a.text} ${a.notes ? `(${a.notes})` : ''}`)
+          .join('\n')}`
+      })
+      .join('\n\n')
     navigator.clipboard.writeText(exportedAnnotationsMd)
   }
 
   return (
-    <Pane headline={t('annotations')} actions={Object.keys(groupedAnnotation).length > 0 ? [
-      {
-        id: 'copy-all',
-        title: t('export'),
-        Icon: VscCopy,
-        handle() {
-          exportAnnotations()
-        },
-      },
-    ] : []}>
+    <Pane
+      headline={t('annotations')}
+      actions={
+        Object.keys(groupedAnnotation).length > 0
+          ? [
+              {
+                id: 'copy-all',
+                title: t('export'),
+                Icon: VscCopy,
+                handle() {
+                  exportAnnotations()
+                },
+              },
+            ]
+          : []
+      }
+    >
       {keys(groupedAnnotation).map((k) => (
         <AnnotationBlock key={k} annotations={groupedAnnotation[k]!} />
       ))}
