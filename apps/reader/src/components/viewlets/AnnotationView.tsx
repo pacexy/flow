@@ -45,17 +45,17 @@ const DefinitionPane: React.FC = () => {
 const AnnotationPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
   const t = useTranslation('annotation')
+
+  const annotations = useMemo(
+    () => (focusedBookTab?.book.annotations as Annotation[]) ?? [],
+    [focusedBookTab?.book.annotations],
+  )
+
   const groupedAnnotation = useMemo(() => {
-    return group(
-      (focusedBookTab?.book.annotations as Annotation[]) ?? [],
-      (a) => a.spine.index,
-    )
-  }, [focusedBookTab?.book.annotations])
+    return group(annotations ?? [], (a) => a.spine.index)
+  }, [annotations])
 
   const exportAnnotations = () => {
-    const annotations = (focusedBookTab?.book.annotations ?? []).map((a) => ({
-      ...a,
-    }))
     // process annotations to be under each section
     // group annotations by title
     const grouped = group(annotations, (a) => a.spine.title)
@@ -86,7 +86,7 @@ const AnnotationPane: React.FC = () => {
     <Pane
       headline={t('annotations')}
       actions={
-        Object.keys(groupedAnnotation).length > 0
+        annotations.length > 0
           ? [
               {
                 id: 'copy-all',
@@ -97,7 +97,7 @@ const AnnotationPane: React.FC = () => {
                 },
               },
             ]
-          : []
+          : undefined
       }
     >
       {keys(groupedAnnotation).map((k) => (
