@@ -90,7 +90,7 @@ const AnnotationPane: React.FC = () => {
           ? [
               {
                 id: 'copy-all',
-                title: t('export'),
+                title: t('copy_as_markdown'),
                 Icon: VscCopy,
                 handle() {
                   exportAnnotations()
