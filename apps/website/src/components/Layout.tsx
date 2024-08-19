@@ -90,7 +90,7 @@ const Header: React.FC = () => {
           </Link>
           <Link
             href={asPath}
-            locale={isDefaultLocale ? 'zh-CN' : 'en-US'}
+            locale={isDefaultLocale ? 'vi-VN' : 'en-US'}
             className="flex items-center gap-2"
           >
             <MdLanguage size={22} />

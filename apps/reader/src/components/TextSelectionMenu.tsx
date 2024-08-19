@@ -8,6 +8,7 @@ import {
   MdOutlineEdit,
   MdOutlineIndeterminateCheckBox,
   MdSearch,
+  MdImageSearch,
 } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
 
@@ -22,11 +23,12 @@ import {
 } from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
-import { copy, keys, last } from '../utils'
+import { copy, getPromptFromCFI, keys, last, parseCFI } from '../utils'
 
 import { Button, IconButton } from './Button'
 import { TextField } from './Form'
 import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
+import Modal from './modal'
 
 interface TextSelectionMenuProps {
   tab: BookTab
@@ -127,10 +129,18 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   const cfi = tab.rangeToCfi(range)
   const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
   const [annotate, setAnnotate] = useState(!!annotation)
+  const [popup, setPopup] = useState(false);
 
   const position = forward
     ? LayoutAnchorPosition.Before
     : LayoutAnchorPosition.After
+
+    console.log('annotation', annotation);
+    console.log('cfi', cfi);
+    console.log('parseCFI', parseCFI(cfi));
+  const cfiSanitize = parseCFI(cfi) || {}
+  const prompt = getPromptFromCFI(cfiSanitize, tab.title);
+  console.log('prompt', prompt);
 
   const { zoom } = useTypography(tab)
   const endContainer = forward ? range.endContainer : range.startContainer
@@ -142,12 +152,22 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
     ? anchorRect.height
     : _lineHeight * (zoom ?? 1)
 
+  const onCancelModal = () => {
+    setPopup(false);
+  };
+
   return (
     <FocusLock disabled={mobile}>
       <Overlay
         // cover `sash`
         className="!z-50 !bg-transparent"
         onMouseDown={hide}
+      />
+      <Modal
+        isOpen={popup}
+        setIsOpen={setPopup}
+        onCancel={onCancelModal}
+        prompt={prompt}
       />
       <div
         ref={(el) => {
@@ -221,6 +241,14 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
               size={ICON_SIZE}
               onClick={() => {
                 setAnnotate(true)
+              }}
+            />
+            <IconButton
+              title={t('annotate')}
+              Icon={MdImageSearch}
+              size={ICON_SIZE}
+              onClick={() => {
+                setPopup(true)
               }}
             />
             {tab.isDefined(text) ? (

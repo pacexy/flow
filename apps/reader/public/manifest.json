@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/web-manifest-combined.json",
-  "name": "Flow",
-  "short_name": "Flow",
-  "description": "Redefine EPUB reader",
+  "name": "VERA",
+  "short_name": "VERA",
+  "description": "Ứng dụng đọc sách",
   "icons": [
     {
       "src": "/icons/192.png",

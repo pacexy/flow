@@ -39,8 +39,18 @@ const config = {
   webpack(config) {
     return config
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.leonardo.ai',
+        port: '',
+        pathname: '/users/**',
+      },
+    ],
+  },
   i18n: {
-    locales: ['en-US', 'zh-CN'],
+    locales: ['en-US', 'vi-VN'],
     defaultLocale: 'en-US',
   },
   ...(IS_DOCKER && {

@@ -1,4 +1,22 @@
 {
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
+  },
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on",
+    "editor.renderWhitespace": "all",
+    "editor.acceptSuggestionOnEnter": "off"
+  },
   "typescript.tsdk": "./node_modules/typescript/lib",
   // https://github.com/tailwindlabs/tailwindcss/discussions/5258#discussioncomment-1979394
   "css.lint.unknownAtRules": "ignore",

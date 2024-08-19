@@ -1,8 +1,8 @@
 import en_US from '../locales/en-US'
-import zh_CN from '../locales/zh-CN'
+import vi_VN from '../locales/vi-VN'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   'en-US': en_US,
-  'zh-CN': zh_CN,
+  'vi-VN': vi_VN,
 } as const

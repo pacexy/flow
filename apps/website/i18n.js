@@ -1,6 +1,6 @@
 const localeMap = {
   'en-US': 'English',
-  'zh-CN': '简体中文',
+  'vi-VN': '简体中文',
 }
 
 const locales = Object.keys(localeMap)
