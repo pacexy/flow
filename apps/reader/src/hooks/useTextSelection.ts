@@ -30,10 +30,16 @@ export function useTextSelection(win?: Window) {
   const [selection, setSelection] = useState<Selection | undefined>()
   const render = useForceRender()
 
+  const isAndroid = navigator.userAgent.toLowerCase().indexOf('android') > -1
+
   // On touch screen device, mouse/touch/pointer events not working when selection is created.
   useEventListener(
     isTouchScreen ? win?.document : win,
-    isTouchScreen ? 'selectionchange' : 'mouseup',
+    isTouchScreen
+      ? isAndroid
+        ? 'selectionchange'
+        : 'touchend'
+      : 'mouseup',
     () => {
       const s = win?.getSelection()
 
