@@ -149,6 +149,7 @@ function ViewActionBar({ className, env }: EnvActionBarProps) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PageActionBar({ env }: EnvActionBarProps) {
   const mobile = useMobile()
   const [action, setAction] = useState('Home')
@@ -219,7 +220,7 @@ function NavigationBar() {
             className={clsx(visible || 'hidden')}
           />
         ) : (
-          <PageActionBar env={Env.Mobile} />
+          <></>
         )}
       </div>
     </>
