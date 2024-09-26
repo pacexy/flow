@@ -40,6 +40,16 @@ export default function Index() {
   const src = new URL(window.location.href).searchParams.get(SOURCE)
   const [loading, setLoading] = useState(!!src)
 
+  const epub = router.query.epub
+  if (typeof epub === 'string') {
+    fetch(epub)
+    .then((res) => res.status === 200)
+    .then((book_exist) => {
+      if (book_exist) fetchBook(epub).then((book) => reader.addTab(book))
+      else router.push('/error')
+    })
+  }
+
   useDisablePinchZooming()
 
   useEffect(() => {
