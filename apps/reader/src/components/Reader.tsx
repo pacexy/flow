@@ -7,8 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { MdChevronRight, MdWebAsset } from 'react-icons/md'
-import { RiBookLine } from 'react-icons/ri'
+import { MdChevronRight } from 'react-icons/md'
 import { PhotoSlider } from 'react-photo-view'
 import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
@@ -26,7 +25,6 @@ import {
   useDisablePinchZooming,
   useMobile,
   useSync,
-  useTranslation,
   useTypography,
 } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
@@ -38,7 +36,6 @@ import {
   setClickedAnnotation,
   Annotations,
 } from './Annotation'
-import { Tab } from './Tab'
 import { TextSelectionMenu } from './TextSelectionMenu'
 import { DropZone, SplitView, useDndContext, useSplitViewItem } from './base'
 import * as pages from './pages'
@@ -84,9 +81,6 @@ interface ReaderGroupProps {
 }
 function ReaderGroup({ index }: ReaderGroupProps) {
   const group = reader.groups[index]!
-  const { focusedIndex } = useReaderSnapshot()
-  const { tabs, selectedIndex } = useSnapshot(group)
-  const t = useTranslation()
 
   const { size } = useSplitViewItem(`${ReaderGroup.name}.${index}`, {
     // to disable sash resize
@@ -103,32 +97,6 @@ function ReaderGroup({ index }: ReaderGroupProps) {
       onMouseDown={handleMouseDown}
       style={{ width: size }}
     >
-      <Tab.List
-        className="hidden sm:flex"
-        onDelete={() => reader.removeGroup(index)}
-      >
-        {tabs.map((tab, i) => {
-          const selected = i === selectedIndex
-          const focused = index === focusedIndex && selected
-          return (
-            <Tab
-              key={tab.id}
-              selected={selected}
-              focused={focused}
-              onClick={() => group.selectTab(i)}
-              onDelete={() => reader.removeTab(i, index)}
-              Icon={tab instanceof BookTab ? RiBookLine : MdWebAsset}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData('text/plain', `${index},${i}`)
-              }}
-            >
-              {tab.isBook ? tab.title : t(`${tab.title}.title`)}
-            </Tab>
-          )
-        })}
-      </Tab.List>
-
       <DropZone
         className={clsx('flex-1', isTouchScreen || 'h-0')}
         split
@@ -178,8 +146,8 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           }
         }}
       >
-        {group.tabs.map((tab, i) => (
-          <PaneContainer active={i === selectedIndex} key={tab.id}>
+        {group.tabs.map((tab) => (
+          <PaneContainer key={tab.id}>
             {tab instanceof BookTab ? (
               <BookPane tab={tab} onMouseDown={handleMouseDown} />
             ) : (
@@ -192,11 +160,9 @@ function ReaderGroup({ index }: ReaderGroupProps) {
   )
 }
 
-interface PaneContainerProps {
-  active: boolean
-}
-const PaneContainer: React.FC<PaneContainerProps> = ({ active, children }) => {
-  return <div className={clsx('h-full', active || 'hidden')}>{children}</div>
+interface PaneContainerProps {}
+const PaneContainer: React.FC<PaneContainerProps> = ({ children }) => {
+  return <div className={clsx('h-full')}>{children}</div>
 }
 
 interface BookPaneProps {
