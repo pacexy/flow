@@ -5,7 +5,6 @@ import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 import {
   useLibrary,
   useList,
-  useMobile,
   useTranslation,
 } from '@flow/reader/hooks'
 import {
@@ -21,15 +20,14 @@ import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 export const TocView: React.FC<PaneViewProps> = (props) => {
-  const mobile = useMobile()
   return (
     <PaneView {...props}>
-      {mobile || <LibraryPane />}
       <TocPane />
     </PaneView>
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LibraryPane: React.FC = () => {
   const books = useLibrary()
   const t = useTranslation('toc')
