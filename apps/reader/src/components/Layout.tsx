@@ -117,7 +117,6 @@ const ActivityBar: React.FC = () => {
   return (
     <div className="ActivityBar flex flex-col justify-between">
       <ViewActionBar env={Env.Desktop} />
-      <PageActionBar env={Env.Desktop} />
     </div>
   )
 }
