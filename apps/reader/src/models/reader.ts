@@ -308,7 +308,10 @@ export class BookTab extends BaseTab {
   search(keyword = this.keyword) {
     // avoid blocking input
     return new Promise<IMatch[] | undefined>((resolve) => {
-      requestIdleCallback(() => {
+      // Currently requestIdleCallback is not supported by some browsers.
+      // This is a temporary solution which may leads to incorrect placement
+      // of priorities of rendering elements
+      requestAnimationFrame(() => {
         if (!keyword) {
           resolve(undefined)
           return
