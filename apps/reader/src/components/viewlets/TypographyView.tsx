@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
-import { RenditionSpread } from '@flow/epubjs/types/rendition'
 import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
 import {
@@ -28,6 +27,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const [scope, setScope] = useState(TypographyScope.Book)
   const t = useTranslation('typography')
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
       ? focusedBookTab?.book.configuration?.typography ?? defaultSettings
@@ -82,20 +82,6 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
         className="space-y-3 px-5 pt-2 pb-4"
         key={`${scope}${focusedBookTab?.id}`}
       >
-        <Select
-          name={t('page_view')}
-          value={spread ?? RenditionSpread.Auto}
-          onChange={(e) => {
-            setTypography('spread', e.target.value as RenditionSpread)
-          }}
-        >
-          <option value={RenditionSpread.None}>
-            {t('page_view.single_page')}
-          </option>
-          <option value={RenditionSpread.Auto}>
-            {t('page_view.double_page')}
-          </option>
-        </Select>
         <Select
           name={t('font_family')}
           value={fontFamily}
