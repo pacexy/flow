@@ -37,8 +37,6 @@ const SOURCE = 'src'
 export default function Index() {
   const { focusedTab } = useReaderSnapshot()
   const router = useRouter()
-  const src = new URL(window.location.href).searchParams.get(SOURCE)
-  const [loading, setLoading] = useState(!!src)
 
   const epub = router.query.epub
   if (typeof epub === 'string') {
@@ -63,7 +61,7 @@ export default function Index() {
           reader.addTab(b)
         }),
       ),
-    ).finally(() => setLoading(false))
+    )
   }, [router.query])
 
   useEffect(() => {
@@ -100,11 +98,11 @@ export default function Index() {
         <title>{focusedTab?.title ?? 'Flow'}</title>
       </Head>
       <ReaderGridView />
-      {loading || <Library />}
     </>
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Library: React.FC = () => {
   const books = useLibrary()
   const covers = useLiveQuery(() => db?.covers.toArray() ?? [])
