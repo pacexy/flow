@@ -10,7 +10,6 @@ import {
   MdOutlineLightMode,
 } from 'react-icons/md'
 import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
-import { useRecoilState } from 'recoil'
 
 import {
   Env,
@@ -23,7 +22,6 @@ import {
   useTranslation,
 } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
-import { navbarState } from '../state'
 import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
@@ -201,29 +199,12 @@ function PageActionBar({ env }: EnvActionBarProps) {
 }
 
 function NavigationBar() {
-  const r = useReaderSnapshot()
-  const readMode = r.focusedTab?.isBook
-  const [visible, setVisible] = useRecoilState(navbarState)
-
   return (
-    <>
-      {visible && (
-        <Overlay
-          className="!bg-transparent"
-          onClick={() => setVisible(false)}
+    <div className="NavigationBar bg-surface border-surface-variant fixed inset-x-0 bottom-0 z-10 border-t">
+        <ViewActionBar
+          env={Env.Mobile}
         />
-      )}
-      <div className="NavigationBar bg-surface border-surface-variant fixed inset-x-0 bottom-0 z-10 border-t">
-        {readMode ? (
-          <ViewActionBar
-            env={Env.Mobile}
-            className={clsx(visible || 'hidden')}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
-    </>
+    </div>
   )
 }
 
