@@ -7,7 +7,6 @@ import {
   MdFormatUnderlined,
   MdSearch,
   MdToc,
-  MdTimeline,
   MdOutlineLightMode,
 } from 'react-icons/md'
 import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
@@ -32,7 +31,6 @@ import { Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { SearchView } from './viewlets/SearchView'
 import { ThemeView } from './viewlets/ThemeView'
-import { TimelineView } from './viewlets/TimelineView'
 import { TocView } from './viewlets/TocView'
 import { TypographyView } from './viewlets/TypographyView'
 
@@ -93,13 +91,6 @@ const viewActions: IViewAction[] = [
     Icon: MdFormatUnderlined,
     View: AnnotationView,
     env: Env.Desktop | Env.Mobile,
-  },
-  {
-    name: 'timeline',
-    title: 'timeline',
-    Icon: MdTimeline,
-    View: TimelineView,
-    env: Env.Desktop,
   },
   {
     name: 'typography',
