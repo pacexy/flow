@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import { IconType } from 'react-icons'
 import {
   MdFormatUnderlined,
-  MdOutlineImage,
   MdSearch,
   MdToc,
   MdTimeline,
@@ -31,7 +30,6 @@ import { activeClass } from '../styles'
 import { SplitView, useSplitViewItem } from './base'
 import { Settings } from './pages'
 import { AnnotationView } from './viewlets/AnnotationView'
-import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
 import { ThemeView } from './viewlets/ThemeView'
 import { TimelineView } from './viewlets/TimelineView'
@@ -95,13 +93,6 @@ const viewActions: IViewAction[] = [
     Icon: MdFormatUnderlined,
     View: AnnotationView,
     env: Env.Desktop | Env.Mobile,
-  },
-  {
-    name: 'image',
-    title: 'image',
-    Icon: MdOutlineImage,
-    View: ImageView,
-    env: Env.Desktop,
   },
   {
     name: 'timeline',
