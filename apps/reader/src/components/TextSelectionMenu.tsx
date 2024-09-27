@@ -4,9 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import {
   MdCopyAll,
-  MdOutlineAddBox,
   MdOutlineEdit,
-  MdOutlineIndeterminateCheckBox,
   MdSearch,
 } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
@@ -223,27 +221,6 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
                 setAnnotate(true)
               }}
             />
-            {tab.isDefined(text) ? (
-              <IconButton
-                title={t('undefine')}
-                Icon={MdOutlineIndeterminateCheckBox}
-                size={ICON_SIZE}
-                onClick={() => {
-                  hide()
-                  tab.undefine(text)
-                }}
-              />
-            ) : (
-              <IconButton
-                title={t('define')}
-                Icon={MdOutlineAddBox}
-                size={ICON_SIZE}
-                onClick={() => {
-                  hide()
-                  tab.define([text])
-                }}
-              />
-            )}
           </div>
         )}
         <div className="space-y-2">

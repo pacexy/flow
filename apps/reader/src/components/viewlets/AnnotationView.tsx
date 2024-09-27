@@ -14,12 +14,12 @@ import { PaneViewProps, PaneView, Pane } from '../base'
 export const AnnotationView: React.FC<PaneViewProps> = (props) => {
   return (
     <PaneView {...props}>
-      <DefinitionPane />
       <AnnotationPane />
     </PaneView>
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DefinitionPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
   const t = useTranslation('annotation')
