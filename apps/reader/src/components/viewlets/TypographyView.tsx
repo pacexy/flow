@@ -123,15 +123,6 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             setTypography('lineHeight', v || undefined)
           }}
         />
-        <NumberField
-          name={t('zoom')}
-          min={1}
-          step={0.1}
-          defaultValue={zoom}
-          onChange={(v) => {
-            setTypography('zoom', v || undefined)
-          }}
-        />
       </Pane>
     </PaneView>
   )
