@@ -133,7 +133,6 @@ const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
     <TextField
       as="input"
       type="number"
-      placeholder="default"
       actions={[
         {
           title: t('step_down'),
