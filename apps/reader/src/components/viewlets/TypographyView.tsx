@@ -19,7 +19,7 @@ enum TypographyScope {
   Global,
 }
 
-const typefaces = ['default', 'sans-serif', 'serif']
+const typefaces = ['arial', 'sans-serif', 'serif']
 
 const defaultFontSize = '16'
 
