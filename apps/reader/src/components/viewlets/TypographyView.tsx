@@ -21,6 +21,10 @@ enum TypographyScope {
 
 const typefaces = ['default', 'sans-serif', 'serif']
 
+const defaultFontSize = '16'
+
+const defaultLineHeigh= '1.2'
+
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const [settings, setSettings] = useSettings()
@@ -99,7 +103,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           name={t('font_size')}
           min={14}
           max={28}
-          defaultValue={fontSize && parseInt(fontSize)}
+          defaultValue={defaultFontSize}
           onChange={(v) => {
             setTypography('fontSize', v ? v + 'px' : undefined)
           }}
@@ -108,7 +112,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           name={t('line_height')}
           min={1}
           step={0.1}
-          defaultValue={lineHeight}
+          defaultValue={defaultLineHeigh}
           onChange={(v) => {
             setTypography('lineHeight', v || undefined)
           }}
