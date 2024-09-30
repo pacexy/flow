@@ -105,16 +105,6 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           }}
         />
         <NumberField
-          name={t('font_weight')}
-          min={100}
-          max={900}
-          step={100}
-          defaultValue={fontWeight}
-          onChange={(v) => {
-            setTypography('fontWeight', v || undefined)
-          }}
-        />
-        <NumberField
           name={t('line_height')}
           min={1}
           step={0.1}
