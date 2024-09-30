@@ -104,6 +104,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           min={14}
           max={28}
           defaultValue={defaultFontSize}
+          placeholder={defaultFontSize}
           onChange={(v) => {
             setTypography('fontSize', v ? v + 'px' : undefined)
           }}
@@ -113,6 +114,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           min={1}
           step={0.1}
           defaultValue={defaultLineHeigh}
+          placeholder={defaultLineHeigh}
           onChange={(v) => {
             setTypography('lineHeight', v || undefined)
           }}
