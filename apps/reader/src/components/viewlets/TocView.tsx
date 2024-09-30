@@ -1,5 +1,4 @@
 import { StateLayer } from '@literal-ui/core'
-import { useMemo } from 'react'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import {
@@ -56,7 +55,7 @@ const TocPane: React.FC = () => {
   const t = useTranslation()
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
-  const rows = useMemo(() => toc?.flatMap((i) => flatTree(i)), [toc])
+  const rows = toc?.flatMap((i) => flatTree(i))
   const expanded = toc?.some((r) => r.expanded)
   const currentNavItem = focusedBookTab?.currentNavItem
 
