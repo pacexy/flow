@@ -22,7 +22,9 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-*.yaml .
 RUN corepack enable
-RUN pnpm i --frozen-lockfile
+RUN corepack prepare pnpm@7.26.3 --activate
+
+RUN pnpm install --no-frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
