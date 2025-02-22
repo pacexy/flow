@@ -41,5 +41,8 @@
     "postcss": "8.4.12",
     "tailwindcss": "3.2.0",
     "type-fest": "2.12.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
