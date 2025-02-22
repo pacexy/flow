@@ -48,7 +48,7 @@ export default {
   'settings.color_scheme': 'Color Scheme',
   'settings.color_scheme.system': 'System',
   'settings.color_scheme.light': 'Light',
-  'settings.color_scheme.dark': 'dark',
+  'settings.color_scheme.dark': 'Dark',
   'settings.synchronization.title': 'Synchronization',
   'settings.synchronization.authorize': 'Authorize',
   'settings.synchronization.unauthorize': 'Unauthorize',
