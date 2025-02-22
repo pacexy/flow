@@ -3,13 +3,9 @@ import clsx from 'clsx'
 import useTranslation from 'next-translate/useTranslation'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
-import { MdLanguage } from 'react-icons/md'
 import { RiGithubFill } from 'react-icons/ri'
 
-function useIsDefaultLocale() {
-  const { locale, defaultLocale } = useRouter()
-  return locale === defaultLocale
-}
+import { localeMap } from '../../i18n'
 
 export const Layout: React.FC = ({ children }) => {
   return (
@@ -72,8 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({ className }) => {
 }
 
 const Header: React.FC = () => {
-  const { asPath } = useRouter()
-  const isDefaultLocale = useIsDefaultLocale()
+  const { asPath, locale, push } = useRouter()
 
   return (
     <header className="typescale-body-large text-on-surface sticky top-0 border-b bg-white py-3">
@@ -88,13 +83,19 @@ const Header: React.FC = () => {
           <Link href="https://github.com/pacexy/flow">
             <RiGithubFill size={22} />
           </Link>
-          <Link
-            href={asPath}
-            locale={isDefaultLocale ? 'zh-CN' : 'en-US'}
-            className="flex items-center gap-2"
+          <select
+            className="bg-transparent outline-none"
+            value={locale}
+            onChange={(e) => {
+              push(asPath, asPath, { locale: e.target.value })
+            }}
           >
-            <MdLanguage size={22} />
-          </Link>
+            {Object.entries(localeMap).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <Navbar className="container mt-3 flex justify-end sm:hidden" />
