@@ -1,12 +1,10 @@
 import useTranslation from 'next-translate/useTranslation'
-import { useRouter } from 'next/router'
 
 import { range } from '@flow/internal'
 
 import { OpenApp, QA, Seo } from '../components'
 
 export default function Home() {
-  const { locale } = useRouter()
   const { t } = useTranslation()
 
   return (
@@ -42,7 +40,7 @@ export default function Home() {
             </ul>
           </div>
           <img
-            src={`/screenshots/${locale}.webp`}
+            src="/screenshots/01.webp"
             alt="Screenshot"
             className="shadow-1 mt-16"
           />
