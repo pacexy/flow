@@ -1,6 +1,6 @@
 import en_US from '../locales/en-US'
-import ko_KR from '../locales/ko-KR'
 import ja_JP from '../locales/ja-JP'
+import ko_KR from '../locales/ko-KR'
 import zh_CN from '../locales/zh-CN'
 
 // eslint-disable-next-line import/no-anonymous-default-export
