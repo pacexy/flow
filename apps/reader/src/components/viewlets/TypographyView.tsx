@@ -102,14 +102,23 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             {t('page_view.double_page')}
           </option>
         </Select>
-        <Select
+        <TextField
+          as="input"
           name={t('font_family')}
-          value={fontFamily ?? 'default'}
+          value={fontFamily}
+          datalist={localFonts.map((font) => (
+            <option
+              key={font}
+              value={font}
+              style={{ fontFamily: font !== 'default' ? font : undefined }}
+            >
+              {font}
+            </option>
+          ))}
           onFocus={async () => {
             if ('queryLocalFonts' in window) {
               try {
                 const fonts = await window.queryLocalFonts()
-                console.log('fonts', fonts)
                 const uniqueFontFamilies = Array.from(
                   new Set(fonts.map((font) => font.family)),
                 )
@@ -127,17 +136,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
               e.target.value === 'default' ? undefined : e.target.value,
             )
           }}
-        >
-          {localFonts.map((font) => (
-            <option
-              key={font}
-              value={font}
-              style={{ fontFamily: font !== 'default' ? font : undefined }}
-            >
-              {font}
-            </option>
-          ))}
-        </Select>
+        />
         <NumberField
           name={t('font_size')}
           min={14}

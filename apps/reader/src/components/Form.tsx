@@ -26,6 +26,7 @@ export type TextFieldProps<T extends ElementType> = PolymorphicPropsWithoutRef<
     hideLabel?: boolean
     autoFocus?: boolean
     actions?: Action[]
+    datalist?: React.ReactNode[]
     onClear?: () => void
     // https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/forward_and_create_ref/#generic-forwardrefs
     mRef?: RefObject<HTMLInputElement> | null
@@ -39,6 +40,7 @@ export function TextField<T extends ElementType = 'input'>({
   hideLabel = false,
   autoFocus,
   actions = [],
+  datalist,
   onClear,
   mRef: outerRef,
   ...props
@@ -46,6 +48,7 @@ export function TextField<T extends ElementType = 'input'>({
   const Component = as || 'input'
   const isInput = Component === 'input'
   const innerRef = useRef<HTMLInputElement>(null)
+  const datalistId = `${name}-datalist` // TODO: use `useId`
   const ref = outerRef || innerRef
   const mobile = useMobile()
   const t = useTranslation()
@@ -83,8 +86,10 @@ export function TextField<T extends ElementType = 'input'>({
             'typescale-body-medium text-on-surface-variant placeholder:text-outline/60 w-0 flex-1 bg-transparent py-1 px-1.5 !text-[13px]',
             isInput || 'scroll h-full resize-none',
           )}
+          {...(datalist && { list: datalistId })}
           {...props}
         />
+        {datalist && <datalist id={datalistId}>{datalist}</datalist>}
         {!!actions.length && (
           <div className="mx-1 flex gap-0.5">
             {actions.map(({ onClick, ...a }) => (
