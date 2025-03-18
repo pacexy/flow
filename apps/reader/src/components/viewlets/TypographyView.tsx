@@ -107,11 +107,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           name={t('font_family')}
           value={fontFamily}
           datalist={localFonts.map((font) => (
-            <option
-              key={font}
-              value={font}
-              style={{ fontFamily: font !== 'default' ? font : undefined }}
-            >
+            <option key={font} value={font}>
               {font}
             </option>
           ))}
