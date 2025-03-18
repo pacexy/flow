@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useCallback, useRef, useState, useEffect } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
 import { RenditionSpread } from '@flow/epubjs/types/rendition'
@@ -16,12 +16,6 @@ import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
 // Define an interface for the Font object
-interface LocalFont {
-  family: string
-  fullName: string
-  postscriptName: string
-  style: string
-}
 
 enum TypographyScope {
   Book,
@@ -39,33 +33,6 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
     'sans-serif',
     'serif',
   ])
-
-  useEffect(() => {
-    const getLocalFonts = async () => {
-      if ('queryLocalFonts' in window) {
-        try {
-          // Type assertion for the window object
-          const queryLocalFonts = (
-            window as Window &
-              typeof globalThis & {
-                queryLocalFonts: () => Promise<LocalFont[]>
-              }
-          ).queryLocalFonts
-          const fonts: LocalFont[] = await queryLocalFonts()
-          const uniqueFontFamilies = Array.from(
-            new Set(fonts.map((font) => font.family)),
-          )
-          setLocalFonts(['default', ...uniqueFontFamilies])
-        } catch (error) {
-          console.error('Error querying local fonts:', error)
-          // Fallback fonts are already set in the initial state
-        }
-      }
-      // If queryLocalFonts is not available, we'll use the fallback fonts set in the initial state
-    }
-
-    getLocalFonts()
-  }, [])
 
   const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
@@ -138,6 +105,22 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
         <Select
           name={t('font_family')}
           value={fontFamily ?? 'default'}
+          onFocus={async () => {
+            if ('queryLocalFonts' in window) {
+              try {
+                const fonts = await window.queryLocalFonts()
+                console.log('fonts', fonts)
+                const uniqueFontFamilies = Array.from(
+                  new Set(fonts.map((font) => font.family)),
+                )
+                setLocalFonts(['default', ...uniqueFontFamilies])
+              } catch (error) {
+                console.error('Error querying local fonts:', error)
+                // Fallback fonts are already set in the initial state
+              }
+            }
+            // If queryLocalFonts is not available, we'll use the fallback fonts set in the initial state
+          }}
           onChange={(e) => {
             setTypography(
               'fontFamily',

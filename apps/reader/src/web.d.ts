@@ -9,6 +9,14 @@ interface LaunchQueue {
   setConsumer(consumer: (launchParams: LaunchParams) => any): void
 }
 
+interface LocalFont {
+  family: string
+  fullName: string
+  postscriptName: string
+  style: string
+}
+
 interface Window {
   launchQueue: LaunchQueue
+  queryLocalFonts: () => Promise<LocalFont[]>
 }
