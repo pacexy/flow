@@ -28,11 +28,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const [scope, setScope] = useState(TypographyScope.Book)
   const t = useTranslation('typography')
 
-  const [localFonts, setLocalFonts] = useState<string[]>([
-    'default',
-    'sans-serif',
-    'serif',
-  ])
+  const [localFonts, setLocalFonts] = useState<string[]>()
 
   const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
@@ -106,31 +102,31 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           as="input"
           name={t('font_family')}
           value={fontFamily}
-          datalist={localFonts.map((font) => (
+          // Tips: Datalist only appears on mouse click or keyboard input.
+          // Does not show when focused via Tab/focus() or triggered by click()
+          datalist={localFonts?.map((font) => (
             <option key={font} value={font}>
               {font}
             </option>
           ))}
           onFocus={async () => {
-            if ('queryLocalFonts' in window) {
+            if (!localFonts && 'queryLocalFonts' in window) {
               try {
                 const fonts = await window.queryLocalFonts()
-                const uniqueFontFamilies = Array.from(
-                  new Set(fonts.map((font) => font.family)),
+                const uniqueFonts = Array.from(
+                  new Set(fonts.map((f) => f.family)),
                 )
-                setLocalFonts(['default', ...uniqueFontFamilies])
+                setLocalFonts(uniqueFonts)
+                // FIXME: datalist doesn't appear on first mouse click since
+                // `localFonts` is updated asynchronously after the focus event.
+                // Maybe need to pre-load fonts.
               } catch (error) {
                 console.error('Error querying local fonts:', error)
-                // Fallback fonts are already set in the initial state
               }
             }
-            // If queryLocalFonts is not available, we'll use the fallback fonts set in the initial state
           }}
           onChange={(e) => {
-            setTypography(
-              'fontFamily',
-              e.target.value === 'default' ? undefined : e.target.value,
-            )
+            setTypography('fontFamily', e.target.value)
           }}
         />
         <NumberField
