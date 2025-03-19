@@ -15,18 +15,20 @@ import { keys } from '@flow/reader/utils'
 import { Select, TextField, TextFieldProps } from '../Form'
 import { PaneViewProps, PaneView, Pane } from '../base'
 
+// Define an interface for the Font object
+
 enum TypographyScope {
   Book,
   Global,
 }
-
-const typefaces = ['default', 'sans-serif', 'serif']
 
 export const TypographyView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const [settings, setSettings] = useSettings()
   const [scope, setScope] = useState(TypographyScope.Book)
   const t = useTranslation('typography')
+
+  const [localFonts, setLocalFonts] = useState<string[]>()
 
   const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
     scope === TypographyScope.Book
@@ -57,6 +59,22 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
     },
     [scope, setSettings],
   )
+
+  const queryLocalFonts = useCallback(async () => {
+    if (localFonts) return
+    if (!('queryLocalFonts' in window)) {
+      console.error('queryLocalFonts is not available')
+      return
+    }
+
+    try {
+      const fonts = await window.queryLocalFonts()
+      const uniqueFonts = Array.from(new Set(fonts.map((f) => f.family)))
+      setLocalFonts(uniqueFonts)
+    } catch (error) {
+      console.error('Error querying local fonts:', error)
+    }
+  }, [localFonts])
 
   return (
     <PaneView {...props}>
@@ -96,19 +114,26 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             {t('page_view.double_page')}
           </option>
         </Select>
-        <Select
+        <TextField
+          as="input"
           name={t('font_family')}
           value={fontFamily}
+          placeholder="default"
+          // Tips: Datalist only appears on mouse click or keyboard input.
+          // Does not show when focused via Tab/focus() or triggered by click()
+          datalist={localFonts?.map((font) => (
+            <option key={font} value={font}>
+              {font}
+            </option>
+          ))}
+          onFocus={queryLocalFonts}
+          // Preload fonts to ensure `localFonts` is available on first mouse click.
+          // Without preloading, datalist dropdown will be empty for the first mouse click.
+          onMouseEnter={queryLocalFonts}
           onChange={(e) => {
             setTypography('fontFamily', e.target.value)
           }}
-        >
-          {typefaces.map((t) => (
-            <option key={t} value={t} style={{ fontFamily: t }}>
-              {t}
-            </option>
-          ))}
-        </Select>
+        />
         <NumberField
           name={t('font_size')}
           min={14}
