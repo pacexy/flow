@@ -60,6 +60,22 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
     [scope, setSettings],
   )
 
+  const queryLocalFonts = useCallback(async () => {
+    if (localFonts) return
+    if (!('queryLocalFonts' in window)) {
+      console.error('queryLocalFonts is not available')
+      return
+    }
+
+    try {
+      const fonts = await window.queryLocalFonts()
+      const uniqueFonts = Array.from(new Set(fonts.map((f) => f.family)))
+      setLocalFonts(uniqueFonts)
+    } catch (error) {
+      console.error('Error querying local fonts:', error)
+    }
+  }, [localFonts])
+
   return (
     <PaneView {...props}>
       <div className="typescale-body-medium flex gap-2 px-5 pb-2 !text-[13px]">
@@ -109,22 +125,10 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
               {font}
             </option>
           ))}
-          onFocus={async () => {
-            if (!localFonts && 'queryLocalFonts' in window) {
-              try {
-                const fonts = await window.queryLocalFonts()
-                const uniqueFonts = Array.from(
-                  new Set(fonts.map((f) => f.family)),
-                )
-                setLocalFonts(uniqueFonts)
-                // FIXME: datalist doesn't appear on first mouse click since
-                // `localFonts` is updated asynchronously after the focus event.
-                // Maybe need to pre-load fonts.
-              } catch (error) {
-                console.error('Error querying local fonts:', error)
-              }
-            }
-          }}
+          onFocus={queryLocalFonts}
+          // Preload fonts to ensure `localFonts` is available on first mouse click.
+          // Without preloading, datalist dropdown will be empty for the first mouse click.
+          onMouseEnter={queryLocalFonts}
           onChange={(e) => {
             setTypography('fontFamily', e.target.value)
           }}
