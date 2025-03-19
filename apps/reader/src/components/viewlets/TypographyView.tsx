@@ -118,6 +118,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           as="input"
           name={t('font_family')}
           value={fontFamily}
+          placeholder="default"
           // Tips: Datalist only appears on mouse click or keyboard input.
           // Does not show when focused via Tab/focus() or triggered by click()
           datalist={localFonts?.map((font) => (
