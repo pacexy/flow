@@ -15,12 +15,11 @@ import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
 import { RenditionSpread } from '@flow/epubjs/types/rendition'
-import { navbarState } from '@flow/reader/state'
+import { navbarState, useSettings } from '@flow/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
 import {
-  hasSelection,
   useBackground,
   useColorScheme,
   useDisablePinchZooming,
@@ -72,7 +71,7 @@ export function ReaderGridView() {
   if (!groups.length) return null
   return (
     <SplitView className={clsx('ReaderGridView')}>
-      {groups.map(({ id }, i) => (
+      {groups.map(({ id }: { id: string }, i: number) => (
         <ReaderGroup key={id} index={i} />
       ))}
     </SplitView>
@@ -107,7 +106,7 @@ function ReaderGroup({ index }: ReaderGroupProps) {
         className="hidden sm:flex"
         onDelete={() => reader.removeGroup(index)}
       >
-        {tabs.map((tab, i) => {
+        {tabs.map((tab: any, i: number) => {
           const selected = i === selectedIndex
           const focused = index === focusedIndex && selected
           return (
@@ -178,10 +177,14 @@ function ReaderGroup({ index }: ReaderGroupProps) {
           }
         }}
       >
-        {group.tabs.map((tab, i) => (
+        {group.tabs.map((tab: any, i: number) => (
           <PaneContainer active={i === selectedIndex} key={tab.id}>
             {tab instanceof BookTab ? (
-              <BookPane tab={tab} onMouseDown={handleMouseDown} />
+              <BookPane
+                tab={tab}
+                onMouseDown={handleMouseDown}
+                swipeThreshold={60}
+              />
             ) : (
               <tab.Component />
             )}
@@ -202,18 +205,158 @@ const PaneContainer: React.FC<PaneContainerProps> = ({ active, children }) => {
 interface BookPaneProps {
   tab: BookTab
   onMouseDown: () => void
+  swipeThreshold?: number
 }
 
-function BookPane({ tab, onMouseDown }: BookPaneProps) {
+function BookPane({ tab, onMouseDown, swipeThreshold = 60 }: BookPaneProps) {
+  // Constants for swipe behavior
+  const SWIPE_DETECTION_THRESHOLD = 15
+  const SWIPE_DAMPING_FACTOR = 0.4
+  const MAX_SWIPE_OFFSET = 150
+  const SWIPE_RESISTANCE_THRESHOLD = 0.7
+  const SWIPE_TIME_LIMIT = 400
+  const GRADIENT_WIDTH = 60
+
   const ref = useRef<HTMLDivElement>(null)
   const prevSize = useRef(0)
+  const touchMoveHandlerRef = useRef<((e: TouchEvent) => void) | null>(null)
+  const touchEndHandlerRef = useRef<((e: TouchEvent) => void) | null>(null)
+  const touchStartStateRef = useRef<{
+    startX: number
+    startY: number
+    startTime: number
+    hasShownGradient: boolean
+  } | null>(null)
   const typography = useTypography(tab)
   const { dark } = useColorScheme()
   const [background] = useBackground()
+  const [swipeOffset, setSwipeOffset] = useState(0)
+  const [isSwiping, setIsSwiping] = useState(false)
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(
+    null,
+  )
+  const [showPageTurnGradient, setShowPageTurnGradient] = useState(false)
+  const [settings] = useSettings()
 
   const { iframe, rendition, rendered, container } = useSnapshot(tab)
 
+  // Helper function to generate theme-aware gradient
+  const generateGradient = (direction: 'left' | 'right', isDark: boolean) => {
+    const position = direction === 'right' ? 'left center' : 'right center'
+    const opacity = isDark
+      ? { start: 0.1, mid: 0.05 }
+      : { start: 0.03, mid: 0.015 }
+
+    return `radial-gradient(ellipse 120px 100% at ${position}, rgba(0,0,0,${opacity.start}) 0%, rgba(0,0,0,${opacity.mid}) 40%, transparent 70%)`
+  }
+
+  // Helper function to apply damping to swipe offset
+  const applySwipeDamping = (deltaX: number) => {
+    let dampedOffset = deltaX * SWIPE_DAMPING_FACTOR
+
+    // Add resistance when approaching maximum offset
+    if (
+      Math.abs(dampedOffset) >
+      MAX_SWIPE_OFFSET * SWIPE_RESISTANCE_THRESHOLD
+    ) {
+      const resistance = Math.abs(dampedOffset) / MAX_SWIPE_OFFSET
+      dampedOffset = dampedOffset * (1 - resistance * 0.5)
+    }
+
+    // Clamp to maximum offset
+    return Math.max(-MAX_SWIPE_OFFSET, Math.min(MAX_SWIPE_OFFSET, dampedOffset))
+  }
+
   useTilg()
+
+  // Memoized touch handlers to prevent recreation on every touchstart
+  const touchMoveHandler = useCallback(
+    (e: TouchEvent) => {
+      const touchState = touchStartStateRef.current
+      if (!touchState) return
+
+      const currentX = e.touches[0]?.clientX ?? 0
+      const currentY = e.touches[0]?.clientY ?? 0
+      const deltaX = currentX - touchState.startX
+      const deltaY = currentY - touchState.startY
+      const absX = Math.abs(deltaX)
+      const absY = Math.abs(deltaY)
+
+      // Only handle horizontal swipes above detection threshold
+      if (absX > absY && absX > SWIPE_DETECTION_THRESHOLD) {
+        e.preventDefault()
+        setIsSwiping(true)
+
+        // Apply damping for smooth movement
+        const dampedOffset = applySwipeDamping(deltaX)
+        setSwipeOffset(dampedOffset)
+
+        // Determine swipe direction
+        const direction = deltaX > 0 ? 'right' : 'left'
+        setSwipeDirection(direction)
+
+        // Show gradient when swipe threshold is met
+        const shouldShowGradient = absX > absY && absX > swipeThreshold
+        setShowPageTurnGradient(shouldShowGradient)
+
+        // Track gradient state for page turn commitment
+        if (shouldShowGradient) {
+          touchState.hasShownGradient = true
+        }
+      }
+    },
+    [swipeThreshold],
+  )
+
+  const touchEndHandler = useCallback(
+    (e: TouchEvent) => {
+      const touchState = touchStartStateRef.current
+      if (!touchState) return
+
+      // Clean up event listeners
+      if (touchMoveHandlerRef.current) {
+        iframe?.removeEventListener('touchmove', touchMoveHandlerRef.current)
+        touchMoveHandlerRef.current = null
+      }
+      if (touchEndHandlerRef.current) {
+        iframe?.removeEventListener('touchend', touchEndHandlerRef.current)
+        touchEndHandlerRef.current = null
+      }
+
+      const endX = e.changedTouches[0]?.clientX ?? 0
+      const endY = e.changedTouches[0]?.clientY ?? 0
+      const endTime = Date.now()
+
+      const deltaX = endX - touchState.startX
+      const deltaY = endY - touchState.startY
+      const deltaTime = endTime - touchState.startTime
+      const absX = Math.abs(deltaX)
+      const absY = Math.abs(deltaY)
+
+      // Page turn logic: gradient shown OR fast swipe criteria met
+      const fastSwipeCondition =
+        absX > absY && absX > swipeThreshold && deltaTime < SWIPE_TIME_LIMIT
+      const shouldTurnPage = touchState.hasShownGradient || fastSwipeCondition
+
+      if (shouldTurnPage && absX > absY) {
+        if (deltaX > 0) {
+          tab.prev()
+        } else {
+          tab.next()
+        }
+      }
+
+      // Reset swipe state
+      setIsSwiping(false)
+      setSwipeOffset(0)
+      setSwipeDirection(null)
+      setShowPageTurnGradient(false)
+
+      // Clear touch state
+      touchStartStateRef.current = null
+    },
+    [swipeThreshold, iframe, tab],
+  )
 
   useEffect(() => {
     const el = ref.current
@@ -341,48 +484,55 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   useEventListener(iframe, 'keydown', handleKeyDown(tab))
 
   useEventListener(iframe, 'touchstart', (e) => {
-    const x0 = e.targetTouches[0]?.clientX ?? 0
-    const y0 = e.targetTouches[0]?.clientY ?? 0
-    const t0 = Date.now()
+    // Early return if swipes are disabled
+    if (!settings.swipeEnabled) return
+
+    const startX = e.targetTouches[0]?.clientX ?? 0
+    const startY = e.targetTouches[0]?.clientY ?? 0
+    const startTime = Date.now()
 
     if (!iframe) return
 
-    // When selecting text with long tap, `touchend` is not fired,
-    // so instead of use `addEventlistener`, we should use `on*`
-    // to remove the previous listener.
-    iframe.ontouchend = function handleTouchEnd(e: TouchEvent) {
-      iframe.ontouchend = undefined
-      const selection = iframe.getSelection()
-      if (hasSelection(selection)) return
-
-      const x1 = e.changedTouches[0]?.clientX ?? 0
-      const y1 = e.changedTouches[0]?.clientY ?? 0
-      const t1 = Date.now()
-
-      const deltaX = x1 - x0
-      const deltaY = y1 - y0
-      const deltaT = t1 - t0
-
-      const absX = Math.abs(deltaX)
-      const absY = Math.abs(deltaY)
-
-      if (absX < 10) return
-
-      if (absY / absX > 2) {
-        if (deltaT > 100 || absX < 30) {
-          return
-        }
-      }
-
-      if (deltaX > 0) {
-        tab.prev()
-      }
-
-      if (deltaX < 0) {
-        tab.next()
-      }
+    // Clean up any existing listeners before adding new ones
+    if (touchMoveHandlerRef.current) {
+      iframe.removeEventListener('touchmove', touchMoveHandlerRef.current)
+      touchMoveHandlerRef.current = null
     }
+    if (touchEndHandlerRef.current) {
+      iframe.removeEventListener('touchend', touchEndHandlerRef.current)
+      touchEndHandlerRef.current = null
+    }
+
+    // Store touch state in ref for the memoized handlers to access
+    touchStartStateRef.current = {
+      startX,
+      startY,
+      startTime,
+      hasShownGradient: false,
+    }
+
+    // Store handlers in refs for cleanup
+    touchMoveHandlerRef.current = touchMoveHandler
+    touchEndHandlerRef.current = touchEndHandler
+    iframe.addEventListener('touchmove', touchMoveHandler)
+    iframe.addEventListener('touchend', touchEndHandler)
   })
+
+  // Cleanup listeners on unmount
+  useEffect(() => {
+    return () => {
+      if (iframe && touchMoveHandlerRef.current) {
+        iframe.removeEventListener('touchmove', touchMoveHandlerRef.current)
+        touchMoveHandlerRef.current = null
+      }
+      if (iframe && touchEndHandlerRef.current) {
+        iframe.removeEventListener('touchend', touchEndHandlerRef.current)
+        touchEndHandlerRef.current = null
+      }
+      // Clear touch state ref
+      touchStartStateRef.current = null
+    }
+  }, [iframe])
 
   useDisablePinchZooming(iframe)
 
@@ -399,18 +549,38 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       <div
         ref={ref}
         className={clsx('relative flex-1', isTouchScreen || 'h-0')}
-        // `color-scheme: dark` will make iframe background white
-        style={{ colorScheme: 'auto' }}
+        style={{
+          colorScheme: 'auto',
+          transform: isSwiping ? `translateX(${swipeOffset}px)` : undefined,
+          transition: isSwiping
+            ? 'none'
+            : 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        }}
       >
         <div
           className={clsx(
             'absolute inset-0',
-            // do not cover `sash`
             'z-20',
             rendered && 'hidden',
             background,
           )}
         />
+
+        {/* Page turn gradient - provides visual feedback for swipe threshold */}
+        {showPageTurnGradient && swipeDirection && (
+          <div
+            className={clsx(
+              'pointer-events-none absolute inset-y-0 z-30',
+              'transition-opacity duration-150 ease-out',
+              swipeDirection === 'right' ? 'left-0' : 'right-0',
+            )}
+            style={{
+              width: `${GRADIENT_WIDTH}px`,
+              background: generateGradient(swipeDirection, dark ?? false),
+            }}
+          />
+        )}
+
         <TextSelectionMenu tab={tab} />
         <Annotations tab={tab} />
       </div>
