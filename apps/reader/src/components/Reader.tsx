@@ -14,8 +14,7 @@ import { useSetRecoilState } from 'recoil'
 import useTilg from 'tilg'
 import { useSnapshot } from 'valtio'
 
-import { RenditionSpread } from '@flow/epubjs/types/rendition'
-import { navbarState } from '@flow/reader/state'
+import { navbarState, PageViewMode } from '@flow/reader/state'
 
 import { db } from '../db'
 import { handleFiles } from '../file'
@@ -46,17 +45,34 @@ import * as pages from './pages'
 function handleKeyDown(tab?: BookTab) {
   return (e: KeyboardEvent) => {
     try {
-      switch (e.code) {
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          tab?.prev()
-          break
-        case 'ArrowRight':
-        case 'ArrowDown':
-          tab?.next()
-          break
-        case 'Space':
-          e.shiftKey ? tab?.prev() : tab?.next()
+      const pageViewMode = tab?.book.configuration?.typography?.pageViewMode;
+
+      if (e.code === 'Space') {
+        e.shiftKey ? tab?.prev() : tab?.next();
+        return;
+      }
+
+      if (pageViewMode === PageViewMode.Scrolled) {
+        switch (e.code) {
+          case 'ArrowLeft':
+            tab?.prev();
+            break;
+          case 'ArrowRight':
+            tab?.next();
+            break;
+        }
+      } else {
+        // Paginated modes
+        switch (e.code) {
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            tab?.prev();
+            break;
+          case 'ArrowRight':
+          case 'ArrowDown':
+            tab?.next();
+            break;
+        }
       }
     } catch (error) {
       // ignore `rendition is undefined` error
@@ -224,6 +240,9 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
       // `display: hidden` will lead `rect` to 0
       if (size !== 0 && prevSize.current !== 0) {
         reader.resize()
+      } else if (size !== 0) {
+        // initial render
+        tab.rendition?.resize()
       }
       prevSize.current = size
     })
@@ -259,8 +278,26 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
      * then call {@link updateCustomStyle} to update custom style
      * according to the latest layout
      */
-    rendition?.spread(typography.spread ?? RenditionSpread.Auto)
-  }, [typography.spread, rendition])
+    switch (typography.pageViewMode) {
+      case PageViewMode.Scrolled:
+        rendition?.flow('scrolled')
+        rendition?.spread('none') // Spread is not applicable in scrolled mode
+        break
+      case PageViewMode.SinglePage:
+        rendition?.flow('paginated')
+        rendition?.spread('none')
+        break
+      case PageViewMode.DoublePage:
+        rendition?.flow('paginated')
+        rendition?.spread('auto')
+        break
+      case PageViewMode.Auto:
+      default:
+        rendition?.flow('auto')
+        rendition?.spread('auto')
+        break
+    }
+  }, [typography.pageViewMode, rendition])
 
   useEffect(() => applyCustomStyle(), [applyCustomStyle])
 
@@ -331,10 +368,12 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
   })
 
   useEventListener(iframe, 'wheel', (e) => {
-    if (e.deltaY < 0) {
-      tab.prev()
-    } else {
-      tab.next()
+    if (typography.pageViewMode !== PageViewMode.Scrolled) {
+      if (e.deltaY < 0) {
+        tab.prev()
+      } else {
+        tab.next()
+      }
     }
   })
 

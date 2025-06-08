@@ -33,6 +33,7 @@ export default {
   'typography.page_view': 'ページ表示',
   'typography.page_view.single_page': '片ページ',
   'typography.page_view.double_page': '見開きページ',
+  'typography.page_view.scroll': 'スクロール',
   'typography.font_family': 'フォントファミリー',
   'typography.font_size': 'フォントサイズ',
   'typography.font_weight': 'フォントウェイト',

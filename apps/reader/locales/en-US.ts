@@ -33,6 +33,7 @@ export default {
   'typography.page_view': 'Page View',
   'typography.page_view.single_page': 'Single Page',
   'typography.page_view.double_page': 'Double Page',
+  'typography.page_view.scroll': 'Scroll',
   'typography.font_family': 'Font Family',
   'typography.font_size': 'Font Size',
   'typography.font_weight': 'Font Weight',
