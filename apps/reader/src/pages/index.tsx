@@ -319,6 +319,7 @@ const Library: React.FC = () => {
                       const files = e.target.files
                       if (files) handleFiles(files)
                     }}
+                    multiple
                   />
                   {t('import')}
                 </Button>
