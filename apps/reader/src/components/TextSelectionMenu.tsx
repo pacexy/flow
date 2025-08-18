@@ -22,6 +22,7 @@ import {
 } from '../hooks'
 import { BookTab } from '../models'
 import { isTouchScreen, scale } from '../platform'
+import { useSettings } from '../state'
 import { copy, keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
@@ -35,6 +36,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   tab,
 }) => {
   const { rendition, annotationRange } = useSnapshot(tab)
+  const [settings] = useSettings()
 
   // `manager` is not reactive, so we need to use getter
   const view = useCallback(() => {
@@ -43,6 +45,11 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
 
   const win = view()?.window
   const [selection, setSelection] = useTextSelection(win)
+
+  // If text selection menu is disabled, don't render it
+  if (settings.disableTextSelectionMenu) {
+    return null
+  }
 
   const el = view()?.element as HTMLElement
   if (!el) return null

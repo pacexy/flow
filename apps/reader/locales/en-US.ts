@@ -54,6 +54,8 @@ export default {
   'settings.synchronization.unauthorize': 'Unauthorize',
   'settings.cache': 'Cache',
   'settings.cache.clear': 'Clear',
+  'settings.text_selection_menu': 'Text Selection Menu',
+  'settings.text_selection_menu.disable': 'Disable automatic text selection menu',
 
   'menu.copy': 'Copy',
   'menu.search_in_book': 'Search in book',
