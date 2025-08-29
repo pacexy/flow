@@ -115,4 +115,6 @@ export class DB extends Dexie {
   }
 }
 
-export const db = IS_SERVER ? null : new DB('re-reader')
+const isExport = process.env.NEXT_PUBLIC_IS_EXPORT === 'true'
+
+export const db = IS_SERVER && !isExport ? null : new DB('re-reader')

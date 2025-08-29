@@ -47,6 +47,13 @@ async function build() {
       path.join(distDir, 'manifest.json')
     );
 
+    // 7. Copy background script
+    console.log('Copying background script...');
+    await fs.copy(
+      path.join(extensionDir, 'public', 'background.js'),
+      path.join(distDir, 'background.js')
+    );
+
     console.log(`\n✅ Extension for ${browser} built successfully!`);
     console.log(`✅ Output directory: ${distDir}`);
 
