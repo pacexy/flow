@@ -109,7 +109,6 @@ const TocRow: React.FC<TocRowProps> = ({
 }) => {
   if (!item) return null
   const { label, subitems, depth, expanded, id, href } = item
-  const tab = reader.focusedBookTab
 
   return (
     <Row
@@ -120,18 +119,20 @@ const TocRow: React.FC<TocRowProps> = ({
       subitems={subitems}
       onClick={() => {
         const [, id] = href.split('#')
-        const section = tab?.sections?.find((s) => compareHref(s.href, href))
+        const section = reader.focusedBookTab?.sections?.find((s) =>
+          compareHref(s.href, href),
+        )
 
         if (!section) return
 
         if (id) {
-          tab?.displayFromSelector(`#${id}`, section, false)
+          reader.focusedBookTab?.displayFromSelector(`#${id}`, section, false)
         } else {
-          tab?.display(section.href, false)
+          reader.focusedBookTab?.display(section.href, false)
         }
       }}
       // `tab` can not be proxy here
-      toggle={() => tab?.toggle(id)}
+      toggle={() => reader.focusedBookTab?.toggle(id)}
       onActivate={onActivate}
     />
   )
