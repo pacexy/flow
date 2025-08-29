@@ -4,8 +4,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 const { withSentryConfig } = require('@sentry/nextjs')
+
+const IS_EXPORT = process.env.IS_EXPORT === 'true'
+
 const withPWA = require('next-pwa')({
   dest: 'public',
+  disable: IS_EXPORT,
 })
 const withTM = require('next-transpile-modules')([
   '@flow/internal',
@@ -34,14 +38,10 @@ const sentryWebpackPluginOptions = {
 /**
  * @type {import('next').NextConfig}
  **/
-const config = {
+let config = {
   pageExtensions: ['ts', 'tsx'],
   webpack(config) {
     return config
-  },
-  i18n: {
-    locales: ['en-US', 'zh-CN', 'ja-JP'],
-    defaultLocale: 'en-US',
   },
   ...(IS_DOCKER && {
     output: 'standalone',
@@ -49,6 +49,17 @@ const config = {
       outputFileTracingRoot: path.join(__dirname, '../../'),
     },
   }),
+}
+
+if (!IS_EXPORT) {
+  config.i18n = {
+    locales: ['en-US', 'zh-CN', 'ja-JP'],
+    defaultLocale: 'en-US',
+  }
+} else {
+  config.images = {
+    unoptimized: true,
+  }
 }
 
 const base = withPWA(withTM(withBundleAnalyzer(config)))

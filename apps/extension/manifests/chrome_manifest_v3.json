@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Flow",
+  "version": "1.0.0",
+  "description": "Redefine ePub reader",
+  "icons": {
+    "16": "icons/192.png",
+    "48": "icons/192.png",
+    "128": "icons/192.png"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icons/192.png",
+      "48": "icons/192.png"
+    },
+    "default_title": "Flow"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval' 'sha256-Fc+vSsMVDhzLFPavAY0TI07pwX3aYwwk52HqqlJB358=' 'sha256-zb8ygSc2+G4sSd77nO/lyPNb/sawrcmNTL6Q1/fuKrM='; object-src 'self'"
+  }
+}

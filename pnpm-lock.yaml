@@ -69,6 +69,8 @@ importers:
         specifier: 4.6.3
         version: 4.6.3
 
+  apps/extension: {}
+
   apps/reader:
     dependencies:
       '@flow/epubjs':
