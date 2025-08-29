@@ -5,7 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 })
 const { withSentryConfig } = require('@sentry/nextjs')
 
-const IS_EXPORT = process.env.IS_EXPORT === 'true'
+const IS_EXPORT = process.env.NEXT_PUBLIC_IS_EXPORT === 'true'
 
 const withPWA = require('next-pwa')({
   dest: 'public',
