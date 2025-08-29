@@ -59,7 +59,9 @@ const TocPane: React.FC = () => {
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
   const rows = useMemo(() => toc?.flatMap((i) => flatTree(i)), [toc])
-  const expanded = toc?.some((r) => r.expanded)
+  const expanded = Object.values(
+    focusedBookTab?.tocExpandedState ?? {},
+  ).some((v) => v)
   const currentNavItem = focusedBookTab?.currentNavItem
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
@@ -74,9 +76,14 @@ const TocPane: React.FC = () => {
           title: t(expanded ? 'action.collapse_all' : 'action.expand_all'),
           Icon: expanded ? VscCollapseAll : VscExpandAll,
           handle() {
-            reader.focusedBookTab?.nav?.toc?.forEach((r) =>
-              dfs(r as INavItem, (i) => (i.expanded = !expanded)),
-            )
+            if (reader.focusedBookTab) {
+              const newState = !expanded
+              const newExpandedState: Record<string, boolean> = {}
+              rows?.forEach((item) => {
+                newExpandedState[item.id] = newState
+              })
+              reader.focusedBookTab.tocExpandedState = newExpandedState
+            }
           },
         },
       ]}
@@ -108,7 +115,9 @@ const TocRow: React.FC<TocRowProps> = ({
   onActivate,
 }) => {
   if (!item) return null
-  const { label, subitems, depth, expanded, id, href } = item
+  const { label, subitems, depth, id, href } = item
+  const { focusedBookTab } = useReaderSnapshot()
+  const expanded = focusedBookTab?.tocExpandedState[id]
 
   return (
     <Row

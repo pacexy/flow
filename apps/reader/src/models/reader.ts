@@ -77,6 +77,7 @@ class BaseTab {
 type AsRef = { $$valtioRef: true }
 
 export class BookTab extends BaseTab {
+  tocExpandedState: Record<string, boolean> = {}
   epub?: Book
   iframe?: Window & AsRef
   rendition?: Rendition & { manager?: any }
@@ -227,8 +228,7 @@ export class BookTab extends BaseTab {
   }
 
   toggle(id: string) {
-    const item = find(this.nav?.toc, id) as INavItem
-    if (item) item.expanded = !item.expanded
+    this.tocExpandedState[id] = !this.tocExpandedState[id]
   }
 
   toggleResult(id: string) {
