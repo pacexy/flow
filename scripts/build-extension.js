@@ -54,10 +54,29 @@ async function build() {
       path.join(distDir, 'background.js')
     );
 
-    // 8. Delete problematic files for Chrome
+    // 8. Fix for Chrome's restrictions on filenames starting with _
     if (browser === 'chrome') {
-      console.log('Deleting files reserved by Chrome...');
+      console.log('Applying fixes for Chrome compatibility...');
+
+      // Rename _next to next_assets
+      const oldPath = path.join(distDir, '_next');
+      const newPath = path.join(distDir, 'next_assets');
+      await fs.rename(oldPath, newPath);
+      console.log('Renamed _next directory to next_assets.');
+
+      // Update references in HTML files
+      const htmlFiles = (await fs.readdir(distDir)).filter(f => f.endsWith('.html'));
+      for (const file of htmlFiles) {
+        const filePath = path.join(distDir, file);
+        let content = await fs.readFile(filePath, 'utf8');
+        content = content.replace(/_next\//g, 'next_assets/');
+        await fs.writeFile(filePath, content, 'utf8');
+      }
+      console.log('Updated references in HTML files.');
+
+      // Delete problematic _.html file
       await fs.remove(path.join(distDir, '_.html'));
+      console.log('Deleted _.html file.');
     }
 
     console.log(`\n✅ Extension for ${browser} built successfully!`);
