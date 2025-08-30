@@ -1,8 +1,8 @@
 import {
   themeFromSourceColor,
   argbFromHex,
-  Theme,
 } from '@material/material-color-utilities'
+import type { Theme } from '@material/material-color-utilities'
 import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 

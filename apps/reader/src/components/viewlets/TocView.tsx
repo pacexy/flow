@@ -9,7 +9,6 @@ import {
   useTranslation,
 } from '@flow/reader/hooks'
 import {
-  compareHref,
   dfs,
   flatTree,
   INavItem,
@@ -19,6 +18,8 @@ import {
 
 import { Row } from '../Row'
 import { PaneViewProps, PaneView, Pane } from '../base'
+
+const EMPTY_OBJECT = {}
 
 export const TocView: React.FC<PaneViewProps> = (props) => {
   const mobile = useMobile()
@@ -58,7 +59,7 @@ const TocPane: React.FC = () => {
   const t = useTranslation()
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
-  const expandedState = focusedBookTab?.tocExpandedState ?? {}
+  const expandedState = focusedBookTab?.tocExpandedState ?? EMPTY_OBJECT
   const rows = useMemo(
     () => toc?.flatMap((i) => flatTree(i, 1, expandedState)),
     [toc, expandedState],

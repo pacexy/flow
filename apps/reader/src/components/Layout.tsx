@@ -16,7 +16,6 @@ import { useRecoilState } from 'recoil'
 
 import {
   Env,
-  Action,
   useAction,
   useBackground,
   useColorScheme,
@@ -24,6 +23,7 @@ import {
   useSetAction,
   useTranslation,
 } from '../hooks'
+import type { Action } from '../hooks'
 import { reader, useReaderSnapshot } from '../models'
 import { navbarState } from '../state'
 import { activeClass } from '../styles'
