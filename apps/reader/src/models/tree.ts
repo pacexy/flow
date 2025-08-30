@@ -5,11 +5,17 @@ export interface INode {
   subitems?: INode[]
 }
 
-export function flatTree<T extends INode>(node: T, depth = 1): T[] {
-  if (!node.subitems || !node.subitems.length || !node.expanded) {
+export function flatTree<T extends INode>(
+  node: T,
+  depth = 1,
+  expandedState: Record<string, boolean> = {},
+): T[] {
+  if (!node.subitems || !node.subitems.length || !expandedState[node.id]) {
     return [{ ...node, depth }]
   }
-  const children = node.subitems.flatMap((i) => flatTree(i, depth + 1)) as T[]
+  const children = node.subitems.flatMap((i) =>
+    flatTree(i as T, depth + 1, expandedState),
+  )
   return [{ ...node, depth }, ...children]
 }
 

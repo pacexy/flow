@@ -57,7 +57,11 @@ const TocPane: React.FC = () => {
   const t = useTranslation()
   const { focusedBookTab } = useReaderSnapshot()
   const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
-  const rows = useMemo(() => toc?.flatMap((i) => flatTree(i)), [toc])
+  const expandedState = focusedBookTab?.tocExpandedState ?? {}
+  const rows = useMemo(
+    () => toc?.flatMap((i) => flatTree(i, 1, expandedState)),
+    [toc, expandedState],
+  )
   const expanded = Object.values(
     focusedBookTab?.tocExpandedState ?? {},
   ).some((v) => v)
