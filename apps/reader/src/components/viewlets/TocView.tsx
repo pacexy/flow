@@ -10,7 +10,6 @@ import {
 } from '@flow/reader/hooks'
 import {
   compareHref,
-  dfs,
   flatTree,
   INavItem,
   reader,
@@ -114,9 +113,9 @@ const TocRow: React.FC<TocRowProps> = ({
   item,
   onActivate,
 }) => {
+  const { focusedBookTab } = useReaderSnapshot()
   if (!item) return null
   const { label, subitems, depth, id, href } = item
-  const { focusedBookTab } = useReaderSnapshot()
   const expanded = focusedBookTab?.tocExpandedState[id]
 
   return (
