@@ -18,6 +18,9 @@
   "permissions": [
     "storage"
   ],
+  "host_permissions": [
+    "*://*.dropboxapi.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },

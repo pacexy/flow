@@ -16,7 +16,8 @@
     "default_title": "Flow"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "*://*.dropboxapi.com/*"
   ],
   "background": {
     "scripts": ["background.js"]
