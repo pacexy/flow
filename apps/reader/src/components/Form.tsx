@@ -92,7 +92,7 @@ export function TextField<T extends ElementType = 'input'>({
         {datalist && <datalist id={datalistId}>{datalist}</datalist>}
         {!!actions.length && (
           <div className="mx-1 flex gap-0.5">
-            {actions.map(({ onClick, ...a }) => (
+            {actions.map(({ onClick, ...a }: Action) => (
               <IconButton
                 className="text-outline !p-px"
                 key={a.title}

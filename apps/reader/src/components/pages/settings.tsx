@@ -26,7 +26,7 @@ export const Settings: React.FC = () => {
         <Item title={t('language')}>
           <Select
             value={locale}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               push(asPath, undefined, { locale: e.target.value })
             }}
           >
@@ -38,7 +38,7 @@ export const Settings: React.FC = () => {
         <Item title={t('color_scheme')}>
           <Select
             value={scheme}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setScheme(e.target.value as ColorScheme)
             }}
           >

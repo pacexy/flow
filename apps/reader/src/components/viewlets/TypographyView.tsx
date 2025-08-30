@@ -103,7 +103,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
         <Select
           name={t('page_view')}
           value={spread ?? RenditionSpread.Auto}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             setTypography('spread', e.target.value as RenditionSpread)
           }}
         >
@@ -130,7 +130,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
           // Preload fonts to ensure `localFonts` is available on first mouse click.
           // Without preloading, datalist dropdown will be empty for the first mouse click.
           onMouseEnter={queryLocalFonts}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTypography('fontFamily', e.target.value)
           }}
         />

@@ -25,7 +25,7 @@ export const ThemeView: React.FC<PaneViewProps> = (props) => {
           <ColorPicker
             name={t('source_color')}
             defaultValue={sourceColor}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setSourceColor(e.target.value)
             }}
           />
