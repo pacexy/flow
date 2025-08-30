@@ -10,6 +10,7 @@ import {
 } from '@flow/reader/hooks'
 import {
   compareHref,
+  dfs,
   flatTree,
   INavItem,
   reader,

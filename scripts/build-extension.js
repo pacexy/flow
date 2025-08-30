@@ -41,7 +41,7 @@ async function build() {
     console.log(`Copying manifest for ${browser}...`);
     const manifestFile = browser === 'chrome'
       ? 'chrome_manifest_v3.json'
-      : 'firefox_manifest_v3.json';
+      : 'firefox_manifest_v2.json';
     await fs.copy(
       path.join(manifestsDir, manifestFile),
       path.join(distDir, 'manifest.json')
