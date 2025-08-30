@@ -2,7 +2,7 @@ export interface INode {
   id: string
   depth?: number
   expanded?: boolean
-  subitems?: INode[]
+  subitems?: readonly INode[]
 }
 
 export function flatTree<T extends INode>(

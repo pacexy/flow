@@ -57,7 +57,7 @@ export interface IMatch extends INode {
   excerpt: string
   description?: string
   cfi?: string
-  subitems?: IMatch[]
+  subitems?: readonly IMatch[]
 }
 
 export interface ISection extends Section {
