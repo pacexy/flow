@@ -49,7 +49,7 @@ export interface INavItemSnapshot {
   href: string
   label: string
   parent?: string
-  subitems?: INavItemSnapshot[]
+  subitems?: readonly INavItemSnapshot[]
   depth?: number
 }
 
@@ -72,7 +72,7 @@ export interface ISectionSnapshot {
   href: string
   index: number
   length: number
-  images: string[]
+  images: readonly string[]
   navitem?: INavItemSnapshot
 }
 

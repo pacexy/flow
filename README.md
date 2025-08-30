@@ -2,7 +2,7 @@
 
 <h2 align="center">Redefine ePub reader</h2>
 
-<p align="center">Free. Open source. Browser-based.</p>
+<p align="center">Free. Open source. Now available as a browser extension!</p>
 
 <p align="center"><img src="apps/website/public/screenshots/en-US.webp"/>
 </p>
@@ -15,11 +15,42 @@
 - Custom typography
 - Highlight and Annotation
 - Theme
-- Share/Download book with link
 - Data export
 - Cloud storage
 
-For planed features, see our [roadmap](https://pacexy.notion.site/283696d0071c43bfb03652e8e5f47936?v=b43f4dd7a3cb4ce785d6c32b698a8ff5).
+## Browser Extension
+
+Flow is now available as a browser extension for both Google Chrome and Mozilla Firefox.
+
+### Installation (from source)
+
+To install the extension, you first need to build it from the source code.
+
+1.  **Build for Chrome:**
+    ```bash
+    pnpm build:ext:chrome
+    ```
+2.  **Build for Firefox:**
+    ```bash
+    pnpm build:ext:firefox
+    ```
+    The built extension files will be located in the `apps/extension/dist` directory.
+
+#### Loading in Chrome
+
+1.  Open Google Chrome and navigate to `chrome://extensions`.
+2.  Enable "Developer mode" using the toggle switch in the top-right corner.
+3.  Click the "Load unpacked" button.
+4.  In the file dialog, select the `apps/extension/dist` directory from this project.
+5.  The "Flow" extension will now be installed.
+
+#### Loading in Firefox
+
+1.  Open Mozilla Firefox and navigate to `about:debugging`.
+2.  Click on the "This Firefox" tab on the left.
+3.  Click the "Load Temporary Add-on..." button.
+4.  In the file dialog, navigate to the `apps/extension/dist` directory and select the `manifest.json` file.
+5.  The "Flow" extension will now be temporarily installed.
 
 ## Development
 
@@ -45,30 +76,35 @@ pnpm i
 
 Copy and rename all `.env.local.example`s to `.env.local` and setup the environment variables.
 
-### Run the apps
+### Run the original Web App
 
 ```bash
 pnpm dev
 ```
 
-## Self-hosting
+### Build the Extension
 
-Before self-hosting, you should [setup the environment variables](#setup-the-environment-variables).
+-   **For Chrome:**
+    ```bash
+    pnpm build:ext:chrome
+    ```
+-   **For Firefox:**
+    ```bash
+    pnpm build:ext:firefox
+    ```
 
-### Docker
+### Package the Extension for Distribution
 
-You can use docker-compose:
-
-```sh
-docker compose up -d
-```
-
-Or build the image and run it manually:
-
-```sh
-docker build -t flow .
-docker run -p 3000:3000 --env-file apps/reader/.env.local flow
-```
+-   **For Chrome:**
+    ```bash
+    pnpm package:chrome
+    ```
+    This will create a `flow-chrome.zip` file in the root directory.
+-   **For Firefox:**
+    ```bash
+    pnpm package:firefox
+    ```
+    This will create a `flow-firefox.zip` file in the root directory.
 
 ## Contributing
 
