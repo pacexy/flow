@@ -8,7 +8,7 @@ import { PaneView, PaneViewProps } from '../base'
 export const ImageView: React.FC<PaneViewProps> = (props) => {
   const { focusedBookTab } = useReaderSnapshot()
   const sections = focusedBookTab?.sections?.filter(
-    (s: ISection) => s.images.length > 0,
+    (s) => s.images.length > 0,
   )
 
   if ((sections?.length ?? 0) > 500) return null
