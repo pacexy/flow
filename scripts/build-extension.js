@@ -54,6 +54,12 @@ async function build() {
       path.join(distDir, 'background.js')
     );
 
+    // 8. Delete problematic files for Chrome
+    if (browser === 'chrome') {
+      console.log('Deleting files reserved by Chrome...');
+      await fs.remove(path.join(distDir, '_.html'));
+    }
+
     console.log(`\n✅ Extension for ${browser} built successfully!`);
     console.log(`✅ Output directory: ${distDir}`);
 
