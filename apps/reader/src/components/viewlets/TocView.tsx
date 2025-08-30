@@ -141,13 +141,7 @@ const TocRow: React.FC<TocRowProps> = ({
       expanded={expanded}
       subitems={subitems}
       onClick={() => {
-        const section = reader.focusedBookTab?.sections?.find((s) =>
-          compareHref(s.href, href),
-        )
-
-        if (!section) return
-
-        reader.focusedBookTab?.display(section.href, false)
+        reader.focusedBookTab?.display(href, false)
       }}
       // `tab` can not be proxy here
       toggle={() => {
