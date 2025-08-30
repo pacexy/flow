@@ -1,5 +1,5 @@
 import { StateLayer } from '@literal-ui/core'
-import { useMemo } from 'react'
+import { useMemo, useReducer } from 'react'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import {
@@ -114,6 +114,7 @@ const TocRow: React.FC<TocRowProps> = ({
   onActivate,
 }) => {
   const { focusedBookTab } = useReaderSnapshot()
+  const [, forceUpdate] = useReducer((x) => x + 1, 0)
   if (!item) return null
   const { label, subitems, depth, id, href } = item
   const expanded = focusedBookTab?.tocExpandedState[id]
@@ -140,7 +141,10 @@ const TocRow: React.FC<TocRowProps> = ({
         }
       }}
       // `tab` can not be proxy here
-      toggle={() => reader.focusedBookTab?.toggle(id)}
+      toggle={() => {
+        reader.focusedBookTab?.toggle(id)
+        forceUpdate()
+      }}
       onActivate={onActivate}
     />
   )
