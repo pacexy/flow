@@ -1,5 +1,5 @@
 import { StateLayer } from '@literal-ui/core'
-import { useMemo, useReducer } from 'react'
+import { useMemo } from 'react'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import {
@@ -65,15 +65,12 @@ const TocPane: React.FC = () => {
     () => toc?.flatMap((i) => flatTree(i, 1, expandedState)),
     [toc, expandedState],
   )
-  const expanded = Object.values(
-    focusedBookTab?.tocExpandedState ?? {},
-  ).some((v) => v)
+  const expanded = rows?.some((r) => r.expanded)
   const currentNavItem = focusedBookTab?.currentNavItem as
     | INavItemSnapshot
     | undefined
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
-  const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
   return (
     <Pane
@@ -107,10 +104,9 @@ const TocPane: React.FC = () => {
             return (
               <TocRow
                 key={item.id}
-                currentNavItem={currentNavItem as INavItem}
+                currentNavItem={currentNavItem}
                 item={item}
                 onActivate={() => scrollToItem(index)}
-                forceUpdatePane={forceUpdate}
               />
             )
           })}
@@ -122,20 +118,15 @@ const TocPane: React.FC = () => {
 
 interface TocRowProps {
   currentNavItem?: INavItemSnapshot
-  item?: INavItemSnapshot
+  item: INavItemSnapshot
   onActivate: () => void
-  forceUpdatePane: () => void
 }
 const TocRow: React.FC<TocRowProps> = ({
   currentNavItem,
   item,
   onActivate,
-  forceUpdatePane,
 }) => {
-  const { focusedBookTab } = useReaderSnapshot()
-  if (!item) return null
-  const { label, subitems, depth, id, href } = item
-  const expanded = focusedBookTab?.tocExpandedState[id]
+  const { label, subitems, depth, expanded, id, href } = item
 
   return (
     <Row
@@ -147,11 +138,7 @@ const TocRow: React.FC<TocRowProps> = ({
       onClick={() => {
         reader.focusedBookTab?.display(href, false)
       }}
-      // `tab` can not be proxy here
-      toggle={() => {
-        reader.focusedBookTab?.toggle(id)
-        forceUpdatePane()
-      }}
+      toggle={() => reader.focusedBookTab?.toggle(id)}
       onActivate={onActivate}
     />
   )
