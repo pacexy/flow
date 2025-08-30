@@ -16,7 +16,7 @@
     "@literal-ui/core": "0.0.13",
     "@literal-ui/hooks": "0.0.8",
     "@literal-ui/next": "0.0.3",
-    "@material/material-color-utilities": "0.3.0",
+    "@material/material-color-utilities": "0.2.0",
     "@next/bundle-analyzer": "12.1.6",
     "@sentry/nextjs": "7.12.1",
     "@types/react-highlight-words": "0.16.4",
