@@ -228,7 +228,10 @@ export class BookTab extends BaseTab {
   }
 
   toggle(id: string) {
-    this.tocExpandedState[id] = !this.tocExpandedState[id]
+    this.tocExpandedState = {
+      ...this.tocExpandedState,
+      [id]: !this.tocExpandedState[id],
+    }
   }
 
   toggleResult(id: string) {
