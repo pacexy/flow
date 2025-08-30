@@ -210,7 +210,7 @@ const NumberField: React.FC<NumberFieldProps> = ({ onChange, ...props }) => {
       ]}
       mRef={ref}
       // lazy render
-      onBlur={(e) => {
+      onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
         onChange(Number(e.target.value))
       }}
       onClear={() => {

@@ -194,7 +194,7 @@ const Library: React.FC = () => {
               {
                 title: t('share'),
                 Icon: MdOutlineShare,
-                onClick(el) {
+                onClick: (el: HTMLInputElement | null) => {
                   if (el?.reportValidity()) {
                     copy(`${window.location.origin}/?${SOURCE}=${el.value}`)
                   }
@@ -203,7 +203,7 @@ const Library: React.FC = () => {
               {
                 title: t('download'),
                 Icon: MdOutlineFileDownload,
-                onClick(el) {
+                onClick: (el: HTMLInputElement | null) => {
                   if (el?.reportValidity()) fetchBook(el.value)
                 },
               },
