@@ -97,15 +97,19 @@ const TocPane: React.FC = () => {
     >
       {rows && (
         <div ref={innerRef}>
-          {items.map(({ index }) => (
-            <TocRow
-              key={index}
-              currentNavItem={currentNavItem as INavItem}
-              item={rows[index]}
-              onActivate={() => scrollToItem(index)}
-              forceUpdatePane={forceUpdate}
-            />
-          ))}
+          {items.map(({ index }) => {
+            const item = rows[index]
+            if (!item) return null
+            return (
+              <TocRow
+                key={item.id}
+                currentNavItem={currentNavItem as INavItem}
+                item={item}
+                onActivate={() => scrollToItem(index)}
+                forceUpdatePane={forceUpdate}
+              />
+            )
+          })}
         </div>
       )}
     </Pane>
