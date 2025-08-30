@@ -1,5 +1,5 @@
 import { StateLayer } from '@literal-ui/core'
-import { useMemo } from 'react'
+import { useMemo, useReducer } from 'react'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import {
@@ -69,6 +69,7 @@ const TocPane: React.FC = () => {
   const currentNavItem = focusedBookTab?.currentNavItem
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
+  const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
   return (
     <Pane
@@ -102,6 +103,7 @@ const TocPane: React.FC = () => {
               currentNavItem={currentNavItem as INavItem}
               item={rows[index]}
               onActivate={() => scrollToItem(index)}
+              forceUpdatePane={forceUpdate}
             />
           ))}
         </div>
@@ -114,11 +116,13 @@ interface TocRowProps {
   currentNavItem?: INavItem
   item?: INavItem
   onActivate: () => void
+  forceUpdatePane: () => void
 }
 const TocRow: React.FC<TocRowProps> = ({
   currentNavItem,
   item,
   onActivate,
+  forceUpdatePane,
 }) => {
   const { focusedBookTab } = useReaderSnapshot()
   if (!item) return null
@@ -147,7 +151,10 @@ const TocRow: React.FC<TocRowProps> = ({
         }
       }}
       // `tab` can not be proxy here
-      toggle={() => reader.focusedBookTab?.toggle(id)}
+      toggle={() => {
+        reader.focusedBookTab?.toggle(id)
+        forceUpdatePane()
+      }}
       onActivate={onActivate}
     />
   )
