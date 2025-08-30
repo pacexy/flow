@@ -1,5 +1,5 @@
 import { StateLayer } from '@literal-ui/core'
-import { useMemo, useReducer } from 'react'
+import { useMemo } from 'react'
 import { VscCollapseAll, VscExpandAll } from 'react-icons/vsc'
 
 import {
@@ -10,6 +10,7 @@ import {
 } from '@flow/reader/hooks'
 import {
   compareHref,
+  dfs,
   flatTree,
   INavItem,
   reader,
@@ -82,9 +83,11 @@ const TocPane: React.FC = () => {
             if (reader.focusedBookTab) {
               const newState = !expanded
               const newExpandedState: Record<string, boolean> = {}
-              rows?.forEach((item) => {
-                newExpandedState[item.id] = newState
-              })
+              reader.focusedBookTab.nav?.toc?.forEach((r) =>
+                dfs(r as INavItem, (i) => {
+                  newExpandedState[i.id] = newState
+                }),
+              )
               reader.focusedBookTab.tocExpandedState = newExpandedState
             }
           },
@@ -118,7 +121,6 @@ const TocRow: React.FC<TocRowProps> = ({
   onActivate,
 }) => {
   const { focusedBookTab } = useReaderSnapshot()
-  const [, forceUpdate] = useReducer((x) => x + 1, 0)
   if (!item) return null
   const { label, subitems, depth, id, href } = item
   const expanded = focusedBookTab?.tocExpandedState[id]
@@ -145,10 +147,7 @@ const TocRow: React.FC<TocRowProps> = ({
         }
       }}
       // `tab` can not be proxy here
-      toggle={() => {
-        reader.focusedBookTab?.toggle(id)
-        forceUpdate()
-      }}
+      toggle={() => reader.focusedBookTab?.toggle(id)}
       onActivate={onActivate}
     />
   )
