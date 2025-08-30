@@ -43,6 +43,16 @@ export interface INavItem extends NavItem, INode {
   subitems?: INavItem[]
 }
 
+// A plain object representation of INavItem for use in snapshots
+export interface INavItemSnapshot {
+  id: string
+  href: string
+  label: string
+  parent?: string
+  subitems?: INavItemSnapshot[]
+  depth?: number
+}
+
 export interface IMatch extends INode {
   excerpt: string
   description?: string
@@ -54,6 +64,16 @@ export interface ISection extends Section {
   length: number
   images: string[]
   navitem?: INavItem
+}
+
+// A plain object representation of ISection for use in snapshots
+export interface ISectionSnapshot {
+  idref: string
+  href: string
+  index: number
+  length: number
+  images: string[]
+  navitem?: INavItemSnapshot
 }
 
 interface TimelineItem {

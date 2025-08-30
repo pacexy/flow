@@ -12,6 +12,7 @@ import {
   dfs,
   flatTree,
   INavItem,
+  INavItemSnapshot,
   reader,
   useReaderSnapshot,
 } from '@flow/reader/models'
@@ -58,7 +59,7 @@ const LibraryPane: React.FC = () => {
 const TocPane: React.FC = () => {
   const t = useTranslation()
   const { focusedBookTab } = useReaderSnapshot()
-  const toc = focusedBookTab?.nav?.toc as INavItem[] | undefined
+  const toc = focusedBookTab?.nav?.toc as INavItemSnapshot[] | undefined
   const expandedState = focusedBookTab?.tocExpandedState ?? EMPTY_OBJECT
   const rows = useMemo(
     () => toc?.flatMap((i) => flatTree(i, 1, expandedState)),
@@ -67,7 +68,9 @@ const TocPane: React.FC = () => {
   const expanded = Object.values(
     focusedBookTab?.tocExpandedState ?? {},
   ).some((v) => v)
-  const currentNavItem = focusedBookTab?.currentNavItem
+  const currentNavItem = focusedBookTab?.currentNavItem as
+    | INavItemSnapshot
+    | undefined
 
   const { outerRef, innerRef, items, scrollToItem } = useList(rows)
   const [, forceUpdate] = useReducer((x) => x + 1, 0)
@@ -118,8 +121,8 @@ const TocPane: React.FC = () => {
 }
 
 interface TocRowProps {
-  currentNavItem?: INavItem
-  item?: INavItem
+  currentNavItem?: INavItemSnapshot
+  item?: INavItemSnapshot
   onActivate: () => void
   forceUpdatePane: () => void
 }

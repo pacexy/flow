@@ -1,6 +1,10 @@
 import { useBoolean } from '@literal-ui/hooks'
 
-import { ISection, reader, useReaderSnapshot } from '@flow/reader/models'
+import {
+  ISectionSnapshot,
+  reader,
+  useReaderSnapshot,
+} from '@flow/reader/models'
 
 import { Row } from '../Row'
 import { PaneView, PaneViewProps } from '../base'
@@ -25,7 +29,7 @@ export const ImageView: React.FC<PaneViewProps> = (props) => {
 }
 
 interface BlockProps {
-  section: ISection
+  section: ISectionSnapshot
 }
 const Block: React.FC<BlockProps> = ({ section }) => {
   const { focusedBookTab } = useReaderSnapshot()

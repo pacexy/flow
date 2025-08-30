@@ -5,18 +5,21 @@ export interface INode {
   subitems?: INode[]
 }
 
-export function flatTree<T extends INode>(
+import { INavItemSnapshot } from './reader'
+
+export function flatTree<T extends INavItemSnapshot>(
   node: T,
   depth = 1,
   expandedState: Record<string, boolean> = {},
 ): T[] {
+  const newNode = { ...node, depth }
   if (!node.subitems || !node.subitems.length || !expandedState[node.id]) {
-    return [{ ...node, depth }]
+    return [newNode]
   }
   const children = node.subitems.flatMap((i) =>
     flatTree(i as T, depth + 1, expandedState),
   )
-  return [{ ...node, depth }, ...children]
+  return [newNode, ...children]
 }
 
 export function find<T extends INode>(
