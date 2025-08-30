@@ -51,6 +51,7 @@ export interface INavItemSnapshot {
   parent?: string
   subitems?: readonly INavItemSnapshot[]
   depth?: number
+  expanded?: boolean
 }
 
 export interface IMatch extends INode {

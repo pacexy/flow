@@ -23,13 +23,13 @@ export function flatTree<T extends INode>(
 }
 
 export function find<T extends INode>(
-  nodes: T[] = [],
+  nodes: readonly T[] = [],
   id: string,
 ): T | undefined {
   const node = nodes.find((n) => n.id === id)
   if (node) return node
   for (const child of nodes) {
-    const node = find(child.subitems, id)
+    const node = find(child.subitems as T[], id)
     if (node) return node as T
   }
   return undefined
