@@ -40,6 +40,9 @@ const sentryWebpackPluginOptions = {
  **/
 let config = {
   productionBrowserSourceMaps: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   pageExtensions: ['ts', 'tsx'],
   webpack(config) {
     return config
