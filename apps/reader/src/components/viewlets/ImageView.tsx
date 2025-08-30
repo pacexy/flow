@@ -62,10 +62,15 @@ const Block: React.FC<BlockProps> = ({ section }) => {
                 src={blob}
                 alt={asset.href}
                 onClick={() => {
-                  reader.focusedBookTab?.displayFromSelector(
-                    `img[src*="${asset.href}"]`,
-                    section,
+                  const realSection = reader.focusedBookTab?.sections?.find(
+                    (s) => s.href === section.href,
                   )
+                  if (realSection) {
+                    reader.focusedBookTab?.displayFromSelector(
+                      `img[src*="${asset.href}"]`,
+                      realSection,
+                    )
+                  }
                 }}
               />
             )
