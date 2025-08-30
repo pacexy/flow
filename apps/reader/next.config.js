@@ -39,6 +39,7 @@ const sentryWebpackPluginOptions = {
  * @type {import('next').NextConfig}
  **/
 let config = {
+  productionBrowserSourceMaps: true,
   pageExtensions: ['ts', 'tsx'],
   webpack(config) {
     return config
