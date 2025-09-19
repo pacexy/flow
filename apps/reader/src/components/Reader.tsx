@@ -336,7 +336,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 
   useEventListener(iframe, 'keydown', handleKeyDown(tab))
 
-  useTouchEvent({iframe: iframe, tab: tab});
+  useTouchEvent({iframe, tab});
 
   useDisablePinchZooming(iframe)
 
