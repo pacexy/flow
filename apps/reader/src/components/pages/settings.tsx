@@ -52,7 +52,7 @@ export const Settings: React.FC = () => {
         <Item title={t('text_selection_menu')}>
           <Checkbox
             name={t('text_selection_menu.enable')}
-            checked={settings.enableTextSelectionMenu !== false}
+            checked={settings.enableTextSelectionMenu}
             onChange={(e) => {
               setSettings({
                 ...settings,
