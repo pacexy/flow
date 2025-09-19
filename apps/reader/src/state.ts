@@ -29,6 +29,7 @@ export const navbarState = atom<boolean>({
 
 export interface Settings extends TypographyConfiguration {
   theme?: ThemeConfiguration
+  swipeEnabled?: boolean
 }
 
 export interface TypographyConfiguration {
@@ -45,7 +46,9 @@ interface ThemeConfiguration {
   background?: number
 }
 
-export const defaultSettings: Settings = {}
+export const defaultSettings: Settings = {
+  swipeEnabled: false,
+}
 
 const settingsState = atom<Settings>({
   key: 'settings',

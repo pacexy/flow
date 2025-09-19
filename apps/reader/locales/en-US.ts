@@ -38,6 +38,7 @@ export default {
   'typography.font_weight': 'Font Weight',
   'typography.line_height': 'Line Height',
   'typography.zoom': 'Zoom',
+  'typography.swipe_navigation': 'Swipe Navigation',
 
   'theme.title': 'Theme',
   'theme.source_color': 'Source Color',
@@ -49,6 +50,8 @@ export default {
   'settings.color_scheme.system': 'System',
   'settings.color_scheme.light': 'Light',
   'settings.color_scheme.dark': 'Dark',
+  'settings.navigation': 'Navigation',
+  'settings.swipe_navigation': 'Swipe Navigation',
   'settings.synchronization.title': 'Synchronization',
   'settings.synchronization.authorize': 'Authorize',
   'settings.synchronization.unauthorize': 'Unauthorize',

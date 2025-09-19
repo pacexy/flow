@@ -9,6 +9,7 @@ import {
   useForceRender,
   useTranslation,
 } from '@flow/reader/hooks'
+import { useSettings } from '@flow/reader/state'
 import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@flow/reader/sync'
 
 import { Button } from '../Button'
@@ -19,6 +20,7 @@ export const Settings: React.FC = () => {
   const { scheme, setScheme } = useColorScheme()
   const { asPath, push, locale } = useRouter()
   const t = useTranslation('settings')
+  const [settings, setSettings] = useSettings()
 
   return (
     <Page headline={t('title')}>
@@ -46,6 +48,23 @@ export const Settings: React.FC = () => {
             <option value="light">{t('color_scheme.light')}</option>
             <option value="dark">{t('color_scheme.dark')}</option>
           </Select>
+        </Item>
+        <Item title={t('navigation')}>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={settings.swipeEnabled ?? false}
+              onChange={(e) => {
+                setSettings((prev) => ({
+                  ...prev,
+                  swipeEnabled: e.target.checked,
+                }))
+              }}
+            />
+            <span className="typescale-body-medium">
+              {t('swipe_navigation')}
+            </span>
+          </div>
         </Item>
         <Synchronization />
         <Item title={t('cache')}>
