@@ -2,13 +2,13 @@ import clsx from 'clsx'
 import { useCallback, useRef, useState } from 'react'
 import { MdAdd, MdRemove } from 'react-icons/md'
 
-import { RenditionSpread } from '@flow/epubjs/types/rendition'
 import { useTranslation } from '@flow/reader/hooks'
 import { reader, useReaderSnapshot } from '@flow/reader/models'
 import {
   defaultSettings,
   TypographyConfiguration,
   useSettings,
+  PageViewMode,
 } from '@flow/reader/state'
 import { keys } from '@flow/reader/utils'
 
@@ -30,7 +30,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
 
   const [localFonts, setLocalFonts] = useState<string[]>()
 
-  const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
+  const { fontFamily, fontSize, fontWeight, lineHeight, zoom, pageViewMode } =
     scope === TypographyScope.Book
       ? focusedBookTab?.book.configuration?.typography ?? defaultSettings
       : settings
@@ -102,16 +102,19 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
       >
         <Select
           name={t('page_view')}
-          value={spread ?? RenditionSpread.Auto}
+          value={pageViewMode ?? PageViewMode.Auto}
           onChange={(e) => {
-            setTypography('spread', e.target.value as RenditionSpread)
+            setTypography('pageViewMode', e.target.value as PageViewMode)
           }}
         >
-          <option value={RenditionSpread.None}>
+          <option value={PageViewMode.SinglePage}>
             {t('page_view.single_page')}
           </option>
-          <option value={RenditionSpread.Auto}>
+          <option value={PageViewMode.DoublePage}>
             {t('page_view.double_page')}
+          </option>
+          <option value={PageViewMode.Scrolled}>
+            {t('page_view.scroll')}
           </option>
         </Select>
         <TextField
