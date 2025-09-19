@@ -55,7 +55,7 @@ export default {
   'settings.cache': 'キャッシュ',
   'settings.cache.clear': 'クリア',
   'settings.text_selection_menu': 'テキスト選択メニュー',
-  'settings.text_selection_menu.disable': '自動テキスト選択メニューを無効にする',
+  'settings.text_selection_menu.enable': '自動テキスト選択メニューを有効にする',
 
   'menu.copy': 'コピー',
   'menu.search_in_book': '本を検索',

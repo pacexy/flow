@@ -29,7 +29,7 @@ export const navbarState = atom<boolean>({
 
 export interface Settings extends TypographyConfiguration {
   theme?: ThemeConfiguration
-  disableTextSelectionMenu?: boolean
+  enableTextSelectionMenu?: boolean
 }
 
 export interface TypographyConfiguration {

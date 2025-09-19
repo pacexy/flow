@@ -47,7 +47,7 @@ export const TextSelectionMenu: React.FC<TextSelectionMenuProps> = ({
   const [selection, setSelection] = useTextSelection(win)
 
   // If text selection menu is disabled, don't render it
-  if (settings.disableTextSelectionMenu) {
+  if (settings.enableTextSelectionMenu === false) {
     return null
   }
 

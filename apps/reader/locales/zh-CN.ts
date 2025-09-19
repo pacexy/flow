@@ -55,7 +55,7 @@ export default {
   'settings.cache': '缓存',
   'settings.cache.clear': '清除',
   'settings.text_selection_menu': '文本选择菜单',
-  'settings.text_selection_menu.disable': '禁用自动弹出的文本选择菜单',
+  'settings.text_selection_menu.enable': '启用自动弹出的文本选择菜单',
 
   'menu.copy': '复制',
   'menu.search_in_book': '书内搜索',
