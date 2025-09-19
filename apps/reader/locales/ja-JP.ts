@@ -54,6 +54,8 @@ export default {
   'settings.synchronization.unauthorize': '認証解除',
   'settings.cache': 'キャッシュ',
   'settings.cache.clear': 'クリア',
+  'settings.text_selection_menu': 'テキスト選択メニュー',
+  'settings.text_selection_menu.enable': '有効化',
 
   'menu.copy': 'コピー',
   'menu.search_in_book': '本を検索',

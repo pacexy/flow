@@ -54,6 +54,8 @@ export default {
   'settings.synchronization.unauthorize': '取消授权',
   'settings.cache': '缓存',
   'settings.cache.clear': '清除',
+  'settings.text_selection_menu': '文本选择菜单',
+  'settings.text_selection_menu.enable': '启用',
 
   'menu.copy': '复制',
   'menu.search_in_book': '书内搜索',
