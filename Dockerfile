@@ -1,6 +1,6 @@
 # https://github.com/vercel/turborepo/blob/a2a04ed4eba28602c7cdb36377c75a2f7007e90d/examples/with-docker/apps/web/Dockerfile
 
-FROM node:16-alpine AS builder
+FROM node:18-alpine AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -12,7 +12,7 @@ COPY . .
 RUN turbo prune --scope=@flow/reader --docker
 
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:alpine AS installer
+FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
@@ -31,7 +31,7 @@ COPY tsconfig.*json .
 
 RUN DOCKER=1 pnpm -F reader build
 
-FROM node:alpine AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 # Don't run production as root
