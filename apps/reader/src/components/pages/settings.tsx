@@ -9,6 +9,7 @@ import {
   useForceRender,
   useTranslation,
 } from '@flow/reader/hooks'
+import { localeNames } from '@flow/reader/locales'
 import { useSettings } from '@flow/reader/state'
 import { dbx, mapToToken, OAUTH_SUCCESS_MESSAGE } from '@flow/reader/sync'
 
@@ -18,7 +19,7 @@ import { Page } from '../Page'
 
 export const Settings: React.FC = () => {
   const { scheme, setScheme } = useColorScheme()
-  const { asPath, push, locale } = useRouter()
+  const { asPath, push, locale, locales } = useRouter()
   const [settings, setSettings] = useSettings()
   const t = useTranslation('settings')
 
@@ -32,9 +33,11 @@ export const Settings: React.FC = () => {
               push(asPath, undefined, { locale: e.target.value })
             }}
           >
-            <option value="en-US">English</option>
-            <option value="zh-CN">简体中文</option>
-            <option value="ja-JP">日本語</option>
+            {locales?.map((loc) => (
+              <option key={loc} value={loc}>
+                {localeNames[loc] || loc}
+              </option>
+            ))}
           </Select>
         </Item>
         <Item title={t('color_scheme')}>
