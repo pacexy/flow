@@ -3,6 +3,13 @@ import { atom, AtomEffect, useRecoilState } from 'recoil'
 
 import { RenditionSpread } from '@flow/epubjs/types/rendition'
 
+export enum PageViewMode {
+  Auto = 'auto',
+  SinglePage = 'single-page',
+  DoublePage = 'double-page',
+  Scrolled = 'scrolled',
+}
+
 function localStorageEffect<T>(key: string, defaultValue: T): AtomEffect<T> {
   return ({ setSelf, onSet }) => {
     if (IS_SERVER) return
@@ -37,7 +44,7 @@ export interface TypographyConfiguration {
   fontWeight?: number
   fontFamily?: string
   lineHeight?: number
-  spread?: RenditionSpread
+  pageViewMode?: PageViewMode
   zoom?: number
 }
 
