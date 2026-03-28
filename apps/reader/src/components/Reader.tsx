@@ -33,6 +33,7 @@ import { BookTab, reader, useReaderSnapshot } from '../models'
 import { isTouchScreen } from '../platform'
 import { updateCustomStyle } from '../styles'
 
+import { AIAssistant } from './AIAssistant'
 import {
   getClickedAnnotation,
   setClickedAnnotation,
@@ -413,6 +414,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
         />
         <TextSelectionMenu tab={tab} />
         <Annotations tab={tab} />
+        <AIAssistant tab={tab} />
       </div>
       <ReaderPaneFooter tab={tab} />
     </div>

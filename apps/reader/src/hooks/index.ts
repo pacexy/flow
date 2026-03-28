@@ -1,6 +1,7 @@
 export * from './remote'
 export * from './theme'
 export * from './useAction'
+export * from './useAIConfig'
 export * from './useAsync'
 export * from './useDisablePinchZooming'
 export * from './useEnv'

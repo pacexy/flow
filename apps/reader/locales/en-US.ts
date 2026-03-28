@@ -43,6 +43,44 @@ export default {
   'theme.source_color': 'Source Color',
   'theme.background_color': 'Background Color',
 
+  'ai.title': 'AI Configuration',
+  'ai.api_key': 'API Key',
+  'ai.api_key.placeholder': 'Enter OpenAI API Key',
+  'ai.api_key.show': 'Show',
+  'ai.api_key.hide': 'Hide',
+  'ai.api_url': 'API URL',
+  'ai.api_url.placeholder': 'https://api.openai.com/v1',
+  'ai.model_name': 'Model Name',
+  'ai.model_name.placeholder': 'gpt-3.5-turbo',
+  'ai.translate_prompt': 'Translate Prompt',
+  'ai.translate_prompt.placeholder':
+    'Please translate the following text to Chinese, maintaining the original format and style:',
+  'ai.summarize_prompt': 'Summarize Prompt',
+  'ai.summarize_prompt.placeholder':
+    'Please summarize the main content of the following text, be concise and clear:',
+
+  'ai_assistant.summarize': 'AI Summarize',
+  'ai_assistant.summarize.title': 'Page Summary',
+  'ai_assistant.summarize.loading': 'Summarizing...',
+  'ai_assistant.summarize.error.no_content':
+    'Unable to get current page content',
+  'ai_assistant.summarize.error.no_text': 'Current page has no text content',
+  'ai_assistant.summarize.error.failed': 'Summarization failed',
+  'ai_assistant.translate.page': 'Translate Page',
+  'ai_assistant.translate.page.title': 'Translating Page',
+  'ai_assistant.translate.loading': 'Translating...',
+  'ai_assistant.translate.progress': 'Progress',
+  'ai_assistant.translate.success': 'Translation complete',
+  'ai_assistant.translate.success.detail':
+    '{success} succeeded, {failed} failed',
+  'ai_assistant.translate.removed': 'Translations removed',
+  'ai_assistant.translate.error.no_content':
+    'Unable to get current page content',
+  'ai_assistant.translate.error.no_paragraphs':
+    'Current page has no translatable paragraphs',
+  'ai_assistant.translate.error.failed': 'Translation failed',
+  'ai_assistant.close': 'Close',
+
   'settings.title': 'Settings',
   'settings.language': 'Language',
   'settings.color_scheme': 'Color Scheme',
@@ -59,6 +97,9 @@ export default {
 
   'menu.copy': 'Copy',
   'menu.search_in_book': 'Search in book',
+  'menu.translate': 'Translate',
+  'menu.translate.loading': 'Translating...',
+  'menu.close': 'Close',
   'menu.annotate': 'Annotate',
   'menu.define': 'Define',
   'menu.undefine': 'Undefine',

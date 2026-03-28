@@ -43,6 +43,45 @@ export default {
   'theme.source_color': 'ソースカラー',
   'theme.background_color': '背景色',
 
+  'ai.title': 'AI 設定',
+  'ai.api_key': 'API キー',
+  'ai.api_key.placeholder': 'OpenAI API キーを入力',
+  'ai.api_key.show': '表示',
+  'ai.api_key.hide': '非表示',
+  'ai.api_url': 'API URL',
+  'ai.api_url.placeholder': 'https://api.openai.com/v1',
+  'ai.model_name': 'モデル名',
+  'ai.model_name.placeholder': 'gpt-3.5-turbo',
+  'ai.translate_prompt': '翻訳プロンプト',
+  'ai.translate_prompt.placeholder':
+    '以下のテキストを中国語に翻訳してください。元の形式とスタイルを維持してください：',
+  'ai.summarize_prompt': '要約プロンプト',
+  'ai.summarize_prompt.placeholder':
+    '以下のテキストの主要内容を要約してください。簡潔で明確に：',
+
+  'ai_assistant.summarize': 'AI 要約',
+  'ai_assistant.summarize.title': 'ページ要約',
+  'ai_assistant.summarize.loading': '要約中...',
+  'ai_assistant.summarize.error.no_content':
+    '現在のページコンテンツを取得できません',
+  'ai_assistant.summarize.error.no_text':
+    '現在のページにテキストコンテンツがありません',
+  'ai_assistant.summarize.error.failed': '要約に失敗しました',
+  'ai_assistant.translate.page': 'ページ翻訳',
+  'ai_assistant.translate.page.title': 'ページ翻訳中',
+  'ai_assistant.translate.loading': '翻訳中...',
+  'ai_assistant.translate.progress': '進捗',
+  'ai_assistant.translate.success': '翻訳完了',
+  'ai_assistant.translate.success.detail':
+    '成功 {success} 件、失敗 {failed} 件',
+  'ai_assistant.translate.removed': '翻訳を削除しました',
+  'ai_assistant.translate.error.no_content':
+    '現在のページコンテンツを取得できません',
+  'ai_assistant.translate.error.no_paragraphs':
+    '現在のページに翻訳可能な段落がありません',
+  'ai_assistant.translate.error.failed': '翻訳に失敗しました',
+  'ai_assistant.close': '閉じる',
+
   'settings.title': '設定',
   'settings.language': '言語',
   'settings.color_scheme': '配色',
@@ -59,6 +98,9 @@ export default {
 
   'menu.copy': 'コピー',
   'menu.search_in_book': '本を検索',
+  'menu.translate': '翻訳',
+  'menu.translate.loading': '翻訳中...',
+  'menu.close': '閉じる',
   'menu.annotate': '注釈',
   'menu.define': '定義',
   'menu.undefine': '未定義',

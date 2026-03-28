@@ -10,6 +10,7 @@ import {
   MdToc,
   MdTimeline,
   MdOutlineLightMode,
+  MdSmartToy,
 } from 'react-icons/md'
 import { RiFontSize, RiHome6Line, RiSettings5Line } from 'react-icons/ri'
 import { useRecoilState } from 'recoil'
@@ -30,6 +31,7 @@ import { activeClass } from '../styles'
 
 import { SplitView, useSplitViewItem } from './base'
 import { Settings } from './pages'
+import { AIView } from './viewlets/AIView'
 import { AnnotationView } from './viewlets/AnnotationView'
 import { ImageView } from './viewlets/ImageView'
 import { SearchView } from './viewlets/SearchView'
@@ -122,6 +124,13 @@ const viewActions: IViewAction[] = [
     title: 'theme',
     Icon: MdOutlineLightMode,
     View: ThemeView,
+    env: Env.Desktop | Env.Mobile,
+  },
+  {
+    name: 'ai',
+    title: 'ai',
+    Icon: MdSmartToy,
+    View: AIView,
     env: Env.Desktop | Env.Mobile,
   },
 ]

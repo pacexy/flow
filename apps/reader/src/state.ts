@@ -32,6 +32,30 @@ export interface Settings extends TypographyConfiguration {
   enableTextSelectionMenu?: boolean
 }
 
+export interface AIConfig {
+  apiKey?: string
+  apiUrl?: string
+  modelName?: string
+  translatePrompt?: string
+  summarizePrompt?: string
+}
+
+export const defaultAIConfig: AIConfig = {
+  apiKey: '',
+  apiUrl: 'https://api.openai.com/v1',
+  modelName: 'gpt-3.5-turbo',
+  translatePrompt: '请将以下文本翻译成中文，保持原文的格式和风格：',
+  summarizePrompt: '请总结以下文本的主要内容，要求简洁明了：',
+}
+
+const aiConfigState = atom<AIConfig>({
+  key: 'aiConfig',
+  default: defaultAIConfig,
+  effects: [localStorageEffect('aiConfig', defaultAIConfig)],
+})
+
+export { aiConfigState }
+
 export interface TypographyConfiguration {
   fontSize?: string
   fontWeight?: number

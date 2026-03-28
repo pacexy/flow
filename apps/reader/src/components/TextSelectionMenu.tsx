@@ -8,6 +8,7 @@ import {
   MdOutlineEdit,
   MdOutlineIndeterminateCheckBox,
   MdSearch,
+  MdTranslate,
 } from 'react-icons/md'
 import { useSnapshot } from 'valtio'
 
@@ -27,6 +28,7 @@ import { copy, keys, last } from '../utils'
 
 import { Button, IconButton } from './Button'
 import { TextField } from './Form'
+import { TranslatePopup } from './TranslatePopup'
 import { layout, LayoutAnchorMode, LayoutAnchorPosition } from './base'
 
 interface TextSelectionMenuProps {
@@ -134,6 +136,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
   const cfi = tab.rangeToCfi(range)
   const annotation = tab.book.annotations.find((a) => a.cfi === cfi)
   const [annotate, setAnnotate] = useState(!!annotation)
+  const [showTranslate, setShowTranslate] = useState(false)
 
   const position = forward
     ? LayoutAnchorPosition.Before
@@ -220,6 +223,14 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
                 hide()
                 setAction('search')
                 tab.setKeyword(text)
+              }}
+            />
+            <IconButton
+              title={t('translate')}
+              Icon={MdTranslate}
+              size={ICON_SIZE}
+              onClick={() => {
+                setShowTranslate(true)
               }}
             />
             <IconButton
@@ -319,6 +330,15 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           </div>
         )}
       </div>
+      {showTranslate && (
+        <TranslatePopup
+          text={text}
+          anchorRect={anchorRect}
+          containerRect={containerRect}
+          viewRect={viewRect}
+          onClose={() => setShowTranslate(false)}
+        />
+      )}
     </FocusLock>
   )
 }
