@@ -6,7 +6,10 @@ export function useDisablePinchZooming(win?: Window) {
     const _win = win ?? window
     // Block pinch-zooming on iOS outside of the content area
     const handleTouchMove = (event: TouchEvent) => {
-      event.preventDefault()
+      // event.preventDefault()
+      if ((event as any).scale !== 1) {
+        event.preventDefault()
+      }
     }
 
     _win.document.addEventListener('touchmove', handleTouchMove, {

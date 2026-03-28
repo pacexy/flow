@@ -162,7 +162,7 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           setWidth(el.clientWidth)
           setHeight(el.clientHeight)
           if (!mobile) {
-            el.focus()
+            el.focus({ preventScroll: true })
           }
         }}
         className={clsx(
@@ -187,6 +187,9 @@ const TextSelectionMenuRenderer: React.FC<TextSelectionMenuRendererProps> = ({
           if (e.key === 'c' && e.ctrlKey) {
             copy(text)
           }
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation()
         }}
       >
         {annotate ? (
