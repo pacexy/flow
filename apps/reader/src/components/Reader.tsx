@@ -20,7 +20,6 @@ import { navbarState } from '@flow/reader/state'
 import { db } from '../db'
 import { handleFiles } from '../file'
 import {
-  hasSelection,
   useBackground,
   useColorScheme,
   useDisablePinchZooming,
@@ -28,6 +27,7 @@ import {
   useSync,
   useTranslation,
   useTypography,
+  useTouchEvent,
 } from '../hooks'
 import { BookTab, reader, useReaderSnapshot } from '../models'
 import { isTouchScreen } from '../platform'
@@ -340,49 +340,7 @@ function BookPane({ tab, onMouseDown }: BookPaneProps) {
 
   useEventListener(iframe, 'keydown', handleKeyDown(tab))
 
-  useEventListener(iframe, 'touchstart', (e) => {
-    const x0 = e.targetTouches[0]?.clientX ?? 0
-    const y0 = e.targetTouches[0]?.clientY ?? 0
-    const t0 = Date.now()
-
-    if (!iframe) return
-
-    // When selecting text with long tap, `touchend` is not fired,
-    // so instead of use `addEventlistener`, we should use `on*`
-    // to remove the previous listener.
-    iframe.ontouchend = function handleTouchEnd(e: TouchEvent) {
-      iframe.ontouchend = undefined
-      const selection = iframe.getSelection()
-      if (hasSelection(selection)) return
-
-      const x1 = e.changedTouches[0]?.clientX ?? 0
-      const y1 = e.changedTouches[0]?.clientY ?? 0
-      const t1 = Date.now()
-
-      const deltaX = x1 - x0
-      const deltaY = y1 - y0
-      const deltaT = t1 - t0
-
-      const absX = Math.abs(deltaX)
-      const absY = Math.abs(deltaY)
-
-      if (absX < 10) return
-
-      if (absY / absX > 2) {
-        if (deltaT > 100 || absX < 30) {
-          return
-        }
-      }
-
-      if (deltaX > 0) {
-        tab.prev()
-      }
-
-      if (deltaX < 0) {
-        tab.next()
-      }
-    }
-  })
+  useTouchEvent({iframe, tab});
 
   useDisablePinchZooming(iframe)
 
