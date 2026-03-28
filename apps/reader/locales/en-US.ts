@@ -37,6 +37,10 @@ export default {
   'typography.font_size': 'Font Size',
   'typography.font_weight': 'Font Weight',
   'typography.line_height': 'Line Height',
+  'typography.text_align': 'Text Alignment',
+  'typography.text_align.default': 'Default',
+  'typography.text_align.left': 'Left aligned',
+  'typography.text_align.justify': 'Justified',
   'typography.zoom': 'Zoom',
 
   'theme.title': 'Theme',

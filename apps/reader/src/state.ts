@@ -1,4 +1,5 @@
 import { IS_SERVER } from '@literal-ui/hooks'
+import type { CSSProperties } from 'react'
 import { atom, AtomEffect, useRecoilState } from 'recoil'
 
 import { RenditionSpread } from '@flow/epubjs/types/rendition'
@@ -37,6 +38,7 @@ export interface TypographyConfiguration {
   fontWeight?: number
   fontFamily?: string
   lineHeight?: number
+  textAlign?: CSSProperties['textAlign']
   spread?: RenditionSpread
   zoom?: number
 }

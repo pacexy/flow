@@ -37,6 +37,10 @@ export default {
   'typography.font_size': '字号',
   'typography.font_weight': '字重',
   'typography.line_height': '行高',
+  'typography.text_align': '对齐方式',
+  'typography.text_align.default': '默认',
+  'typography.text_align.left': '左对齐',
+  'typography.text_align.justify': '两端对齐',
   'typography.zoom': '缩放',
 
   'theme.title': '颜色主题',

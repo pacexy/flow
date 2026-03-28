@@ -30,7 +30,7 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
 
   const [localFonts, setLocalFonts] = useState<string[]>()
 
-  const { fontFamily, fontSize, fontWeight, lineHeight, zoom, spread } =
+  const { fontFamily, fontSize, fontWeight, lineHeight, textAlign, zoom, spread } =
     scope === TypographyScope.Book
       ? focusedBookTab?.book.configuration?.typography ?? defaultSettings
       : settings
@@ -162,6 +162,18 @@ export const TypographyView: React.FC<PaneViewProps> = (props) => {
             setTypography('lineHeight', v || undefined)
           }}
         />
+        <Select
+          name={t('text_align')}
+          value={textAlign ?? ''}
+          onChange={(e) => {
+            const value = e.target.value as '' | 'left' | 'justify'
+            setTypography('textAlign', value || undefined)
+          }}
+        >
+          <option value="">{t('text_align.default')}</option>
+          <option value="left">{t('text_align.left')}</option>
+          <option value="justify">{t('text_align.justify')}</option>
+        </Select>
         <NumberField
           name={t('zoom')}
           min={1}
